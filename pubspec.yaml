@@ -1,0 +1,48 @@
+name: new_school_official
+description: A new Flutter application.
+
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  dio: ^3.0.8
+  gradient_text: ^1.0.2
+  get: 3.24.0
+  global_configuration: ^1.6.0
+  flutter_svg: 0.18.1
+  get_storage: 1.4.0
+  cupertino_icons: ^0.1.3
+  pin_code_fields: 6.1.0
+  auto_size_text: 2.1.0
+  chewie: 0.10.1
+  video_player: 1.0.1
+  shimmer: 1.1.2
+  cached_network_image: 2.5.1
+  share: 0.6.5+4
+  better_player: any
+  fl_chart: any
+  charts_flutter: 0.10.0
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+
+  uses-material-design: true
+  fonts:
+    - family: Raleway
+      fonts:
+        - asset: assets/fonts/Montserrat-Regular.ttf
+
+
+  assets:
+    - assets/cfg/
+    - assets/images/
+    - assets/icons/
