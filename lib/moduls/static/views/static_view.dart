@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:new_school_official/dialog/treyler.dart';
+import 'package:new_school_official/moduls/auth/views/register.dart';
 import 'package:new_school_official/moduls/home/controllers/home_controller.dart';
 import 'package:new_school_official/moduls/main/controllers/main_controller.dart';
 import 'package:new_school_official/moduls/search/controllers/search_controller.dart';
@@ -17,6 +18,7 @@ import 'package:new_school_official/storage/colors/main_color.dart';
 import 'package:new_school_official/storage/styles/text_style.dart';
 import 'package:new_school_official/widgets/speackear.dart';
 import 'package:video_player/video_player.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
 
 class StaticScreen extends StatefulWidget {
   @override
@@ -101,24 +103,42 @@ class StateStaticScreen extends State<StaticScreen>{
       ],
     );
   }
+  var items;
   @override
   void initState() {
     super.initState();
-    final barGroup1 = makeGroupData(0, 10, 15);
-    final barGroup2 = makeGroupData(1, 15, 20);
-    final barGroup3 = makeGroupData(2, 10, 15);
-    final barGroup4 = makeGroupData(3, 10, 20);
-    final barGroup5 = makeGroupData(4, 15, 20);
-    final barGroup6 = makeGroupData(5, 10, 20);
+    if(_mainController.auth.value) {
+      final barGroup1 = makeGroupData(0, 10, 15);
+      final barGroup2 = makeGroupData(1, 15, 20);
+      final barGroup3 = makeGroupData(2, 10, 15);
+      final barGroup4 = makeGroupData(3, 10, 20);
+      final barGroup5 = makeGroupData(4, 15, 20);
+      final barGroup6 = makeGroupData(5, 10, 20);
+      items = [
+        barGroup1,
+        barGroup2,
+        barGroup3,
+        barGroup4,
+        barGroup5,
+        barGroup6,
+      ];
+    }else{
+      final barGroup1 = makeGroupData(0, 2.5, 2.5);
+      final barGroup2 = makeGroupData(1, 2.5, 2.5);
+      final barGroup3 = makeGroupData(2, 2.5, 2.5);
+      final barGroup4 = makeGroupData(3, 2.5, 2.5);
+      final barGroup5 = makeGroupData(4, 2.5, 2.5);
+      final barGroup6 = makeGroupData(5, 2.5, 2.5);
+      items = [
+        barGroup1,
+        barGroup2,
+        barGroup3,
+        barGroup4,
+        barGroup5,
+        barGroup6,
+      ];
+    }
 
-    final items = [
-      barGroup1,
-      barGroup2,
-      barGroup3,
-      barGroup4,
-      barGroup5,
-      barGroup6,
-    ];
 
     rawBarGroups = items;
 
@@ -137,21 +157,118 @@ class StateStaticScreen extends State<StaticScreen>{
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: white_color,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-                padding: EdgeInsets.only(
-                    left: 20,right: 20,bottom: 33,
-                    top:77
+      body: SafeArea(
+        child: ListView(
+          padding: EdgeInsets.only(
+            top:0
+          ),
+          children:[
+            Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: 42,
+                  margin: EdgeInsets.only(
+                      left: 20,right: 20, top:27
+                  ),
+                  child: Text("Статистика",style: TextStyle(fontSize: 25,fontWeight: FontWeight.w700,color: Colors.black,height: 1,fontFamily: 'Raleway'),)
+              ),
+              Container(
+                  height: 53,
+
+                  margin: EdgeInsets.only(
+                      left: 20,right: 20,bottom: 12
+                  ),
+                  child: Text("Все обучение оцифрованно в разделе статистики. Доступно для зарегестрированного пользователя.",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300,color: Colors.black,height: 1,fontFamily: 'Raleway'),)
+              ),
+              _mainController.auth.value?Container():Container(
+                margin: EdgeInsets.only(top: 7,left: 15,right: 15,bottom:57 ),
+                width: Get.width-30,
+                height: 223,
+                child: Stack(
+                  children: [
+                    Container(
+                        width: Get.width-30,
+                        height: 223,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                              fit: BoxFit.fill,
+                              image: AssetImage(
+                                "assets/images/Group 248.png",
+                              )
+                          ),
+                        )
+                    ),
+                    Positioned(top:11,right: 13,
+                        child: GestureDetector(
+                          child: SvgPicture.asset("assets/icons/close-3 1 (1).svg",height: 11,width: 11,),
+                          onTap: (){
+                            _homeController.banner.value=false;
+                          },
+                        )),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Opacity(
+                          child: Text(
+                              'Учись новому!'
+                              ,style: TextStyle(fontSize: 13,fontWeight: FontWeight.w300,color: Colors.white,letterSpacing: 0.5,fontFamily: "Raleway")
+                          ),
+                          opacity: 0.7,
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(left: 13,right: 13,top: 7),
+                          width: Get.width,
+                          child:  AutoSizeText(
+                              'Обучайтесь без ограничений'.toUpperCase(),maxLines:1,minFontSize: 11,textAlign:TextAlign.center,
+                              style: TextStyle(fontSize: 15,letterSpacing: 0.5,fontWeight: FontWeight.bold,color: Colors.white,fontFamily: "Raleway")
+                          ),
+                        ),
+                        Opacity(
+                          child: GestureDetector(
+                            child: Container(
+                              margin: EdgeInsets.only(left: 39,right: 39,top: 15),
+                              padding: EdgeInsets.all(9),
+                              decoration: BoxDecoration(
+                                  border: Border.all(width: 1,color: Colors.white),
+                                  borderRadius: BorderRadius.circular(5)
+                              ),
+                              child: Center(
+                                child: Text(
+                                    'Начать учиться',style: TextStyle(fontSize: 14,letterSpacing: 0.5,fontWeight: FontWeight.w400,color: Colors.white,fontFamily: "Raleway")
+                                ),
+                              ),
+                            ),
+                            onTap: ()async{
+
+                              _mainController.widgets.removeAt(4);
+                              _mainController.widgets.add(RegisterPage());
+                              _mainController.currentIndex.value=4;
+
+
+                            },
+                          ),
+                          opacity: 0.7,
+                        ),
+                        SizedBox(height: 7,),
+                        Opacity(
+                          child:  Text(
+                              '30 дней бесплатно, далее 199 ₽ в месяц',style: TextStyle(fontSize: 9,fontWeight: FontWeight.w300,color: Colors.white,fontFamily: "Raleway",letterSpacing: 0.5)
+                          ),
+                          opacity: 0.7,
+                        ),
+
+                      ],
+                    )
+                  ],
                 ),
-                child: Text("Статистика",style: TextStyle(fontSize: 34,fontWeight: FontWeight.bold,color: Colors.black,fontFamily: 'Raleway'),)
-            ),
-            getStatistik(),
-            getGraph(),
-            getFinishedCourses(),
-          ],
+              ),
+              getStatistik(),
+              getGraph(),
+              getFinishedCourses(),
+            ],
+          ),
+          ]
         ),
       ),
     );
@@ -165,7 +282,7 @@ class StateStaticScreen extends State<StaticScreen>{
           )
       ),
       height: 68,
-      margin: EdgeInsets.only(left: 20,right: 20,bottom: 38),
+      margin: EdgeInsets.only(left: 20,right: 20,bottom: 57),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -174,12 +291,12 @@ class StateStaticScreen extends State<StaticScreen>{
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                  "9"
+                  "${_mainController.auth.value?9:0}"
                   ,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w500,letterSpacing: 0.5,color: Colors.black)),
               SizedBox(height: 2,),
               Text(
                   "Курса в процессе"
-                  ,style: TextStyle(fontSize: 11,fontWeight: FontWeight.w400,letterSpacing: 0.5,color: Colors.grey))
+                  ,style: TextStyle(fontSize: 10,fontWeight: FontWeight.w500,letterSpacing: 0.5,color: Color(0xff666666)))
             ],
           ),
           // SizedBox(width:50,),
@@ -188,11 +305,12 @@ class StateStaticScreen extends State<StaticScreen>{
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                  "248"
+                  "${_mainController.auth.value?248:0}"
                   ,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w500,letterSpacing: 0.5,color: Colors.black)),
+              SizedBox(height: 2,),
               Text(
                   "Часов обучено"
-                  ,style: TextStyle(fontSize: 11,fontWeight: FontWeight.w400,letterSpacing: 0.5,color: Colors.grey))
+                  ,style: TextStyle(fontSize: 10,fontWeight: FontWeight.w500,letterSpacing: 0.5,color: Color(0xff666666)))
             ],
           ),
           // SizedBox(width:50,),
@@ -201,19 +319,61 @@ class StateStaticScreen extends State<StaticScreen>{
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                  "1"
+                  "${_mainController.auth.value?1:0}"
                   ,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w500,letterSpacing: 0.5,color: Colors.black)),
+              SizedBox(height: 2,),
+
               Text(
                   "Курсов пройдено"
-                  ,style: TextStyle(fontSize: 11,fontWeight: FontWeight.w400,letterSpacing: 0.5,color: Colors.grey))
+                  ,style: TextStyle(fontSize: 10,fontWeight: FontWeight.w500,letterSpacing: 0.5,color: Color(0xff666666)))
             ],
           )
         ],
       ),
     );
   }
+  List<charts.Series<OrdinalSales, String>> _createSampleData() {
+    final desktopSalesData = [
+      new OrdinalSales('2014', 5),
+      new OrdinalSales('2015', 25),
+      new OrdinalSales('2016', 100),
+      new OrdinalSales('2017', 75),
+    ];
 
+    final tableSalesData = [
+      new OrdinalSales('2014', 25),
+      new OrdinalSales('2015', 50),
+      new OrdinalSales('2016', 10),
+      new OrdinalSales('2017', 20),
+    ];
+
+
+
+    return [
+      // Blue bars with a lighter center color.
+      new charts.Series<OrdinalSales, String>(
+        id: 'Desktop',
+        domainFn: (OrdinalSales sales, _) => sales.year,
+        measureFn: (OrdinalSales sales, _) => sales.sales,
+        data: desktopSalesData,
+        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+        fillColorFn: (_, __) =>
+        charts.MaterialPalette.blue.shadeDefault.lighter,
+      ),
+      // Solid red bars. Fill color will default to the series color if no
+      // fillColorFn is configured.
+      new charts.Series<OrdinalSales, String>(
+        id: 'Tablet',
+        measureFn: (OrdinalSales sales, _) => sales.sales,
+        data: tableSalesData,
+        colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
+        domainFn: (OrdinalSales sales, _) => sales.year,
+      ),
+
+    ];
+  }
   Widget getGraph(){
+
     return Container(
       padding: EdgeInsets.only(left: 20,right: 20,bottom: 71),
       child:  Column(
@@ -221,7 +381,7 @@ class StateStaticScreen extends State<StaticScreen>{
         children: [
           Container(
             child:
-            Text("Завершенные курсы",style: black_text_title),
+            Text("${_mainController.auth.value?"Завершенные курсы":"Предпочтения категорий"}",style: black_text_title),
           ),
           SizedBox(height: 21,),
           Row(
@@ -230,14 +390,17 @@ class StateStaticScreen extends State<StaticScreen>{
               Row(
                 children: [
                   Icon(Icons.circle,color: rightBarColor,size: 8,),
-                  Text("Прошли",style: TextStyle(fontFamily: 'Raleway',fontSize: 12,fontWeight: FontWeight.w400))
+                  SizedBox(width: 6,),
+
+                  Text("Прошли",style: TextStyle(fontFamily: 'Raleway',fontSize: 10,fontWeight: FontWeight.w500))
                 ],
               ),
               SizedBox(width: 32,),
               Row(
                 children: [
                   Icon(Icons.circle,color: leftBarColor,size: 8),
-                  Text("В процесссе",style: TextStyle(fontFamily: 'Raleway',fontSize: 12,fontWeight: FontWeight.w400),)
+                  SizedBox(width: 6,),
+                  Text("В процесссе",style: TextStyle(fontFamily: 'Raleway',fontSize: 10,fontWeight: FontWeight.w500),)
                 ],
               )
             ],
@@ -250,7 +413,7 @@ class StateStaticScreen extends State<StaticScreen>{
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
               color: const Color(0xffffffff),
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.only(left: 4),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -260,65 +423,10 @@ class StateStaticScreen extends State<StaticScreen>{
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: BarChart(
-                          BarChartData(
-                            maxY: 20,
-
-                            titlesData: FlTitlesData(
-                              show: true,
-                              bottomTitles: SideTitles(
-                                showTitles: true,
-                                getTextStyles: (value) => const TextStyle(
-                                    color: Color(0xff999999), fontWeight: FontWeight.w400, fontSize: 11,fontFamily: 'Raleway'),
-                                margin: 20,
-                                getTitles: (double value) {
-                                  switch (value.toInt()) {
-                                    case 0:
-                                      return 'Музыка';
-                                    case 1:
-                                      return 'Спорт';
-                                    case 2:
-                                      return 'Наука';
-                                    case 3:
-                                      return 'Питание';
-                                    case 4:
-                                      return 'Кино';
-                                    case 5:
-                                      return 'Дизайн';
-                                    default:
-                                      return '';
-                                  }
-                                },
-                              ),
-                              leftTitles: SideTitles(
-                                showTitles: true,
-                                getTextStyles: (value) => const TextStyle(
-                                    color: Color(0xff999999), fontWeight: FontWeight.w400, fontSize: 11,fontFamily: 'Raleway'),
-                                margin: 32,
-                                reservedSize: 14,
-                                getTitles: (value) {
-                                  if (value == 0) {
-                                    return '0';
-                                  } else if (value == 5) {
-                                    return '1 курс';
-                                  }else if (value == 10) {
-                                    return '2 курс';
-                                  } else if (value == 15) {
-                                    return '3 курс';
-                                  } else if (value == 20) {
-                                    return '4 курс';
-                                  }  else {
-                                    return '';
-                                  }
-
-                                },
-                              ),
-                            ),
-                            borderData: FlBorderData(
-                              show: false,
-                            ),
-                            barGroups: showingBarGroups,
-                          ),
+                        child: charts.BarChart(
+                          _createSampleData(),
+                          defaultRenderer: new charts.BarRendererConfig(
+                              groupingType: charts.BarGroupingType.grouped, strokeWidthPx: 2.0),
                         ),
                       ),
                     ),
@@ -343,7 +451,7 @@ class StateStaticScreen extends State<StaticScreen>{
         Container(
           padding: EdgeInsets.only(left: 20,right: 20),
           child:
-          Text("Завершенные курсы",style: black_text_title),
+          Text("Активность за последний год",style: black_text_title),
         ),
         Container(
           padding: EdgeInsets.only(left: 20,right: 20),
@@ -365,6 +473,12 @@ class StateStaticScreen extends State<StaticScreen>{
       ],
     );
   }
+}
+class OrdinalSales {
+  final String year;
+  final int sales;
+
+  OrdinalSales(this.year, this.sales);
 }
 class Item extends StatefulWidget{
   String text;

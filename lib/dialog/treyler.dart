@@ -43,10 +43,11 @@ class _ChewieDemoState extends State<TrailerScreen> {
   Future<void> initializePlayer() async {
     print(_homeController.course['kurses'][0]['trailer']);
     _videoPlayerController1 = VideoPlayerController.network(
-        'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4');
+        _homeController.course['kurses'][0]['trailer']);
     await _videoPlayerController1.initialize();
 
     _chewieController = ChewieController(
+      allowFullScreen: false,
       videoPlayerController: _videoPlayerController1,
       autoPlay: true,
       looping: true,
@@ -86,54 +87,15 @@ class _ChewieDemoState extends State<TrailerScreen> {
                         )
                             : Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
+                          children:  [
                             CircularProgressIndicator(),
-
                           ],
                         ),
                       ),
                     ),
                   )
               ),
-              _chewieController != null &&
-                  _chewieController
-                      .videoPlayerController.value.initialized
-                  ?  Positioned(
-                bottom: 50,
-                right: 30,
-                child: ValueListenableBuilder(
-                  valueListenable: _chewieController
-                      .videoPlayerController,
-                  builder: (context, VideoPlayerValue value, child) {
-                    print(value.position.inSeconds);
-                    if(value.position.inSeconds>=(_chewieController.videoPlayerController.value.duration.inSeconds-15)){
-                      return Container(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              height: 80,
-                              width: 120,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                                  color: Colors.black.withOpacity(0.04),
-                                  image: DecorationImage(image: NetworkImage(
-                                      "https://school.webfirst.rv.ua/admin/uploads/category/9810_5957_1615109386.jpg"
-                                  ),fit: BoxFit.fill)
-                              ),),
-                            Text("Следующее видео",style: TextStyle(color: Colors.white),),
 
-                          ],
-                        ),
-                      );
-                    }else{
-                      return Container(
-
-                      );
-                    }
-                  },
-                ),
-              ):Container()
             ],
           )
         ),

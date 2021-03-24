@@ -32,7 +32,6 @@ class HomeController extends GetxController {
 
   var _countdownTime = 0.obs;
 
-  Timer _timer;
   var popular =[].obs;
   var news=[].obs;
   var videos={}.obs;
@@ -49,7 +48,6 @@ class HomeController extends GetxController {
   void onInit() {
     focusNode.requestFocus();
     super.onInit();
-    startCountdownTimer();
     getCourses();
     getCategories();
   }
@@ -62,7 +60,6 @@ class HomeController extends GetxController {
   @override
   void onClose() {
     phoneEditingController.dispose();
-    _timer.cancel();
     super.onClose();
   }
   void getCode(){
@@ -77,22 +74,6 @@ class HomeController extends GetxController {
     }
   }
 
-  void startCountdownTimer() {
-    //TODO request to get code from back
-    _countdownTime.value = 60;
-
-    const oneSec = const Duration(seconds: 1);
-
-    var callback = (timer) => {
-        if (_countdownTime < 1) {
-          _timer.cancel()
-        } else {
-          _countdownTime.value = _countdownTime.value - 1
-        }
-    };
-
-    _timer = Timer.periodic(oneSec, callback);
-  }
 
   //Componets for auth
 

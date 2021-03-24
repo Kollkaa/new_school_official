@@ -49,7 +49,18 @@ class Backend {
 
 
   }
+  Future<dios.Response> register({String email,String pas}) {
+    var response;
+    response= dio.post("",data: {
+      "type": "register ",
+      "apiKey": "2xdCQ9nH",
+      "email": email,
+      "password": pas
+    });
+    return response;
 
+
+  }
   Future<dios.Response> getMainCourse() {
     var response;
     response= dio.post("/api/api.php",data:dios.FormData.fromMap({'type': 'coursesindex',

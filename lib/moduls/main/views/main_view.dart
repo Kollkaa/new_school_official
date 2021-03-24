@@ -22,9 +22,6 @@ class MainScreen extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
 
-    SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(statusBarBrightness: Brightness.light,  statusBarIconBrightness: Brightness.light,    statusBarColor: Colors.white,
-        ));
     return Obx(
             ()=>
         _mainController.widgets.length!=0?Scaffold(

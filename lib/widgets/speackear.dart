@@ -29,42 +29,52 @@ class SpeakerDialog extends StatelessWidget{
                   ),                  width: Get.width,
                   height: 549,
                   padding: EdgeInsets.only(left: 20,right: 20,top: 7),
-                  child: ListView(
+                  child: Column(
                     children: [
-                      Center(
-                        child: Container(
-                          width: 64,
-                          height: 3,
-                          color: Color(0xffC4C4C4),
-                        ),
+                      GestureDetector(
+                        child: Center(
+                          child: Container(
+                            width: 64,
+                            height: 3,
+                            color: Color(0xffC4C4C4),
+                          ),
+                        ),onTap: (){
+                          Get.back();
+                      },
                       ),
                       SizedBox(height: 57,),
-                      Container(
-                        width: Get.width,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              height: 135,
-                              width: 135,
-                              decoration:BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(image: NetworkImage("${_homeController.course['kurses'][0]['spicker_image']}"),fit: BoxFit.cover)
-                              ),
-                            ),
-                            SizedBox(height: 21,),
-                            Text("${_homeController.course['kurses'][0]['spicker_name']}",maxLines:1,textAlign: TextAlign.center
-                                ,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600,letterSpacing: 0.5,color: Colors.black,fontFamily: "Raleway")),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 21,),
-                      Container(
-                        padding: EdgeInsets.only(bottom: 5),
+                      Expanded(child: ListView
+                        (
+                        children: [
 
-                        child: Text("${_homeController.course['kurses'][0]['spicker_desc']}"
-                            ,style: TextStyle(fontSize: 15,fontWeight: FontWeight.w300,letterSpacing: 0.5,height:1.5,color: Colors.black,fontFamily: "Raleway")),
-                      ),
+                          Container(
+                            width: Get.width,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  height: 135,
+                                  width: 135,
+                                  decoration:BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(image: NetworkImage("${_homeController.course['kurses'][0]['spicker_image']}"),fit: BoxFit.cover)
+                                  ),
+                                ),
+                                SizedBox(height: 21,),
+                                Text("${_homeController.course['kurses'][0]['spicker_name']}",maxLines:1,textAlign: TextAlign.center
+                                    ,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w600,letterSpacing: 0.5,color: Colors.black,fontFamily: "Raleway")),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 21,),
+                          Container(
+                            padding: EdgeInsets.only(bottom: 5),
+
+                            child: Text("${_homeController.course['kurses'][0]['spicker_desc']}"
+                                ,style: TextStyle(fontSize: 15,fontWeight: FontWeight.w300,letterSpacing: 0.5,height:1.5,color: Colors.black,fontFamily: "Raleway")),
+                          ),
+                        ],
+                      ))
                     ],
                   ),
                 )

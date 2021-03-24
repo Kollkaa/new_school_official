@@ -6,11 +6,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:new_school_official/moduls/auth/controllers/auth_controller.dart';
+import 'package:new_school_official/moduls/auth/views/register.dart';
+import 'package:new_school_official/moduls/main/controllers/main_controller.dart';
 import 'package:new_school_official/storage/colors/main_color.dart';
 import 'package:new_school_official/storage/styles/text_style.dart';
 
 class AuthPage extends StatelessWidget {
   AuthController _authController = Get.put(AuthController());
+  MainController _mainController=Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -18,98 +21,138 @@ class AuthPage extends StatelessWidget {
       backgroundColor: white_color,
       body:  Center(
         child: Container(
-          padding: EdgeInsets.all(48),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 makeTitleh2(),
-                SizedBox(height: 3,),
                 makeDescription(),
-                SizedBox(height:29 ,),
-                Column(
-                  children: [
-                    makeTextFieldLog(),
-                    SizedBox(height: 17,),
-                    makeTextFieldPass(),
-                    SizedBox(height: 16,),
-                    makeButton(),
-                    SizedBox(height: 23),
-                    Text("или",style: TextStyle(fontSize: 16,color: text_color_title,fontWeight: FontWeight.w300,height: 1),),
-                    SizedBox(height: 21),
-                    GestureDetector(
-                      child: Container(
-                          padding: EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                              color: Colors.black,
-                              border: Border.all(
-                                  width: 1,
-                                  color: Color(0xff000000)
-                              )
-                          ),
-                          width: Get.width-28,
-                          child: Center(
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SvgPicture.asset("assets/icons/apple.svg"),
-                                  SizedBox(width: 10,),
-
-                                  Text(
+                makeTextFieldLog(),
+                makeTextFieldPass(),
+                makeButton(),
+                Text("или",style: TextStyle(fontSize: 14,color: Color(0xff999999),fontWeight: FontWeight.w400,height: 1,fontFamily: "Raleway"),),
+                GestureDetector(
+                  child: Container(
+                      margin: EdgeInsets.only(left: 25,right: 25,top: 21),
+                      height: 50,
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                                color: Color.fromRGBO(50, 50, 71, 0.06),
+                                offset: Offset(0,2),
+                                spreadRadius: 4,
+                                blurRadius: 2
+                            )
+                          ],
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(
+                              width: 1,
+                              color: Color(0xff000000)
+                          )
+                      ),
+                      width: Get.width-28,
+                      child: Center(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SvgPicture.asset("assets/icons/apple.svg"),
+                              Container(
+                                height: 30,
+                                decoration: BoxDecoration(
+                                    border: Border(left: BorderSide(width: 1,color: Colors.white.withOpacity(0.3)))
+                                ),
+                                width: Get.width-122,
+                                child:  Center(
+                                  child:  Text(
                                     "Вход с Apple ID",
-                                    style: TextStyle(fontSize: 15,color: Colors.white,fontWeight: FontWeight.w400,height: 1),
+                                    style: TextStyle(fontSize: 14,color: Colors.white,fontWeight: FontWeight.w400,height: 1,fontFamily: "Raleway"),
                                   ),
-                                ],
+                                ),
+                              ),
+                              Opacity(opacity: 0,
+                                child:   SvgPicture.asset("assets/icons/apple.svg"),
                               )
+
+                            ],
+                          )
+                      )
+                  ),
+                  onTap: _authController.getCode,
+                ),
+                GestureDetector(
+                  child: Container(
+                      height: 50,
+                      margin: EdgeInsets.only(left: 25,right: 25,top: 15),
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                                color: Color.fromRGBO(50, 50, 71, 0.06),
+                                offset: Offset(0,2),
+                                spreadRadius: 4,
+                                blurRadius: 2
+                            )
+                          ],
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(
+                              width: 1,
+                              color: Color(0xff000000)
                           )
                       ),
-                      onTap: _authController.getCode,
-                    ),
-                    SizedBox(height: 24),
-                    GestureDetector(
-                      child: Container(
-                          padding: EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  width: 1,
-                                  color: Color(0xff000000)
-                              )
-                          ),
-                          width: Get.width-28,
-                          child: Center(
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-
-                                children: [
-                                  Image.asset("assets/images/ddjvludx0aa77mu 1.jpg"),
-                                  SizedBox(width: 10,),
-                                  Text(
+                      width: Get.width-28,
+                      child: Center(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Image.asset("assets/images/ddjvludx0aa77mu 1.jpg"),
+                              Container(
+                                height: 30,
+                                decoration: BoxDecoration(
+                                    border: Border(left: BorderSide(width: 1,color: Colors.white.withOpacity(0.3)))
+                                ),
+                                width: Get.width-124,
+                                child:  Center(
+                                  child: Text(
                                     "Вход с Google",
-                                    style: TextStyle(fontSize: 15,color: text_color_title,fontWeight: FontWeight.w400,height: 1),
+                                    style: TextStyle(fontSize: 14,color: Colors.black,fontWeight: FontWeight.w400,height: 1,fontFamily: "Raleway"),
                                   ),
-                                ],
+                                ),
+                              ),
+                              Opacity(opacity: 0,
+                                child:                                   Image.asset("assets/images/ddjvludx0aa77mu 1.jpg"),
                               )
+                            ],
                           )
-                      ),
-                      onTap: _authController.getCode,
-                    ),
-                    SizedBox(height: 15),
-                    Container(
-                        width: Get.width-28,
-                        child:  Center(
-                          child: Text(
-                            "Войдя в систему, вы соглашаетесь с нашей политикой конфиденциальности", textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 15,color: Color(0xff6A6A6a),fontWeight: FontWeight.w300,height: 1),
-                          ),
-                        )
-                    )
+                      )
+                  ),
+                  onTap: _authController.getCode,
+                ),
+                SizedBox(height: 15),
+               GestureDetector(
+                 child: Container(
+                     width: Get.width-28,
+                     child:  Center(
+                       child: Text(
+                         "Создать учетную запись?", textAlign: TextAlign.center,
+                         style: TextStyle(fontSize: 14,color:Color(0xff484848),fontWeight: FontWeight.w400,fontFamily: "Raleway" ),
+                       ),
+                     )
+                 ),
+                 onTap: (){
+                   if(!_mainController.auth.value) {
+                     print("213");
+                     _mainController.widgets.removeAt(4);
+                     _mainController.widgets.add(RegisterPage());
+                     _mainController.currentIndex.value=4;
+                   }                 },
+               )
 
-                  ],
-                )
               ],
             ),
           ),
@@ -120,23 +163,24 @@ class AuthPage extends StatelessWidget {
 
 
   Widget makeTitleh2(){
-    return Text("Войти",style: auth_titleh1_text_style,);
+    return Text("Войти",style: TextStyle(fontSize: 25,fontWeight: FontWeight.w700,fontFamily: "Raleway" ),);
   }
 
   Widget makeDescription(){
-    return Text("или создать профиль",style:auth_description_text_style);
+    return Text("Введите свои данные для входа",style:TextStyle(fontSize: 14,color:Color(0xff3A3A3A), fontWeight: FontWeight.w300,fontFamily: "Raleway" ));
   }
 
   Widget makeTextFieldLog(){
     return Container(
-      width: Get.width-28,
-        padding: EdgeInsets.only(left: 14),
-
-        decoration: BoxDecoration(
+      height: 50,
+      padding: EdgeInsets.only(left: 20),
+      margin: EdgeInsets.only(left: 25,right: 25,top: 26),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
           border: Border.all(
               width: 1,
-              color: Color(0xffc4c4c4)
-        )
+              color: Color(0xffEBEBEB)
+          )
       ),
       child:TextField(
         keyboardType: TextInputType.emailAddress,
@@ -169,13 +213,15 @@ class AuthPage extends StatelessWidget {
   }
   Widget makeTextFieldPass(){
     return Container(
-      width: Get.width-28,
-      padding: EdgeInsets.only(left: 14),
+      height: 50,
+      padding: EdgeInsets.only(left: 20),
 
+      margin: EdgeInsets.only(left: 25,right: 25,top: 20),
       decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
           border: Border.all(
               width: 1,
-              color: Color(0xffc4c4c4)
+              color: Color(0xffEBEBEB)
           )
       ),
       child:TextField(
@@ -211,18 +257,19 @@ class AuthPage extends StatelessWidget {
   Widget makeButton(){
     return GestureDetector(
       child: Container(
-        padding: EdgeInsets.all(12),
+        height: 50,
+        margin: EdgeInsets.only(left: 25,right: 25,bottom: 22,top: 20),
           decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
               border: Border.all(
                   width: 1,
                   color: Color(0xff000000)
               )
           ),
-        width: Get.width-28,
         child: Center(
           child: Text(
             "Продолжить",
-            style: TextStyle(fontSize: 15,color: text_color_title,fontWeight: FontWeight.w400,height: 1),
+            style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,height: 1,fontFamily: "Raleway"),
           ),
         )
       ),

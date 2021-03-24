@@ -26,6 +26,7 @@ class _ChewieDemoState extends State<VideoScreen> {
   HomeController _homeController=Get.find();
   BetterPlayerController _betterPlayerController;
 
+  ChewieController _chewieController;
 
   @override
   void initState() {
@@ -36,23 +37,35 @@ class _ChewieDemoState extends State<VideoScreen> {
   @override
   void dispose() {
     super.dispose();
-  }
+    _chewieController.dispose();
 
+  }
+  VideoPlayerController videoPlayerController;
   Future<void> initializePlayer() async {
     print(widget.lesson['videos'][0]['video_url']);
-    BetterPlayerDataSource betterPlayerDataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK,
+    videoPlayerController = VideoPlayerController.network(
         widget.lesson['videos'][0]['video_url']);
-    _betterPlayerController = BetterPlayerController(
-
-        BetterPlayerConfiguration(
-          autoPlay: true,
-          looping: true,
-          controlsConfiguration: BetterPlayerControlsConfiguration(
-            enableFullscreen: false
-          )
-        ),
-        betterPlayerDataSource: betterPlayerDataSource);
+    await videoPlayerController.initialize();
+    _chewieController = ChewieController(
+        allowFullScreen: false,
+        videoPlayerController: videoPlayerController,
+        autoPlay: true,
+        looping: true,
+        showControls: true,
+    );
+    // BetterPlayerDataSource betterPlayerDataSource = BetterPlayerDataSource(
+    //     BetterPlayerDataSourceType.NETWORK,
+    //     widget.lesson['videos'][0]['video_url']);
+    // _betterPlayerController = BetterPlayerController(
+    //
+    //     BetterPlayerConfiguration(
+    //       autoPlay: true,
+    //       looping: true,
+    //       controlsConfiguration: BetterPlayerControlsConfiguration(
+    //         enableFullscreen: false,
+    //       )
+    //     ),
+    //     betterPlayerDataSource: betterPlayerDataSource);
 
     setState(() {});
   }
@@ -60,7 +73,6 @@ class _ChewieDemoState extends State<VideoScreen> {
   @override
   Widget build(BuildContext context) {
     print(widget.lesson['videos'][0]['video_url']);
-
     return MaterialApp(
       theme: ThemeData.light().copyWith(
         platform: TargetPlatform.iOS,
@@ -79,64 +91,73 @@ class _ChewieDemoState extends State<VideoScreen> {
                         height: Get.height,
                         width: Get.width,
                         child: Center(
-                          child:  BetterPlayer(
-                            controller: _betterPlayerController,
-                          ),
-                          // Chewie(
-                          //
-                          //   controller: _chewieController,
-                          // )
+                          // child:  BetterPlayer(
+                          //   controller: _betterPlayerController,
+                          // ),
+                         child:  _chewieController != null &&
+                             _chewieController
+                                 .videoPlayerController.value.initialized
+                             ?  Chewie(
+
+                           controller: _chewieController,
+                         )
+                             : Column(
+                           mainAxisAlignment: MainAxisAlignment.center,
+                           children:  [
+                             CircularProgressIndicator(),
+                           ],
+                         ),
 
                         ),
                       ),
                     )
                 ),
-                 Positioned(
-                  bottom: 50,
-                  right: 30,
-                  child: ValueListenableBuilder(
-                    valueListenable: _betterPlayerController.videoPlayerController,
-                    builder: (context, var value, child) {
-                      if(value.position.inSeconds==(_betterPlayerController.videoPlayerController.value.duration.inSeconds))
-                        {
-                          Get.back();
-                          Get.dialog(VideoScreen(widget.lesson));
-                        }
-                      print(value.position.inSeconds);
-                      if(value.position.inSeconds>=(_betterPlayerController.videoPlayerController.value.duration.inSeconds-15)){
-                        return GestureDetector(
-                          child: Container(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  height: 80,
-                                  width: 120,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                                      color: Colors.black.withOpacity(0.04),
-                                      image: DecorationImage(image: NetworkImage(
-                                          "https://school.webfirst.rv.ua/admin/uploads/category/9810_5957_1615109386.jpg"
-                                      ),fit: BoxFit.fill)
-                                  ),),
-                                Text("Следующее видео",style: TextStyle(color: Colors.white),),
-
-                              ],
-                            ),
-                          ),
-                          onTap: (){
-                            Get.back();
-                            Get.dialog(VideoScreen(widget.lesson));
-                          },
-                        );
-                      }else{
-                        return Container(
-
-                        );
-                      }
-                    },
-                  ),
-                )
+                //  Positioned(
+                //   bottom: 50,
+                //   right: 30,
+                //   child: ValueListenableBuilder(
+                //     valueListenable: _chewieController.videoPlayerController,
+                //     builder: (context, var value, child) {
+                //       if(value.position.inSeconds==(_chewieController.videoPlayerController.value.duration.inSeconds))
+                //         {
+                //           Get.back();
+                //           Get.dialog(VideoScreen(widget.lesson));
+                //         }
+                //       print(value.position.inSeconds);
+                //       if(value.position.inSeconds>=(_chewieController.videoPlayerController.value.duration.inSeconds-15)){
+                //         return GestureDetector(
+                //           child: Container(
+                //             child: Column(
+                //               crossAxisAlignment: CrossAxisAlignment.start,
+                //               children: [
+                //                 Container(
+                //                   height: 80,
+                //                   width: 120,
+                //                   decoration: BoxDecoration(
+                //                       borderRadius: BorderRadius.all(Radius.circular(10)),
+                //                       color: Colors.black.withOpacity(0.04),
+                //                       image: DecorationImage(image: NetworkImage(
+                //                           "https://school.webfirst.rv.ua/admin/uploads/category/9810_5957_1615109386.jpg"
+                //                       ),fit: BoxFit.fill)
+                //                   ),),
+                //                 Text("Следующее видео",style: TextStyle(color: Colors.white),),
+                //
+                //               ],
+                //             ),
+                //           ),
+                //           onTap: (){
+                //             Get.back();
+                //             Get.dialog(VideoScreen(widget.lesson));
+                //           },
+                //         );
+                //       }else{
+                //         return Container(
+                //
+                //         );
+                //       }
+                //     },
+                //   ),
+                // )
               ],
             )
         ),

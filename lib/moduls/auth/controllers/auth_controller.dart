@@ -17,7 +17,7 @@ import 'package:dio/dio.dart' as dios;
 
 class AuthController extends GetxController {
   final GetStorage box = GetStorage();
-  MainController _mainController=Get.find();
+  MainController mainController=Get.find();
 
   var codeEditingController= new TextEditingController(text: "+380");
 
@@ -27,6 +27,10 @@ class AuthController extends GetxController {
 
   var passEditingController= new TextEditingController();
 
+  var passRegEditingController= new TextEditingController();
+
+  var phoneRegEditingController= new TextEditingController();
+
   String get code => codeEditingController.text;
 
   String get phone => phoneEditingController.text;
@@ -35,14 +39,11 @@ class AuthController extends GetxController {
 
   var _countdownTime = 0.obs;
 
-  Timer _timer;
-
 
   @override
   void onInit() {
     focusNode.requestFocus();
     super.onInit();
-    startCountdownTimer();
 
   }
 
@@ -54,19 +55,31 @@ class AuthController extends GetxController {
   @override
   void onClose() {
     phoneEditingController.dispose();
-    _timer.cancel();
     super.onClose();
   }
   void getCode()async{
     if(phoneEditingController.text!=null){
-      dios.Response responce =await Backend().auth();
+      dios.Response responce =await Backend().auth(email: phoneEditingController.text,pas: passEditingController.text);
       if(responce.statusCode==200){
         print(responce.data);
         box.write("auth", true);
-        _mainController.auth.value=true;
-        _mainController.widgets.removeAt(4);
-        _mainController.widgets.add(ProfilePage());
-        _mainController.profile=[];
+       mainController.auth.value=true;
+        mainController.widgets.removeAt(4);
+        mainController.widgets.add(ProfilePage());
+        mainController.profile=[];
+      }
+    }
+  }
+  void getRegister()async{
+    if(phoneRegEditingController.text!=null){
+      dios.Response responce =await Backend().register(email: phoneRegEditingController.text,pas: passRegEditingController.text);
+      if(responce.statusCode==200){
+        print(responce.data);
+        box.write("auth", true);
+        mainController.auth.value=true;
+        mainController.widgets.removeAt(4);
+        mainController.widgets.add(ProfilePage());
+        mainController.profile=[];
       }
     }
   }
@@ -77,22 +90,6 @@ class AuthController extends GetxController {
     }
   }
 
-  void startCountdownTimer() {
-    //TODO request to get code from back
-    _countdownTime.value = 60;
-
-    const oneSec = const Duration(seconds: 1);
-
-    var callback = (timer) => {
-        if (_countdownTime < 1) {
-          _timer.cancel()
-        } else {
-          _countdownTime.value = _countdownTime.value - 1
-        }
-    };
-
-    _timer = Timer.periodic(oneSec, callback);
-  }
 
 
 
@@ -117,23 +114,7 @@ class AuthController extends GetxController {
     );
   }
 
-  Widget refresh(){
-    return  Obx(
-        ()=>Center(
-          child:FlatButton(
-            child:  Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset("assets/icons/refresh.svg" , color: _countdownTime.value!=0?timer_color:pin_color_active,),
-                SizedBox(width: 4,),
-                Text('Отправить еще раз ${_countdownTime.value!=0?"(${_countdownTime.value})":""}')
-              ],
-            ),
-              onPressed:_countdownTime.value!=0? null:startCountdownTimer,
-          )
-        )
-    );
-  }
+
 
 
 }

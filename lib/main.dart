@@ -14,8 +14,12 @@ void main()async {
   await GlobalConfiguration().loadFromAsset("configurations.json");
 
   await GetStorage.init();
-
-
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.white,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.dark,
+    systemNavigationBarColor: Colors.white
+  ));
   runApp(
       new Localizations(
   locale: const Locale('en', 'US'),
@@ -31,6 +35,7 @@ void main()async {
           primaryColor: white_color,
           backgroundColor: white_color
         ),
+
         defaultTransition: Transition.rightToLeft,
         initialRoute: AppPages.INITIAL,
         getPages: AppPages().getRoutes(),

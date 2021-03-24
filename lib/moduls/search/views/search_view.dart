@@ -23,33 +23,35 @@ class SearchScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: white_color,
-      body: Container(
-        padding: EdgeInsets.only(
-          left: 16,right: 16,top: 57,
+      body: SafeArea(
+        child: Container(
+          padding: EdgeInsets.only(
+            left: 16,right: 16,top: 27,
 
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-                padding: EdgeInsets.only(
-                  left: 4,right: 4,bottom: 19
-                ),
-              child: Text("${searchController.title.toUpperCase()}",style: categoryTitle_text_style,)
-            ),
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                shrinkWrap: true,
-                scrollDirection: Axis.vertical,
-                controller: new ScrollController(keepScrollOffset: false),
-                childAspectRatio: 166/120,
-                children: [
-                  ...searchController.courses.map((el)=>Item("${el['topic']}","${el['banner_big']}","${el['id']}",_homeController,_mainController)),
-                ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                  padding: EdgeInsets.only(
+                      left: 4,right: 4,bottom: 26
+                  ),
+                  child: Text("${searchController.title}",style: TextStyle(fontSize: 25,color: Color(0xff000000),fontWeight: FontWeight.w600,height: 1,fontFamily: "Raleway"),)
               ),
-            )
-          ],
+              Expanded(
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  controller: new ScrollController(keepScrollOffset: false),
+                  childAspectRatio: 166/120,
+                  children: [
+                    ...searchController.courses.map((el)=>Item("${el['topic']}","${el['banner_big']}","${el['id']}",_homeController,_mainController)),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -184,7 +186,7 @@ class StateItem extends State<Item>{
                       padding: EdgeInsets.only(left: 18,right: 10,bottom: 12),
                       child: AutoSizeText(
                         widget.text,
-                        style: white_title2_card_text_title,
+                        style: TextStyle(fontSize: 8,color: Color(0xffffffff),fontWeight: FontWeight.w700,height: 1,fontFamily: "Raleway"),
                         minFontSize: 10,
                         maxLines: 1,
                       ),

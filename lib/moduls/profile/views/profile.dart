@@ -11,6 +11,7 @@ import 'package:new_school_official/moduls/course/views/course_view.dart';
 import 'package:new_school_official/moduls/home/controllers/home_controller.dart';
 import 'package:new_school_official/moduls/main/controllers/main_controller.dart';
 import 'package:new_school_official/moduls/profile/controllers/profile_controller.dart';
+import 'package:new_school_official/moduls/profile/views/settings.dart';
 import 'package:new_school_official/routes/app_pages.dart';
 import 'package:new_school_official/storage/colors/main_color.dart';
 import 'package:new_school_official/storage/styles/text_style.dart';
@@ -20,83 +21,98 @@ class ProfilePage extends StatelessWidget {
   HomeController _homeController =Get.find();
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: white_color,
-      child:  Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: ListView(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                   Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                     children: [
-                       Container(
-                         margin: EdgeInsets.only(left: 20,top: 40),
-                         child: Text(
-                           "Профиль",style: TextStyle(fontSize: 34,fontWeight: FontWeight.bold,color: Colors.black,fontFamily: 'Raleway'),
-                         ),
-                       ),
-                       GestureDetector(
-                         child: Icon(Icons.exit_to_app),
-                         onTap: (){
-                           _profileController.getCode();
-                         },
-                       )
-                     ],
-                   )
-                  ],
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 66),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+    return Scaffold(
+      backgroundColor: white_color,
+      body:  SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.only(top: 0),
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        width:60,
-                        height: 60,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                                image: AssetImage("assets/images/60 x 60.jpg")
-                            )
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 10),
-                        child: Text(
-                          "Aidar Akmaev",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: Colors.black,fontFamily: 'Raleway'),
-                        ),
-                      ),
-                      Container(
-                        child: Text(
-                          "Настройки",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w400,color: Colors.grey,fontFamily: 'Raleway'),
-                        ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(left: 20,top: 27),
+                            child: Text(
+                              "Профиль",style: TextStyle(fontSize: 25,fontWeight: FontWeight.w700,color: Colors.black,fontFamily: 'Raleway'),
+                            ),
+                          ),
+                          GestureDetector(
+                            child: Container(
+                                margin: EdgeInsets.only(right: 14,top: 27),
+                                child: SvgPicture.asset("assets/icons/logout 1.svg")
+                            ),
+                            onTap: (){
+                              _profileController.getCode();
+                            },
+                          )
+                        ],
                       )
                     ],
                   ),
-                ),
-                getStatistik(),
-                getType("Мой список",_homeController.news.length,
-                    getitemOtherCard,_homeController.news
-                ),
-                getType("Продолжить просмотр",4,
-                    getitemOtherCard,_homeController.popular
-                ),
-                getType("Рекомендуемые тесты",_homeController.news.length,
-                    getitemOtherCard,_homeController.news
-                ),
-                getType("Завершенные курсы",4,
-                    getitemOtherCard,_homeController.popular
-                ),
-                SizedBox(height: 40,)
-              ],
-            ),
-          )
-        ],
+                  Container(
+                    margin: EdgeInsets.only(top: 66),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width:120,
+                          height: 120,
+                          decoration: BoxDecoration(
+
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                  image: AssetImage("assets/images/60 x 60.jpg",)
+                              )
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(top: 10),
+                          child: Text(
+                            "Aidar Akmaev",style: TextStyle(fontSize: 18,fontWeight: FontWeight.w700,color: Colors.black,fontFamily: 'Raleway'),
+                          ),
+                        ),
+                        GestureDetector(
+                          child:  Container(
+                            child: Text(
+                              "Настройки",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w400,color: Color(0xff6a6a6a),fontFamily: 'Raleway'),
+                            ),
+                          ),
+                          onTap: (){
+                            Get.dialog(
+                                SettingPage()
+                            );
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                  getStatistik(),
+                  getType("Мой список",_homeController.news.length,
+                      getitemOtherCard,_homeController.news
+                  ),
+                  getType("Продолжить просмотр",_homeController.popular.length,
+                      getitemOtherCard,_homeController.popular
+                  ),
+                  getType("Рекомендуемые тесты",_homeController.news.length,
+                      getitemOtherCard,_homeController.news
+                  ),
+                  getType("Завершенные курсы",_homeController.popular.length,
+                      getitemOtherCard,_homeController.popular
+                  ),
+                  SizedBox(height: 40,)
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -110,7 +126,7 @@ class ProfilePage extends StatelessWidget {
           )
       ),
       height: 68,
-      margin: EdgeInsets.only(left: 20,right: 20,bottom: 38,top: 24),
+      margin: EdgeInsets.only(left: 20,right: 20,top:57,bottom: 40),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -121,10 +137,10 @@ class ProfilePage extends StatelessWidget {
               Text(
                   "9"
                   ,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w500,letterSpacing: 0.5,color: Colors.black)),
-              SizedBox(height: 2,),
+              SizedBox(height: 4,),
               Text(
                   "Курса в процессе"
-                  ,style: TextStyle(fontSize: 11,fontWeight: FontWeight.w400,letterSpacing: 0.5,color: Colors.grey))
+                  ,style: TextStyle(fontSize: 10,fontWeight: FontWeight.w500,letterSpacing: 0.5,color: Color(0xff666666)))
             ],
           ),
           // SizedBox(width:50,),
@@ -135,9 +151,10 @@ class ProfilePage extends StatelessWidget {
               Text(
                   "248"
                   ,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w500,letterSpacing: 0.5,color: Colors.black)),
+              SizedBox(height: 4,),
               Text(
                   "Часов обучено"
-                  ,style: TextStyle(fontSize: 11,fontWeight: FontWeight.w400,letterSpacing: 0.5,color: Colors.grey))
+                  ,style: TextStyle(fontSize: 10,fontWeight: FontWeight.w500,letterSpacing: 0.5,color: Color(0xff666666)))
             ],
           ),
           // SizedBox(width:50,),
@@ -148,9 +165,10 @@ class ProfilePage extends StatelessWidget {
               Text(
                   "1"
                   ,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w500,letterSpacing: 0.5,color: Colors.black)),
+              SizedBox(height: 4,),
               Text(
                   "Курсов пройдено"
-                  ,style: TextStyle(fontSize: 11,fontWeight: FontWeight.w400,letterSpacing: 0.5,color: Colors.grey))
+                  ,style: TextStyle(fontSize: 10,fontWeight: FontWeight.w500,letterSpacing: 0.5,color: Color(0xff666666)))
             ],
           )
         ],
@@ -160,24 +178,23 @@ class ProfilePage extends StatelessWidget {
 
   Widget getType(text,length,item,type){
     return Container(
-      padding: EdgeInsets.only(bottom: 29),
+      padding: EdgeInsets.only(bottom: 40),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.only(left: 15),
+            padding: EdgeInsets.only(left: 20),
             child:
-            Text("${text}",style: TextStyle(fontSize: 20,fontWeight: FontWeight.w500),),
+            Text("${text}",style: TextStyle(fontSize: 17,fontWeight: FontWeight.w600),),
 
           ),
 
           Container(
-            margin: EdgeInsets.only(top: 7),
+            margin: EdgeInsets.only(top: 10),
             width: Get.width,
             height: 142,
             child:  ListView.builder(
-                padding: EdgeInsets.only(left: 15),
-
+                padding: EdgeInsets.only(left: 20),
                 scrollDirection: Axis.horizontal,
                 itemCount: length,
                 itemBuilder: (c,i){
