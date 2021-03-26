@@ -66,7 +66,11 @@ class AuthController extends GetxController {
        mainController.auth.value=true;
         mainController.widgets.removeAt(4);
         mainController.widgets.add(ProfilePage());
-        mainController.profile=[];
+        mainController.profile={}.obs;
+        dios.Response responces =await Backend().getUser(id:responce.data[0]['id']);
+        mainController.profile.value=responces.data['clients'][0];
+
+
       }
     }
   }
@@ -79,7 +83,7 @@ class AuthController extends GetxController {
         mainController.auth.value=true;
         mainController.widgets.removeAt(4);
         mainController.widgets.add(ProfilePage());
-        mainController.profile=[];
+        mainController.profile={}.obs;
       }
     }
   }

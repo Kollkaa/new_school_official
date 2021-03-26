@@ -34,10 +34,10 @@ class HomeController extends GetxController {
 
   var popular =[].obs;
   var news=[].obs;
-  var videos={}.obs;
+  var videos={};
   var categorise=[].obs;
 
-  var course={}.obs;
+  var course={};
 
   var coursesByCat=[].obs;
 
@@ -101,17 +101,7 @@ class HomeController extends GetxController {
     }
   }
 
-  void getCourse(id)async {
-    var  response=await Backend().getCourse(id);
-    print(response.headers);
-    if(response.statusCode==200)
-    {
-      print(response.data);
-      course.value=response.data;
-      response=await Backend().getVideos(id);
-      videos.value=response.data;
-    }
-  }
+
 
   void getCoursesByCatStart(id,text)async{
     var  response=await Backend().getCourseByCat(id);

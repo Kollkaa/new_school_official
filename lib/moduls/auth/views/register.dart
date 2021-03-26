@@ -5,16 +5,30 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:new_school_official/moduls/auth/controllers/auth_controller.dart';
 import 'package:new_school_official/moduls/main/controllers/main_controller.dart';
+import 'package:new_school_official/moduls/profile/views/profile.dart';
+import 'package:new_school_official/service/backend.dart';
 import 'package:new_school_official/storage/colors/main_color.dart';
 import 'package:new_school_official/storage/styles/text_style.dart';
 
 import 'auth.dart';
+import 'package:dio/dio.dart' as dios;
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
+
+  @override
+  State<StatefulWidget> createState() {
+    return StateRegister();
+
+  }
+}
+class StateRegister extends State<RegisterPage>{
   AuthController _authController = Get.put(AuthController());
   MainController _mainController=Get.find();
+  final GetStorage box = GetStorage();
+
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
@@ -187,9 +201,8 @@ class RegisterPage extends StatelessWidget {
         style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w400,
-            color: Color(0xffc4c4c4)
+            color: Color(0xff000000).withOpacity(0.8)
         ),
-
         maxLines: 1,
         decoration: InputDecoration(
           hintText: "E-mail",
@@ -229,7 +242,7 @@ class RegisterPage extends StatelessWidget {
         style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w400,
-            color: Color(0xffc4c4c4)
+            color: Color(0xff000000).withOpacity(0.8)
         ),
 
         maxLines: 1,
@@ -273,7 +286,19 @@ class RegisterPage extends StatelessWidget {
             ),
           )
       ),
-      onTap: _authController.getRegister,
+      onTap:()async{
+        if(_authController.phoneRegEditingController.text!=null){
+          dios.Response responce =await Backend().register(email: _authController.phoneRegEditingController.text,pas: _authController.passRegEditingController.text);
+          if(responce.statusCode==200){
+            print(responce.data);
+            box.write("auth", true);
+            _mainController.auth.value=true;
+            _mainController.widgets.removeAt(4);
+            _mainController.widgets.add(ProfilePage());
+            _mainController.profile={}.obs;
+          }
+        }
+      },
     );
   }
 }

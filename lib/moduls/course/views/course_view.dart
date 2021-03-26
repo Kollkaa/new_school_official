@@ -13,23 +13,42 @@ import 'package:new_school_official/moduls/home/controllers/home_controller.dart
 import 'package:new_school_official/moduls/main/controllers/main_controller.dart';
 import 'package:new_school_official/moduls/video/views/video_view.dart';
 import 'package:new_school_official/routes/app_pages.dart';
+import 'package:new_school_official/service/backend.dart';
 import 'package:new_school_official/storage/styles/text_style.dart';
 import 'package:new_school_official/widgets/speackear.dart';
 import 'package:share/share.dart';
 import 'package:video_player/video_player.dart';
 
 class CourseScreen extends StatefulWidget {
-
   @override
   State<StatefulWidget> createState() {
     return StateCourse();
   }
 
-
 }
 class StateCourse extends State<CourseScreen>{
+  CourseController _courseController =Get.put(CourseController());
+  HomeController _homeController=Get.find();
+  MainController _mainController = Get.find();
+  @override
+  void initState() {
+    super.initState();
+    initPre();
+  }
+  initPre()async{
+    var  response=await Backend().getCourse(_courseController.id);
+    print(response.headers);
+    if(response.statusCode==200)
+    {
+      print(response.data);
+      _homeController.course=response.data;
+      response=await Backend().getVideos(_courseController.id);
+      _homeController.videos=response.data;
+      setState(() {
 
-
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,16 +57,14 @@ class StateCourse extends State<CourseScreen>{
     //     statusBarBrightness: Brightness.dark,
     //   systemNavigationBarColor: Colors.white
     // ));
-    CourseController _courseController =Get.put(CourseController());
-    HomeController _homeController=Get.find();
-    MainController _mainController = Get.find();
+
     return MaterialApp(
       home: Scaffold(
           resizeToAvoidBottomPadding: true,
           body:Obx(
                 ()=>Container(
               color: Colors.white,
-              child: _homeController.course['kurses']!=null?ListView(
+              child: _homeController.videos['lessons']!=null?ListView(
                 padding: EdgeInsets.only(bottom: 20),
                 children: [
                   Container(
@@ -97,7 +114,7 @@ class StateCourse extends State<CourseScreen>{
                                 //     statusBarBrightness: Brightness.dark,
                                 //     systemNavigationBarColor: Colors.white
                                 // ));
-                                _homeController.course={}.obs;
+                                _homeController.videos={}.obs;
                                 Get.back();
 
                               },
@@ -159,7 +176,7 @@ class StateCourse extends State<CourseScreen>{
                                       ),
                                     ),
                                     onTap: (){
-                                      _homeController.course={}.obs;
+                                      _homeController.videos={}.obs;
                                       if(!_mainController.auth.value){
                                         // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
                                         //     statusBarColor: Colors.white,
@@ -190,8 +207,17 @@ class StateCourse extends State<CourseScreen>{
                                             Text("Смотреть трейлер",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300,fontFamily: "Raleway",letterSpacing: 0.5,color: Colors.white))
                                           ],
                                         ),
-                                        onTap: (){
-                                          Get.dialog(TrailerScreen());
+                                        onTap: ()async{
+                                         await Get.dialog(TrailerScreen());
+                                         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+                                             statusBarColor: Colors.white,
+                                             statusBarIconBrightness: Brightness.dark,
+                                             statusBarBrightness: Brightness.dark,
+                                             systemNavigationBarColor: Colors.white
+                                         ));
+                                         setState(() {
+
+                                         });
                                         },
                                       ),
                                       _mainController.auth.value?SizedBox(width: 25,):Container(),
@@ -514,7 +540,7 @@ class StateItem extends State<Item>{
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.all(Radius.circular(10)),
                         color: Colors.black.withOpacity(0.04),
-                        image: DecorationImage(image: _image,fit: BoxFit.fill)
+                        image: DecorationImage(image: _image,fit: BoxFit.cover)
                     ),),
                   Positioned(
                     bottom: 0,
@@ -558,9 +584,17 @@ class StateItem extends State<Item>{
             )
           ],
         ),
-      onTap: (){
+      onTap: ()async{
         if( widget.lock){
-        Get.dialog(VideoScreen(widget.lesson));
+         await Get.dialog(VideoScreen(widget.lesson));
+         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+             statusBarColor: Colors.white,
+             statusBarIconBrightness: Brightness.dark,
+             statusBarBrightness: Brightness.dark,
+             systemNavigationBarColor: Colors.white
+         ));
+         setState(() {
+         });
         }
         else{
         print("eqw");

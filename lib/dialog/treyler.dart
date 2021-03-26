@@ -22,7 +22,6 @@ class TrailerScreen extends StatefulWidget {
 class _ChewieDemoState extends State<TrailerScreen> {
 
   VideoPlayerController _videoPlayerController1;
-  VideoPlayerController _videoPlayerController2;
   ChewieController _chewieController;
   HomeController _homeController=Get.find();
 
@@ -35,13 +34,21 @@ class _ChewieDemoState extends State<TrailerScreen> {
   @override
   void dispose() {
     _videoPlayerController1.dispose();
-    _videoPlayerController2.dispose();
     _chewieController.dispose();
     super.dispose();
   }
 
   Future<void> initializePlayer() async {
-    print(_homeController.course['kurses'][0]['trailer']);
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        statusBarColor: Colors.black,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.light,
+        systemNavigationBarColor: Colors.black
+    ));
+    setState(() {
+
+    });
+    print( _homeController.course['kurses'][0]['trailer']);
     _videoPlayerController1 = VideoPlayerController.network(
         _homeController.course['kurses'][0]['trailer']);
     await _videoPlayerController1.initialize();
@@ -50,9 +57,8 @@ class _ChewieDemoState extends State<TrailerScreen> {
       allowFullScreen: false,
       videoPlayerController: _videoPlayerController1,
       autoPlay: true,
-      looping: true,
+      looping: false,
       showControls: true,
-      systemOverlaysOnEnterFullScreen: [SystemUiOverlay.bottom]
     );
 
     setState(() {});
@@ -70,30 +76,25 @@ class _ChewieDemoState extends State<TrailerScreen> {
           removeTop: true,
           child: Stack(
             children: [
-              SizedBox.expand(
-                  child: FittedBox(
-                    fit: BoxFit.cover,
-                    child: Container(
-                      color: Colors.black,
-                      height: Get.height,
-                      width: Get.width,
-                      child: Center(
-                        child: _chewieController != null &&
-                            _chewieController
-                                .videoPlayerController.value.initialized
-                            ?  Chewie(
+              Container(
+                color: Colors.black,
+                height: Get.height,
+                width: Get.width,
+                child: Center(
+                  child: _chewieController != null &&
+                      _chewieController
+                          .videoPlayerController.value.initialized
+                      ?  Chewie(
 
-                          controller: _chewieController,
-                        )
-                            : Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children:  [
-                            CircularProgressIndicator(),
-                          ],
-                        ),
-                      ),
-                    ),
+                    controller: _chewieController,
                   )
+                      : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children:  [
+                      CircularProgressIndicator(),
+                    ],
+                  ),
+                ),
               ),
 
             ],

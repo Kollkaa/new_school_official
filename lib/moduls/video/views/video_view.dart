@@ -5,6 +5,7 @@ import 'package:better_player/better_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:chewie/chewie.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:new_school_official/moduls/home/controllers/home_controller.dart';
@@ -12,9 +13,9 @@ import 'package:video_player/video_player.dart';
 
 class VideoScreen extends StatefulWidget {
   var lesson;
+  var duration;
 
-
-  VideoScreen(this.lesson);
+  VideoScreen(this.lesson,{ this.duration});
 
   @override
   State<StatefulWidget> createState() {
@@ -37,22 +38,44 @@ class _ChewieDemoState extends State<VideoScreen> {
   @override
   void dispose() {
     super.dispose();
+    _chewieController.videoPlayerController.dispose();
     _chewieController.dispose();
 
   }
   VideoPlayerController videoPlayerController;
   Future<void> initializePlayer() async {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        statusBarColor: Colors.black,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.light,
+        systemNavigationBarColor: Colors.black
+    ));
+    setState(() {
+
+    });
     print(widget.lesson['videos'][0]['video_url']);
     videoPlayerController = VideoPlayerController.network(
         widget.lesson['videos'][0]['video_url']);
     await videoPlayerController.initialize();
     _chewieController = ChewieController(
-        allowFullScreen: false,
-        videoPlayerController: videoPlayerController,
-        autoPlay: true,
-        looping: true,
-        showControls: true,
+      startAt: Duration(seconds: widget.duration!=null?widget.duration:0),
+      videoPlayerController: videoPlayerController,
+      aspectRatio: 16/9,
+      autoInitialize: true,
+      autoPlay: true,
+      showControls: true,
+      deviceOrientationsAfterFullScreen: [DeviceOrientation.portraitUp],
+      materialProgressColors: ChewieProgressColors(
+        playedColor: Colors.purple,
+        handleColor: Colors.purple,
+        backgroundColor: Colors.black,
+        bufferedColor: Colors.purple[100],
+      ),
+      placeholder: Container(
+        color: Colors.black,
+      ),
     );
+
     // BetterPlayerDataSource betterPlayerDataSource = BetterPlayerDataSource(
     //     BetterPlayerDataSourceType.NETWORK,
     //     widget.lesson['videos'][0]['video_url']);
@@ -83,35 +106,30 @@ class _ChewieDemoState extends State<VideoScreen> {
             removeTop: true,
             child: Stack(
               children: [
-                SizedBox.expand(
-                    child: FittedBox(
-                      fit: BoxFit.cover,
-                      child: Container(
-                        color: Colors.black,
-                        height: Get.height,
-                        width: Get.width,
-                        child: Center(
-                          // child:  BetterPlayer(
-                          //   controller: _betterPlayerController,
-                          // ),
-                         child:  _chewieController != null &&
-                             _chewieController
-                                 .videoPlayerController.value.initialized
-                             ?  Chewie(
+                Container(
+                  color: Colors.black,
+                  height: Get.height,
+                  width: Get.width,
+                  child: Center(
+                    // child:  BetterPlayer(
+                    //   controller: _betterPlayerController,
+                    // ),
+                    child:  _chewieController != null &&
+                        _chewieController
+                            .videoPlayerController.value.initialized
+                        ?  Chewie(
 
-                           controller: _chewieController,
-                         )
-                             : Column(
-                           mainAxisAlignment: MainAxisAlignment.center,
-                           children:  [
-                             CircularProgressIndicator(),
-                           ],
-                         ),
-
-                        ),
-                      ),
+                      controller: _chewieController,
                     )
-                ),
+                        : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children:  [
+                        CircularProgressIndicator(),
+                      ],
+                    ),
+
+                  ),
+                )
                 //  Positioned(
                 //   bottom: 50,
                 //   right: 30,

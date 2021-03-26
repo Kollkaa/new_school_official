@@ -7,18 +7,30 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:new_school_official/moduls/course/views/course_view.dart';
 import 'package:new_school_official/moduls/home/controllers/home_controller.dart';
 import 'package:new_school_official/moduls/main/controllers/main_controller.dart';
 import 'package:new_school_official/moduls/profile/controllers/profile_controller.dart';
 import 'package:new_school_official/moduls/profile/views/settings.dart';
 import 'package:new_school_official/routes/app_pages.dart';
+import 'package:new_school_official/service/backend.dart';
 import 'package:new_school_official/storage/colors/main_color.dart';
 import 'package:new_school_official/storage/styles/text_style.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return StateProfile();
+  }
+
+}
+class StateProfile extends State<ProfilePage>{
   ProfileController _profileController =Get.put(ProfileController());
   HomeController _homeController =Get.find();
+  MainController _mainController = Get.find();
+  final GetStorage box = GetStorage();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,29 +78,37 @@ class ProfilePage extends StatelessWidget {
                           width:120,
                           height: 120,
                           decoration: BoxDecoration(
-
                               shape: BoxShape.circle,
                               image: DecorationImage(
-                                  image: AssetImage("assets/images/60 x 60.jpg",)
+                                fit: BoxFit.cover,
+                                  image:_mainController.profile['avatar']!=null?NetworkImage("${_mainController.profile['avatar']}"): AssetImage("assets/images/60 x 60.jpg",)
                               )
                           ),
                         ),
-                        Container(
-                          margin: EdgeInsets.only(top: 10),
-                          child: Text(
-                            "Aidar Akmaev",style: TextStyle(fontSize: 18,fontWeight: FontWeight.w700,color: Colors.black,fontFamily: 'Raleway'),
-                          ),
+                        Obx(
+                            ()=>Container(
+                              margin: EdgeInsets.only(top: 10),
+                              child: Text(
+                                "${_mainController.profile['name']} ${_mainController.profile['lastname']}",style: TextStyle(fontSize: 18,fontWeight: FontWeight.w700,color: Colors.black,fontFamily: 'Raleway'),
+                              ),
+                            ),
                         ),
                         GestureDetector(
                           child:  Container(
+                            margin: EdgeInsets.only(top: 5),
+
                             child: Text(
                               "Настройки",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w400,color: Color(0xff6a6a6a),fontFamily: 'Raleway'),
                             ),
                           ),
-                          onTap: (){
-                            Get.dialog(
-                                SettingPage()
-                            );
+                          onTap: ()async{
+                           await Get.dialog(
+                                SettingPage() );
+                           var responces =await Backend().getUser(id:box.read("id"));
+                           print(responces);
+                           _mainController.profile.value=responces.data['clients'][0];
+                           setState(() {
+                           });
                           },
                         )
                       ],
@@ -254,8 +274,7 @@ class ProfilePage extends StatelessWidget {
         ),
       ),
       onTap: ()async{
-        var response =await _homeController.getCourse(id);
-        Get.toNamed(Routes.COURSE);
+        Get.toNamed(Routes.COURSE,arguments:id);
       },
     );
   }

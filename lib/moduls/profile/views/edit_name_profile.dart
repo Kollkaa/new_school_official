@@ -4,22 +4,26 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:new_school_official/moduls/main/controllers/main_controller.dart';
+import 'package:new_school_official/service/backend.dart';
 
-class EditProfile extends StatelessWidget{
-  MainController _mainController = Get.find();
-
- // final picker = ImagePicker();
-
-
-  Future getImage() async {
-   // final pickedFile = await picker.getImage(source: ImageSource.camera);
-
-     // if (pickedFile != null) {
-    //    _mainController.image.value = File(pickedFile.path);
-    //  } else {
-//      }
+class EditProfile extends StatefulWidget{
+  @override
+  State<StatefulWidget> createState() {
+    return StateEdit();
   }
+
+}
+class StateEdit extends State<EditProfile>{
+  MainController _mainController = Get.find();
+  final GetStorage box = GetStorage();
+
+  bool imageChange=false;
+
+
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -70,9 +74,10 @@ class EditProfile extends StatelessWidget{
                         ],
                         image: DecorationImage(
                             fit: BoxFit.fill,
-                            image:_mainController.image.value.path!="1"
-                                ? Image.file(_mainController.image.value)
-                                :  AssetImage("assets/images/Image.png",)
+                            image:_image!=null?FileImage(_image):_mainController.profile['avatar']!=null
+                                ?NetworkImage("${_mainController.profile['avatar']}")
+                                : AssetImage("assets/images/60 x 60.jpg",)
+
                         )
                     ),
                     child: Column(
@@ -82,8 +87,10 @@ class EditProfile extends StatelessWidget{
                       ],
                     ),
                   ),
-                  onTap: (){
-                    getImage();
+                  onTap: ()async{
+                    await getImage();
+
+
                   },
                 ),
                 makeTextFieldLog(),
@@ -113,12 +120,12 @@ class EditProfile extends StatelessWidget{
         style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w400,
-            color: Color(0xffc4c4c4)
+            color: Color(0xff000000).withOpacity(0.8)
         ),
 
         maxLines: 1,
         decoration: InputDecoration(
-          hintText: "E-mail",
+          hintText: "Имя",
           hintStyle: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w400,
@@ -130,7 +137,7 @@ class EditProfile extends StatelessWidget{
           border: InputBorder.none,
         ),
 
-        controller: _mainController.phoneEditingController,
+        controller: _mainController.nameEditingController,
 
       ),
 
@@ -155,12 +162,12 @@ class EditProfile extends StatelessWidget{
         style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w400,
-            color: Color(0xffc4c4c4)
+            color: Color(0xff000000).withOpacity(0.8)
         ),
 
         maxLines: 1,
         decoration: InputDecoration(
-          hintText: "Пароль",
+          hintText: "Фамилия",
           hintStyle: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w400,
@@ -172,7 +179,7 @@ class EditProfile extends StatelessWidget{
           border: InputBorder.none,
         ),
 
-        controller: _mainController.passEditingController,
+        controller: _mainController.lastnameEditingController,
 
       ),
 
@@ -198,7 +205,38 @@ class EditProfile extends StatelessWidget{
             ),
           )
       ),
+      onTap: ()async{
+        var response= await Backend().editNameSurname(box.read("id"), _mainController.nameEditingController.text, _mainController.lastnameEditingController.text);
+        print(response.data);
+        var responces =await Backend().getUser(id:box.read("id"));
+        _mainController.profile.value=responces.data['clients'][0];
+
+         if(_image!=null){
+           var responce=await Backend().editImage(box.read("id"),_image);
+           var responces =await Backend().getUser(id:box.read("id"));
+           print(responces);
+           _mainController.profile.value=responces.data['clients'][0];
+           setState(() {
+           });
+         }
+      },
     );
   }
+  File _image;
+  final picker = ImagePicker();
 
+  Future getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+        setState(() {
+
+        });
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
 }

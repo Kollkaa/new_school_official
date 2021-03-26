@@ -5,15 +5,28 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:new_school_official/moduls/auth/controllers/auth_controller.dart';
 import 'package:new_school_official/moduls/auth/views/register.dart';
 import 'package:new_school_official/moduls/main/controllers/main_controller.dart';
+import 'package:new_school_official/moduls/profile/views/profile.dart';
+import 'package:new_school_official/service/backend.dart';
 import 'package:new_school_official/storage/colors/main_color.dart';
 import 'package:new_school_official/storage/styles/text_style.dart';
+import 'package:dio/dio.dart' as dios;
 
-class AuthPage extends StatelessWidget {
+class AuthPage extends StatefulWidget {
+
+  @override
+  State<StatefulWidget> createState() {
+    return StateAuth();
+
+  }
+}
+class StateAuth extends State<AuthPage>{
   AuthController _authController = Get.put(AuthController());
   MainController _mainController=Get.find();
+  final GetStorage box = GetStorage();
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +94,6 @@ class AuthPage extends StatelessWidget {
                           )
                       )
                   ),
-                  onTap: _authController.getCode,
                 ),
                 GestureDetector(
                   child: Container(
@@ -131,7 +143,6 @@ class AuthPage extends StatelessWidget {
                           )
                       )
                   ),
-                  onTap: _authController.getCode,
                 ),
                 SizedBox(height: 15),
                GestureDetector(
@@ -187,7 +198,7 @@ class AuthPage extends StatelessWidget {
         style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w400,
-            color: Color(0xffc4c4c4)
+            color: Color(0xff000000).withOpacity(0.8)
         ),
 
         maxLines: 1,
@@ -211,6 +222,8 @@ class AuthPage extends StatelessWidget {
 
     );
   }
+  bool _passwordVisible=false;
+
   Widget makeTextFieldPass(){
     return Container(
       height: 50,
@@ -224,32 +237,59 @@ class AuthPage extends StatelessWidget {
               color: Color(0xffEBEBEB)
           )
       ),
-      child:TextField(
-        keyboardType: TextInputType.text,
-        style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-            color: Color(0xffc4c4c4)
-        ),
+      child:Row(
+        children: [
+          Container(
+            width: Get.width-120,
+            child: TextFormField(
+              keyboardType: TextInputType.text,
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xff000000).withOpacity(0.8)
+              ),
 
-        maxLines: 1,
-        decoration: InputDecoration(
-          hintText: "Пароль",
-          hintStyle: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-              color: Color(0xffc4c4c4)
+              maxLines: 1,
+              obscureText: !_passwordVisible,
+              decoration: InputDecoration(
+                hasFloatingPlaceholder: true,
+                hintText: "Пароль",
+                hintStyle: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xffc4c4c4)
+                ),
+                enabledBorder: InputBorder.none,
+                contentPadding: EdgeInsets.zero,
+                focusedBorder: InputBorder.none,
+                border: InputBorder.none,
+
+              ),
+
+              validator: (String value) {
+                if (value.isEmpty) {
+                  return "*Password needed";
+                }
+              },
+              onSaved: (String value) {
+
+              },
+              onChanged: _authController.onChange,
+              controller: _authController.passEditingController,
+
+            ),
           ),
-          enabledBorder: InputBorder.none,
-          contentPadding: EdgeInsets.zero,
-          focusedBorder: InputBorder.none,
-          border: InputBorder.none,
-        ),
-
-        onChanged: _authController.onChange,
-        controller: _authController.passEditingController,
-
-      ),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                _passwordVisible = !_passwordVisible;
+              });
+            },
+            child: Icon(
+                _passwordVisible ? Icons.visibility : Icons.visibility_off),
+          ),
+        ],
+      )
 
     );
   }
@@ -273,7 +313,38 @@ class AuthPage extends StatelessWidget {
           ),
         )
       ),
-      onTap: _authController.getCode,
+      onTap: ()async{
+        if(_authController.phoneEditingController.text!=null){
+          dios.Response responce =await Backend().auth(email: _authController.phoneEditingController.text,pas: _authController.passEditingController.text);
+          if(responce.statusCode==200){
+            print(responce.data);
+            await box.write("auth", true);
+
+            _mainController.profile={}.obs;
+            print(responce.data);
+            print(responce.data[0]);
+            print(responce.data[0]['id']);
+            await box.write("id", responce.data[0]['id']);
+            dios.Response responces =await Backend().getUser(id:responce.data[0]['id']);
+            _mainController.profile.value=responces.data['clients'][0];
+            dios.Response getUservideo_cab =await Backend().getUservideo_cab(id:responce.data[0]['id']);
+            dios.Response getUservideo_time =await Backend().getUservideo_time(id:responce.data[0]['id']);
+            dios.Response getUservideo_time_all =await Backend().getUservideo_time_all(id:responce.data[0]['id']);
+            dios.Response getStats =await Backend().getStat(id:responce.data[0]['id']);
+            _mainController.getStats.value=getStats.data['user_stats'][0];
+            _mainController.getUservideo_cab.value=getUservideo_cab.data['lessons_cabinet'];
+            _mainController.getUservideo_time.value=getUservideo_time.data['lessons'];
+            _mainController.getUservideo_time_all.value=getUservideo_time_all.data['lessons'];
+             print(responces.data['clients'][0]['name']);
+
+            _mainController.auth.value=true;
+            _mainController.widgets.removeAt(4);
+            _mainController.widgets.add(ProfilePage());
+            _mainController.currentIndex.value=0;
+
+          }
+        }
+      },
     );
   }
 }

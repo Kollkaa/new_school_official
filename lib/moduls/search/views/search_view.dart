@@ -24,83 +24,36 @@ class SearchScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: white_color,
       body: SafeArea(
-        child: Container(
-          padding: EdgeInsets.only(
-            left: 16,right: 16,top: 27,
-
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                  padding: EdgeInsets.only(
-                      left: 4,right: 4,bottom: 26
-                  ),
-                  child: Text("${searchController.title}",style: TextStyle(fontSize: 25,color: Color(0xff000000),fontWeight: FontWeight.w600,height: 1,fontFamily: "Raleway"),)
-              ),
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  controller: new ScrollController(keepScrollOffset: false),
-                  childAspectRatio: 166/120,
-                  children: [
-                    ...searchController.courses.map((el)=>Item("${el['topic']}","${el['banner_big']}","${el['id']}",_homeController,_mainController)),
-                  ],
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+                padding: EdgeInsets.only(
+                  left: 12,right: 4,top: 27,
                 ),
-              )
-            ],
-          ),
+                child: Text("${searchController.title}",style: TextStyle(fontSize: 25,color: Color(0xff000000),fontWeight: FontWeight.w600,height: 1,fontFamily: "Raleway"),)
+            ),
+            Container(
+              padding: EdgeInsets.only(
+                left: 8,right: 8,top: 27,
+              ),
+              child:  GridView.count(
+                crossAxisCount: 2,
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+                controller: new ScrollController(keepScrollOffset: false),
+                childAspectRatio: 166/120,
+                children: [
+                  ...searchController.courses.map((el)=>Item("${el['topic']}","${el['banner_big']}","${el['id']}",_homeController,_mainController)),
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );
   }
-  Widget getitemOtherCard(text,image){
-    return  Container(
-      margin: EdgeInsets.only(bottom: 9, left: 4,right: 4),
 
-      height: 166/120*(Get.width-40)/2,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-          color: Colors.blue,
-          image: DecorationImage(image: NetworkImage("${image}"),fit: BoxFit.cover)
-
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            bottom: 0,left: 0,right: 0,
-            child: Container(
-              height: 50,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  gradient: LinearGradient(
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                      colors: [Colors.black.withOpacity(1), Colors.black.withOpacity(0)]
-                  )
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              padding: EdgeInsets.only(left: 10,right: 10,bottom: 12),
-              child: AutoSizeText(
-                text,
-                style: TextStyle(color:white_color,fontSize: 9,fontWeight: FontWeight.w600,fontFamily: "Raleway",letterSpacing: 0.5),
-                minFontSize: 10,
-                maxLines: 1,
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
 
 }
 class Item extends StatefulWidget{
@@ -186,7 +139,7 @@ class StateItem extends State<Item>{
                       padding: EdgeInsets.only(left: 18,right: 10,bottom: 12),
                       child: AutoSizeText(
                         widget.text,
-                        style: TextStyle(fontSize: 8,color: Color(0xffffffff),fontWeight: FontWeight.w700,height: 1,fontFamily: "Raleway"),
+                        style: TextStyle(fontSize: 7,color: Color(0xffffffff),fontWeight: FontWeight.w700,height: 1,fontFamily: "Raleway"),
                         minFontSize: 10,
                         maxLines: 1,
                       ),

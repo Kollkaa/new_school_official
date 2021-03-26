@@ -29,6 +29,9 @@ dependencies:
   better_player: any
   fl_chart: any
   charts_flutter: 0.10.0
+  http : any
+  image_picker: any
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

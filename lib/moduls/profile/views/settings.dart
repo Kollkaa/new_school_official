@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:new_school_official/moduls/profile/views/edit_profile.dart';
+import 'package:new_school_official/moduls/profile/controllers/profile_controller.dart';
+import 'package:new_school_official/moduls/profile/views/edit_name_profile.dart';
+import 'edit_password_profile.dart';
+import 'edit_email_profile.dart';
 
 class SettingPage extends StatelessWidget{
+  ProfileController _profileController =Get.find();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -91,6 +95,11 @@ class SettingPage extends StatelessWidget{
                             ],
                           ),
                         ),
+                        onTap: (){
+                          Get.dialog(
+                              EditPasswordProfile()
+                          );
+                        },
                       ),
                       GestureDetector(
                         child:  Container(
@@ -113,6 +122,11 @@ class SettingPage extends StatelessWidget{
                             ],
                           ),
                         ),
+                        onTap: (){
+                          Get.dialog(
+                              EditEmailProfile()
+                          );
+                        },
                       ),
                       GestureDetector(
                         child:  Container(
@@ -191,6 +205,9 @@ class SettingPage extends StatelessWidget{
                     ),
                   )
                 ),
+                onTap: (){
+                  _profileController.getCode();
+                },
               )
             ],
           ),

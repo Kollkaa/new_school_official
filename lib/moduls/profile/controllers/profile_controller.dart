@@ -24,6 +24,9 @@ class ProfileController extends GetxController {
 
     super.onClose();
   }
+  getInfoUser(){
+
+  }
   void getCode()async{
         box.write("auth", false);
         _mainController.auth.value=false;
