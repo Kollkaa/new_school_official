@@ -978,7 +978,6 @@ class StateStaticScreen extends State<StaticScreen>{
                   ),
                 ),
                 SizedBox(width: 20,),
-//
               ],
             ),
           ),
