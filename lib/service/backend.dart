@@ -17,8 +17,6 @@ class Backend {
     this.token=token;
     dio=new dios.Dio(dios.BaseOptions(
         baseUrl: baseUrl,
-        connectTimeout: 10000,
-        receiveTimeout: 3000,
       headers: {"Content-Type":"application/json",
     }
     )

@@ -1031,6 +1031,7 @@ class StateStaticScreen extends State<StaticScreen>{
           height: 175,
           width: Get.width,
           child: ListView.builder(
+            padding: EdgeInsets.only(left: 13),
             scrollDirection: Axis.horizontal,
             itemCount: getMonth().length,
             itemBuilder: (c,i){
