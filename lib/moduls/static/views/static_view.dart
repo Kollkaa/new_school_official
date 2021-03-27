@@ -7,6 +7,7 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:new_school_official/dialog/treyler.dart';
 import 'package:new_school_official/moduls/auth/views/register.dart';
 import 'package:new_school_official/moduls/home/controllers/home_controller.dart';
@@ -14,11 +15,15 @@ import 'package:new_school_official/moduls/main/controllers/main_controller.dart
 import 'package:new_school_official/moduls/search/controllers/search_controller.dart';
 import 'package:new_school_official/moduls/static/controllers/static_controller.dart';
 import 'package:new_school_official/routes/app_pages.dart';
+import 'package:new_school_official/service/backend.dart';
 import 'package:new_school_official/storage/colors/main_color.dart';
 import 'package:new_school_official/storage/styles/text_style.dart';
 import 'package:new_school_official/widgets/speackear.dart';
 import 'package:video_player/video_player.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:dio/dio.dart' as dios;
+import 'package:heatmap_calendar/heatmap_calendar.dart';
+import 'package:heatmap_calendar/time_utils.dart';
 
 import 'dialog_count.dart';
 const Color blueColor = Color(0xff1565C0);
@@ -32,6 +37,7 @@ class StaticScreen extends StatefulWidget {
 
 }
 class StateStaticScreen extends State<StaticScreen>{
+  final GetStorage box = GetStorage();
   StaticController searchController =Get.put(StaticController());
   HomeController _homeController =Get.find();
   MainController _mainController = Get.find();
@@ -102,38 +108,22 @@ class StateStaticScreen extends State<StaticScreen>{
   }
   List<charts.Series<OrdinalSales, String>> _createSampleDataAuth() {
 
-   final desktopSalesData= _homeController.categorise.map((element) {
+   final tabletSalesData= _homeController.categorise.map((element) {
 
-     if(_mainController.getStats['courses_ended'].indexWhere((el) => element['id']==el['category'])>0){
-       return OrdinalSales(element['name'], _mainController.getStats['courses_ended'][_mainController.getStats['courses_ended'].indexWhere((el) => element['id']==el['category'])]['count']<=1?3:_mainController.getStats['courses_ended'][_mainController.getStats['courses_ended'].indexWhere((el) => element['id']==el['category'])]['count']);
+     if(_mainController.getStats['courses_in_progress'].indexWhere((el) => element['id']==el['category'])>=0){
+       return OrdinalSales(element['name'], _mainController.getStats['courses_ended'][_mainController.getStats['courses_ended'].indexWhere((el) => element['id']==el['category'])]['count']);
      }else{
-       return OrdinalSales(element['name'], 1 );
+       return OrdinalSales(element['name'], 0 );
    }
   }
    ).toList();
-   // _mainController.getStats['courses_ended'].map(
-   //      (el)=>      OrdinalSales(
-   //          _homeController.categorise[_homeController.categorise.indexWhere((element) => element['id']==el['category'])]['name']
-   //          , el['count']),
-   //
-   // );
-    final desktopSalesData1 = [
-      OrdinalSales('Музыка', 0),
-      OrdinalSales('Спорт', 3),
-      OrdinalSales('Наука', 1),
-      OrdinalSales('Питание', 1),
-      OrdinalSales('Кино', 3),
-      OrdinalSales('Дизайн', 4),
-    ];
 
-   final tabletSalesData= _homeController.categorise.map((element) {
-
-     if(_mainController.getStats['courses_in_progress'].indexWhere((el) => element['id']==el['category'])>0){
+   final desktopSalesData = _homeController.categorise.map((element) {
+     if(_mainController.getStats['courses_ended'].indexWhere((el) => element['id']==el['category'])>=0){
        print(element);
-
-       return OrdinalSales(element['name'], _mainController.getStats['courses_in_progress'][_mainController.getStats['courses_in_progress'].indexWhere((el) => element['id']==el['category'])]['count']<=1?4:_mainController.getStats['courses_in_progress'][_mainController.getStats['courses_in_progress'].indexWhere((el) => element['id']==el['category'])]['count'] );
+       return OrdinalSales(element['name'], _mainController.getStats['courses_in_progress'][_mainController.getStats['courses_in_progress'].indexWhere((el) => element['id']==el['category'])]['count'] );
      }else{
-       return OrdinalSales(element['name'], 1 );
+       return OrdinalSales(element['name'], 0 );
      }
    }
    ).toList();
@@ -154,8 +144,9 @@ class StateStaticScreen extends State<StaticScreen>{
         measureFn: (OrdinalSales sales, _) => sales.sales,
         data: tabletSalesData,
         colorFn: (_, __) => charts.ColorUtil.fromDartColor(rightBarColor),
-        displayName: "Income",
-      )..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId),
+    labelAccessorFn: (OrdinalSales sales, _) =>
+    'expense: ${sales.sales.toString()}',
+    displayName: "Expense"      )..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId),
     ];
   }
 
@@ -210,6 +201,7 @@ class StateStaticScreen extends State<StaticScreen>{
   @override
   void initState() {
     super.initState();
+    initStat();
 
   }
 
@@ -304,8 +296,6 @@ class StateStaticScreen extends State<StaticScreen>{
                               _mainController.widgets.removeAt(4);
                               _mainController.widgets.add(RegisterPage());
                               _mainController.currentIndex.value=4;
-
-
                             },
                           ),
                           opacity: 0.7,
@@ -682,8 +672,9 @@ class StateStaticScreen extends State<StaticScreen>{
                                 return '$index курс';
                               })
                           ),
-                          secondaryMeasureAxis: null,
-
+                          secondaryMeasureAxis: new charts.NumericAxisSpec(
+                            renderSpec: new charts.NoneRenderSpec(),
+                          ),
                         )
                     ),
                     const SizedBox(
@@ -990,21 +981,28 @@ class StateStaticScreen extends State<StaticScreen>{
   }
   List getMonth(){
     return [
-      {'day':31,'name':'январь'},
-      {'day':28,'name':'февраль '},
-      {'day':31,'name':'март'},
-      {'day':30,'name':'апрель'},
-      {'day':31,'name':'май'},
-      {'day':30,'name':'июнь'},
-      {'day':31,'name':'июль'},
-      {'day':31,'name':'август'},
-      {'day':30,'name':'сентябрь'},
-      {'day':31,'name':'октябрь'},
-      {'day':30,'name':'ноябрь'},
-      {'day':31,'name':'декабрь'}
+      {'day':31,'name':'январь','index':1},
+      {'day':28,'name':'февраль','index':2},
+      {'day':31,'name':'март','index':3},
+      {'day':30,'name':'апрель','index':4},
+      {'day':31,'name':'май','index':5},
+      {'day':30,'name':'июнь','index':6},
+      {'day':31,'name':'июль','index':7},
+      {'day':31,'name':'август','index':8},
+      {'day':30,'name':'сентябрь','index':9},
+      {'day':31,'name':'октябрь','index':10},
+      {'day':30,'name':'ноябрь','index':11},
+      {'day':31,'name':'декабрь','index':12}
     ];
   }
   Widget getActivitiesAuth(){
+
+    var list =[];
+    var listStart=getMonth();
+    listStart.removeRange(DateTime.now().month,getMonth().length);
+    list.addAll(getMonth().sublist(DateTime.now().month,getMonth().length));
+    list.addAll(listStart);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1027,33 +1025,89 @@ class StateStaticScreen extends State<StaticScreen>{
           ),
         ),
         Container(
-          height: 175,
+          height: 185,
           width: Get.width,
           child: ListView.builder(
             padding: EdgeInsets.only(left: 13),
             scrollDirection: Axis.horizontal,
-            itemCount: getMonth().length,
+            itemCount: list.length,
             itemBuilder: (c,i){
+              print(list[i]['index']);
               return  Container(
                 margin: EdgeInsets.only(right: 13),
                 width: 76,
-                height: 170,
+                height: 175,
                 child: Column(
                   children: [
                     Expanded(
                       child: GridView.builder(
-                        itemCount: getMonth()[i]['day'],
+                        itemCount: list[i]['day'],
                         itemBuilder: (c,index){
                           Color color;
-                          if(_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&i==DateTime.parse(el['date']).month-1)==0){
-                            color=Colors.blue;
+                          if(_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1)>=0){
+                          if(int.tryParse(_mainController.getStats['lessons_stats'][_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1)>0?_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1):0]['lessons_studied'])==1){
+                             color=Color(0xffBBDEFF);
+
+                           }else if(int.tryParse(_mainController.getStats['lessons_stats'][_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1)>0?_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1):0]['lessons_studied'])==2){
+                             color=Color(0xff7ABFFF);
+
+                           }else if(int.tryParse(_mainController.getStats['lessons_stats'][_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1)>0?_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1):0]['lessons_studied'])==3){
+                             color=Color(0xff2597FF);
+
+                           }else if(int.tryParse(_mainController.getStats['lessons_stats'][_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1)>0?_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1):0]['lessons_studied'])==4){
+                             color=Color(0xff0075E0);
+
+                           }else if(int.tryParse(_mainController.getStats['lessons_stats'][_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1)>0?_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1):0]['lessons_studied'])>=5){
+                             color=Color(0xff0054A1);
+
+                           }
                           }else{
                             color=Color(0xfff2f2f2);
                           }
-                          return Container(
-                            height: 16,
-                            width: 16,
-                            color: color,
+                          return GestureDetector(
+                            child: Container(
+                              height: 16,
+                              width: 16,
+                              color: color,
+                            ),
+                            onTap: (){
+                              showDialog<void>(
+                                context: context,
+                                barrierDismissible: false, // user must tap button!
+                                builder: (BuildContext context) {
+                                  return Dialog(
+                                    child: Container(
+                                      padding: EdgeInsets.all(10),
+                                      height: 91,
+                                      width: 252,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(10)
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            children: [
+                                             GestureDetector(
+                                               child:  Icon(Icons.clear),
+                                               onTap: Get.back,
+                                             )
+                                            ],
+                                          ),
+                                          Text("${DateTime.parse(_mainController.getStats['lessons_stats'][_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1)>0?_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1):0]['date']).day} "
+                                              "${getMonth()[DateTime.parse(_mainController.getStats['lessons_stats'][_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1)>0?_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1):0]['date']).month-1]['name']} "
+                                              "${DateTime.parse(_mainController.getStats['lessons_stats'][_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1)>0?_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1):0]['date']).year} года",style: TextStyle(fontSize: 12,color: Color(0xff0e0e0e),fontWeight: FontWeight.w400,letterSpacing: 0.5,fontFamily: "Raleway")),
+                                          Text("Уроков пройдено - "
+                                              "${_mainController.getStats['lessons_stats'][_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1)>0?_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1):0]['lessons_studied']}",style: TextStyle(fontSize: 12,color: Color(0xff0e0e0e),fontWeight: FontWeight.w400,letterSpacing: 0.5,fontFamily: "Raleway")),
+
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
                           );
                         },
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -1064,7 +1118,7 @@ class StateStaticScreen extends State<StaticScreen>{
                       ),
                     ),
                     SizedBox(height: 13,),
-                    Text("${getMonth()[i]['name']} ",style: TextStyle(fontSize: 9,color: Color(0xff6a6a6a),fontWeight: FontWeight.w400,letterSpacing: 0.5,fontFamily: "Raleway"))
+                    Text("${list[i]['name']} ",style: TextStyle(fontSize: 9,color: Color(0xff6a6a6a),fontWeight: FontWeight.w400,letterSpacing: 0.5,fontFamily: "Raleway"))
                   ],
                 ),
               );
@@ -1119,6 +1173,14 @@ class StateStaticScreen extends State<StaticScreen>{
         )
       ],
     );
+  }
+
+  void initStat() async{
+    dios.Response getStats =await Backend().getStat(id:box.read('id'));
+    _mainController.getStats.value=getStats.data['user_stats'][0];
+setState(() {
+
+});
   }
 }
 class OrdinalSales {
