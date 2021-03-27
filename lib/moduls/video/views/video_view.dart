@@ -58,7 +58,7 @@ class _ChewieDemoState extends State<VideoScreen> {
         widget.lesson['videos'][0]['video_url']);
     await videoPlayerController.initialize();
     _chewieController = ChewieController(
-      startAt: Duration(seconds: widget.duration!=null?widget.duration:0),
+      startAt: Duration(seconds: widget.duration!=null?int.tryParse(widget.duration):0),
       videoPlayerController: videoPlayerController,
       aspectRatio: 16/9,
       autoInitialize: true,

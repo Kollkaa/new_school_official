@@ -325,7 +325,7 @@ class StateStaticScreen extends State<StaticScreen>{
               ),
               _mainController.auth.value?getStatistikAuth():getStatistik(),
               _mainController.auth.value?getGraphAuth():getGraph(),
-              getActivities(),
+              _mainController.auth.value?getActivitiesAuth():getActivities(),
               _mainController.auth.value?getFinishedCourses():Container(),
             ],
           ),
@@ -989,6 +989,96 @@ class StateStaticScreen extends State<StaticScreen>{
       ],
     );
   }
+  List getMonth(){
+    return [
+      {'day':31,'name':'январь'},
+      {'day':28,'name':'февраль '},
+      {'day':31,'name':'март'},
+      {'day':30,'name':'апрель'},
+      {'day':31,'name':'май'},
+      {'day':30,'name':'июнь'},
+      {'day':31,'name':'июль'},
+      {'day':31,'name':'август'},
+      {'day':30,'name':'сентябрь'},
+      {'day':31,'name':'октябрь'},
+      {'day':30,'name':'ноябрь'},
+      {'day':31,'name':'декабрь'}
+    ];
+  }
+  Widget getActivitiesAuth(){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: EdgeInsets.only(left: 20,right: 20),
+          child:
+          Text("Активность за последний год",style: black_text_title),
+        ),
+        Container(
+          padding: EdgeInsets.only(top:2,left: 20,right: 20,bottom: 30),
+
+          child: Row(
+            children: [
+              Text("15 дней без перерыва   ",style: TextStyle(fontSize: 11,fontWeight: FontWeight.w500,color: Color(0xff6A6A6A),fontFamily: "Raleway"),),
+              Container(
+                width: 1,height: 23,color: Color(0xffc4c4c4),
+              ),
+              Text("   Всего 123 дня",style: TextStyle(fontSize: 11,fontWeight: FontWeight.w500,color: Color(0xff6A6A6A),fontFamily: "Raleway"))
+            ],
+          ),
+        ),
+        Container(
+          height: 175,
+          width: Get.width,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: getMonth().length,
+            itemBuilder: (c,i){
+              return  Container(
+                margin: EdgeInsets.only(right: 13),
+                width: 76,
+                height: 170,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: GridView.builder(
+                        itemCount: getMonth()[i]['day'],
+                        itemBuilder: (c,index){
+                          Color color;
+                          if(_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&i==DateTime.parse(el['date']).month-1)==0){
+                            color=Colors.blue;
+                          }else{
+                            color=Color(0xfff2f2f2);
+                          }
+                          return Container(
+                            height: 16,
+                            width: 16,
+                            color: color,
+                          );
+                        },
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4,
+                          crossAxisSpacing: 4.0,
+                          mainAxisSpacing: 4.0,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 13,),
+                    Text("${getMonth()[i]['name']} ",style: TextStyle(fontSize: 9,color: Color(0xff6a6a6a),fontWeight: FontWeight.w400,letterSpacing: 0.5,fontFamily: "Raleway"))
+                  ],
+                ),
+              );
+
+            },
+          ),
+        ),
+        SizedBox(
+          height: 57,
+        )
+      ],
+    );
+  }
+
   Widget getFinishedCourses(){
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

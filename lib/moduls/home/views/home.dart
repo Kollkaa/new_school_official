@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:get_storage/get_storage.dart';
 import 'package:new_school_official/moduls/video/views/video_view.dart';
 import 'package:flutter/services.dart';
+import 'package:dio/dio.dart' as dios;
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
@@ -34,7 +35,19 @@ class Statehome extends State<HomePage>{
   AuthController _authController =Get.put(AuthController());
   final GetStorage box = GetStorage();
 
+  @override
+  void initState() {
+    initPrefs();
+    super.initState();
+  }
+  initPrefs()async{
+    dios.Response responces =await Backend().getUser(id:box.read("id"));
+    _mainController.profile.value=responces.data['clients'][0];
+    setState(() {
 
+    });
+
+  }
   @override
   Widget build(BuildContext context) {
 
@@ -140,7 +153,7 @@ class Statehome extends State<HomePage>{
                                   return ItemCont(
                                       _mainController.getUservideo_time[i]['lesson_id']
                                       ,_mainController.getUservideo_time[i]['course_id']
-                                      ,_mainController.getUservideo_time[i]['video_duration']
+                                      ,_mainController.getUservideo_time[i]['time']
                                       ,_mainController,_homeController
                                   );
                                 },
@@ -841,7 +854,7 @@ class StateItemCont extends State<ItemCont>{
       onTap: ()async{
         Get.toNamed(Routes.COURSE,arguments:widget.idCourse);
         await Future.delayed(Duration(seconds: 3));
-        await  Get.dialog(VideoScreen(video,duration: 21));
+        await  Get.dialog(VideoScreen(video,duration: widget.duration));
         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
             statusBarColor: Colors.white,
             statusBarIconBrightness: Brightness.dark,
