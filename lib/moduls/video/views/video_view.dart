@@ -107,8 +107,70 @@ class _ChewieDemoState extends State<VideoScreen> {
       theme: ThemeData.light().copyWith(
         platform: TargetPlatform.iOS,
       ),
-      home: GestureDetector(
+      home: MouseRegion(
+          onHover: (_) {
+            _chewieController != null &&
+                _chewieController
+                    .videoPlayerController.value.initialized
+                ?showOverlay(context,_chewieController):null;
+          },
+          onEnter:(_) {
+            _chewieController != null &&
+                _chewieController
+                    .videoPlayerController.value.initialized
+                ?showOverlay(context,_chewieController):null;
+          },
+          onExit: (_) {
+            _chewieController != null &&
+                _chewieController
+                    .videoPlayerController.value.initialized
+                ?showOverlay(context,_chewieController):null;
+          },
+          child:GestureDetector(
           behavior: HitTestBehavior.translucent,
+          onTertiaryTapDown: (_){
+            _chewieController != null &&
+                _chewieController
+                    .videoPlayerController.value.initialized
+                ?showOverlay(context,_chewieController):null;
+          },
+          onDoubleTapDown: (_){
+            _chewieController != null &&
+                _chewieController
+                    .videoPlayerController.value.initialized
+                ?showOverlay(context,_chewieController):null;
+          },
+          onHorizontalDragDown: (_){
+            _chewieController != null &&
+                _chewieController
+                    .videoPlayerController.value.initialized
+                ?showOverlay(context,_chewieController):null;
+          },
+          onSecondaryTapDown: (_){
+            _chewieController != null &&
+                _chewieController
+                    .videoPlayerController.value.initialized
+                ?showOverlay(context,_chewieController):null;
+          },
+          onVerticalDragDown: (_){
+            _chewieController != null &&
+                _chewieController
+                    .videoPlayerController.value.initialized
+                ?showOverlay(context,_chewieController):null;
+          },
+          onPanDown:(_){
+            _chewieController != null &&
+                _chewieController
+                    .videoPlayerController.value.initialized
+                ?showOverlay(context,_chewieController):null;
+          },
+          onTertiaryTapUp: (_){
+            _chewieController != null &&
+                _chewieController
+                    .videoPlayerController.value.initialized
+                ?showOverlay(context,_chewieController):null;
+
+          },
           onTap: (){
             _chewieController != null &&
                 _chewieController
@@ -139,7 +201,6 @@ class _ChewieDemoState extends State<VideoScreen> {
                 removeTop: true,
                 child: Stack(
                   children: [
-
                     Container(
                       color: Colors.black,
                       height: Get.height,
@@ -164,7 +225,10 @@ class _ChewieDemoState extends State<VideoScreen> {
                       ),
                     ),
 
-                    Positioned(
+                    _chewieController != null &&
+                        _chewieController
+                            .videoPlayerController.value.initialized
+                        ?  Positioned(
                       bottom: 50,
                       right: 30,
                       child: ValueListenableBuilder(
@@ -178,7 +242,6 @@ class _ChewieDemoState extends State<VideoScreen> {
                             }else{
                             }
                           }
-                          print(value.position.inSeconds);
                           if(value.position.inSeconds>=(_chewieController.videoPlayerController.value.duration.inSeconds-15)){
                             if((widget.index+1)<_homeController.videos['lessons'].length-1){
                               return  GestureDetector(
@@ -214,37 +277,26 @@ class _ChewieDemoState extends State<VideoScreen> {
                             }
                           }else{
                             return Container(
-
                             );
                           }
                         },
                       ),
-                    )
+                    ):Container()
                   ],
                 )
             ),
           ),
-      ),
+      )),
     );
   }
   showOverlay(BuildContext context,Controller) async {
     OverlayState overlayState = Overlay.of(context);
     OverlayEntry overlayEntry = OverlayEntry(
-        builder: (context) => Positioned(child: CupertinoControls(chewieController: Controller,backgroundColor: Color(0xff6a6a6a),iconColor: Colors.white,),));
+        builder: (context) => Positioned(child: CupertinoControls(chewieController: Controller,backgroundColor: Color(0xff232323),iconColor: Colors.white,),));
 
-// OverlayEntry overlayEntry = OverlayEntry(
-//         builder: (context) => Positioned(
-//               top: MediaQuery.of(context).size.height / 2.0,
-//               width: MediaQuery.of(context).size.width / 2.0,
-//               child: CircleAvatar(
-//                 radius: 50.0,
-//                 backgroundColor: Colors.red,
-//                 child: Text("1"),
-//               ),
-//             ));
     overlayState.insert(overlayEntry);
 
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(Duration(seconds: 4));
 
     overlayEntry.remove();
   }

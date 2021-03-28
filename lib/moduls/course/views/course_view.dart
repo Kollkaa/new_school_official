@@ -208,7 +208,9 @@ class StateCourse extends State<CourseScreen>{
                                           ],
                                         ),
                                         onTap: ()async{
+
                                          await Get.dialog(TrailerScreen());
+                                         SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
                                          SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
                                              statusBarColor: Colors.white,
                                              statusBarIconBrightness: Brightness.dark,
