@@ -22,8 +22,6 @@ import 'package:new_school_official/widgets/speackear.dart';
 import 'package:video_player/video_player.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:dio/dio.dart' as dios;
-import 'package:heatmap_calendar/heatmap_calendar.dart';
-import 'package:heatmap_calendar/time_utils.dart';
 
 import 'dialog_count.dart';
 const Color blueColor = Color(0xff1565C0);
@@ -38,52 +36,43 @@ class StaticScreen extends StatefulWidget {
 }
 class StateStaticScreen extends State<StaticScreen>{
   final GetStorage box = GetStorage();
+
   StaticController searchController =Get.put(StaticController());
+
   HomeController _homeController =Get.find();
+
   MainController _mainController = Get.find();
+
    List<charts.Series> seriesList;
+
   static const secondaryMeasureAxisId = 'secondaryMeasureAxisId';
+
    bool animate;
 
   final Color leftBarColor = const Color(0xff9BA6FA);
+
   final Color rightBarColor = const Color(0xff6979F8);
+
   final double width = 7;
 
-  List<BarChartGroupData> rawBarGroups;
-  List<BarChartGroupData> showingBarGroups;
 
-  int touchedGroupIndex;
-  BarChartGroupData makeGroupData(int x, double y1, double y2) {
-    return BarChartGroupData(barsSpace: 4, x: x, barRods: [
-      BarChartRodData(
-        y: y1,
-        colors: [leftBarColor],
-        width: width,
-      ),
-      BarChartRodData(
-        y: y2,
-        colors: [rightBarColor],
-        width: width,
-      ),
-    ]);
-  }
   List<charts.Series<OrdinalSales, String>> _createSampleData() {
     final desktopSalesData = [
       OrdinalSales('Музыка', 0),
-      OrdinalSales('Спорт', 3),
-      OrdinalSales('Наука', 1),
-      OrdinalSales('Питание', 1),
-      OrdinalSales('Кино', 3),
-      OrdinalSales('Дизайн', 4),
+      OrdinalSales('Спорт', 0),
+      OrdinalSales('Наука', 0),
+      OrdinalSales('Питание', 0),
+      OrdinalSales('Кино', 0),
+      OrdinalSales('Дизайн', 0),
     ];
 
     final tabletSalesData = [
       OrdinalSales('Музыка', 0),
-      OrdinalSales('Спорт', 4),
-      OrdinalSales('Наука', 2),
-      OrdinalSales('Питание', 1),
-      OrdinalSales('Кино', 3),
-      OrdinalSales('Дизайн', 4),
+      OrdinalSales('Спорт', 0),
+      OrdinalSales('Наука', 0),
+      OrdinalSales('Питание', 0),
+      OrdinalSales('Кино', 0),
+      OrdinalSales('Дизайн', 0),
     ];
 
     return [
@@ -106,6 +95,7 @@ class StateStaticScreen extends State<StaticScreen>{
       )..setAttribute(charts.measureAxisIdKey, secondaryMeasureAxisId),
     ];
   }
+
   List<charts.Series<OrdinalSales, String>> _createSampleDataAuth() {
 
    final tabletSalesData= _homeController.categorise.map((element) {
@@ -150,54 +140,6 @@ class StateStaticScreen extends State<StaticScreen>{
     ];
   }
 
-  Widget makeTransactionsIcon() {
-    const double width = 4.5;
-    const double space = 3.5;
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        Container(
-          width: width,
-          height: 10,
-          color: Colors.white.withOpacity(0.4),
-        ),
-        const SizedBox(
-          width: space,
-        ),
-        Container(
-          width: width,
-          height: 28,
-          color: Colors.white.withOpacity(0.8),
-        ),
-        const SizedBox(
-          width: space,
-        ),
-        Container(
-          width: width,
-          height: 42,
-          color: Colors.white.withOpacity(1),
-        ),
-        const SizedBox(
-          width: space,
-        ),
-        Container(
-          width: width,
-          height: 28,
-          color: Colors.white.withOpacity(0.8),
-        ),
-        const SizedBox(
-          width: space,
-        ),
-        Container(
-          width: width,
-          height: 10,
-          color: Colors.white.withOpacity(0.4),
-        ),
-      ],
-    );
-  }
-  var items;
   @override
   void initState() {
     super.initState();
@@ -324,6 +266,7 @@ class StateStaticScreen extends State<StaticScreen>{
       ),
     );
   }
+
   Widget getStatistik(){
     return Container(
       decoration: BoxDecoration(
@@ -383,6 +326,7 @@ class StateStaticScreen extends State<StaticScreen>{
       ),
     );
   }
+
   Widget getStatistikAuth(){
     return Container(
       decoration: BoxDecoration(
@@ -549,8 +493,9 @@ class StateStaticScreen extends State<StaticScreen>{
                               return '$index курс';
                             })
                         ),
-                        secondaryMeasureAxis: null,
-
+                        secondaryMeasureAxis: new charts.NumericAxisSpec(
+                          renderSpec: new charts.NoneRenderSpec(),
+                        ),
                       )
                     ),
                     const SizedBox(
@@ -564,6 +509,7 @@ class StateStaticScreen extends State<StaticScreen>{
       ),
     );
   }
+
   Widget getGraphAuth(){
 
     return Container(
@@ -615,7 +561,6 @@ class StateStaticScreen extends State<StaticScreen>{
                         child: charts.BarChart(
                           _createSampleDataAuth(),
                           animate: animate,
-
                           domainAxis: new charts.OrdinalAxisSpec(
                               renderSpec: new charts.SmallTickRendererSpec(
                                   labelRotation: 45,
@@ -637,11 +582,9 @@ class StateStaticScreen extends State<StaticScreen>{
                                       b: 228,
                                     ),
                                   ))),
-
                           barGroupingType: charts.BarGroupingType.grouped,
                           defaultRenderer: charts.BarRendererConfig(
                               cornerStrategy: const charts.ConstCornerStrategy(50)),
-
                           primaryMeasureAxis: charts.NumericAxisSpec(
                               renderSpec: new charts.GridlineRendererSpec(
 
@@ -689,6 +632,23 @@ class StateStaticScreen extends State<StaticScreen>{
     );
   }
 
+  List getMonth(){
+    return [
+      {'day':31,'name':'январь','index':1},
+      {'day':28,'name':'февраль','index':2},
+      {'day':31,'name':'март','index':3},
+      {'day':30,'name':'апрель','index':4},
+      {'day':31,'name':'май','index':5},
+      {'day':30,'name':'июнь','index':6},
+      {'day':31,'name':'июль','index':7},
+      {'day':31,'name':'август','index':8},
+      {'day':30,'name':'сентябрь','index':9},
+      {'day':31,'name':'октябрь','index':10},
+      {'day':30,'name':'ноябрь','index':11},
+      {'day':31,'name':'декабрь','index':12}
+    ];
+  }
+
   Widget getActivities(){
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -703,11 +663,11 @@ class StateStaticScreen extends State<StaticScreen>{
 
           child: Row(
             children: [
-              Text("15 дней без перерыва   ",style: TextStyle(fontSize: 11,fontWeight: FontWeight.w500,color: Color(0xff6A6A6A),fontFamily: "Raleway"),),
+              Text("0 дней без перерыва   ",style: TextStyle(fontSize: 11,fontWeight: FontWeight.w500,color: Color(0xff6A6A6A),fontFamily: "Raleway"),),
               Container(
                 width: 1,height: 23,color: Color(0xffc4c4c4),
               ),
-              Text("   Всего 123 дня",style: TextStyle(fontSize: 11,fontWeight: FontWeight.w500,color: Color(0xff6A6A6A),fontFamily: "Raleway"))
+              Text("   Всего 135 дней",style: TextStyle(fontSize: 11,fontWeight: FontWeight.w500,color: Color(0xff6A6A6A),fontFamily: "Raleway"))
             ],
           ),
         ),
@@ -730,14 +690,7 @@ class StateStaticScreen extends State<StaticScreen>{
                           mainAxisSpacing: 4,
                           crossAxisCount: 4,
                           children: [
-                            GestureDetector(
-                              child:                             Container(width: 16,height: 16,color: Color(0xff2F80ED),),
-                                onTap: (){
-                                showDialog(context: context
-                                ,child:CountVideoOnDay()
-                                );
-                                },
-                            ),
+
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
@@ -749,7 +702,6 @@ class StateStaticScreen extends State<StaticScreen>{
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xff2F80ED),),
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
@@ -788,7 +740,6 @@ class StateStaticScreen extends State<StaticScreen>{
                           mainAxisSpacing: 4,
                           crossAxisCount: 4,
                           children: [
-                            Container(width: 16,height: 16,color: Color(0xff2F80ED),),
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
@@ -844,7 +795,6 @@ class StateStaticScreen extends State<StaticScreen>{
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xff2F80ED),),
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
@@ -893,8 +843,6 @@ class StateStaticScreen extends State<StaticScreen>{
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xff2F80ED),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
@@ -932,7 +880,6 @@ class StateStaticScreen extends State<StaticScreen>{
                           mainAxisSpacing: 4,
                           crossAxisCount: 4,
                           children: [
-                            Container(width: 16,height: 16,color: Color(0xff2F80ED),),
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
                             Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
@@ -979,30 +926,14 @@ class StateStaticScreen extends State<StaticScreen>{
       ],
     );
   }
-  List getMonth(){
-    return [
-      {'day':31,'name':'январь','index':1},
-      {'day':28,'name':'февраль','index':2},
-      {'day':31,'name':'март','index':3},
-      {'day':30,'name':'апрель','index':4},
-      {'day':31,'name':'май','index':5},
-      {'day':30,'name':'июнь','index':6},
-      {'day':31,'name':'июль','index':7},
-      {'day':31,'name':'август','index':8},
-      {'day':30,'name':'сентябрь','index':9},
-      {'day':31,'name':'октябрь','index':10},
-      {'day':30,'name':'ноябрь','index':11},
-      {'day':31,'name':'декабрь','index':12}
-    ];
-  }
-  Widget getActivitiesAuth(){
 
+  Widget getActivitiesAuth(){
     var list =[];
     var listStart=getMonth();
     listStart.removeRange(DateTime.now().month,getMonth().length);
     list.addAll(getMonth().sublist(DateTime.now().month,getMonth().length));
     list.addAll(listStart);
-
+    list =list.reversed.toList();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1016,11 +947,11 @@ class StateStaticScreen extends State<StaticScreen>{
 
           child: Row(
             children: [
-              Text("15 дней без перерыва   ",style: TextStyle(fontSize: 11,fontWeight: FontWeight.w500,color: Color(0xff6A6A6A),fontFamily: "Raleway"),),
+              Text("${_mainController.getStats['withoutSkipMax']} дней без перерыва   ",style: TextStyle(fontSize: 11,fontWeight: FontWeight.w500,color: Color(0xff6A6A6A),fontFamily: "Raleway"),),
               Container(
                 width: 1,height: 23,color: Color(0xffc4c4c4),
               ),
-              Text("   Всего 123 дня",style: TextStyle(fontSize: 11,fontWeight: FontWeight.w500,color: Color(0xff6A6A6A),fontFamily: "Raleway"))
+              Text("   Всего ${_mainController.getStats['allDaysLearing']} дня",style: TextStyle(fontSize: 11,fontWeight: FontWeight.w500,color: Color(0xff6A6A6A),fontFamily: "Raleway"))
             ],
           ),
         ),
@@ -1028,6 +959,7 @@ class StateStaticScreen extends State<StaticScreen>{
           height: 185,
           width: Get.width,
           child: ListView.builder(
+            reverse: true,
             padding: EdgeInsets.only(left: 13),
             scrollDirection: Axis.horizontal,
             itemCount: list.length,
@@ -1063,6 +995,10 @@ class StateStaticScreen extends State<StaticScreen>{
                            }
                           }else{
                             color=Color(0xfff2f2f2);
+                          }
+                          if(list[i]['index']==DateTime.now().month&&index>DateTime.now().day){
+                            color=Colors.white;
+
                           }
                           return GestureDetector(
                             child: Container(
@@ -1183,12 +1119,14 @@ setState(() {
 });
   }
 }
+
 class OrdinalSales {
   final String year;
   final int sales;
 
   OrdinalSales(this.year, this.sales);
 }
+
 class Item extends StatefulWidget{
   String text;
   String image;
@@ -1204,6 +1142,7 @@ class Item extends StatefulWidget{
   }
 
 }
+
 class StateItem extends State<Item>{
 
   var _image;

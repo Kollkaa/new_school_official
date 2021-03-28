@@ -45,10 +45,17 @@ class StateAuth extends State<AuthPage>{
                 makeTextFieldPass(),
                 makeButton(),
                 Text("или",style: TextStyle(fontSize: 14,color: Color(0xff999999),fontWeight: FontWeight.w400,height: 1,fontFamily: "Raleway"),),
-                GestureDetector(
-                  child: Container(
-                      margin: EdgeInsets.only(left: 25,right: 25,top: 21),
+              Container(
+                  margin: EdgeInsets.only(top: 21),
+                  child: FlatButton(
+                    padding: EdgeInsets.all(1),
+
+                    minWidth: Get.width-50,
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    child: Container(
                       height: 50,
+                      width: Get.width-50,
+
                       padding: EdgeInsets.all(10),
                       decoration: BoxDecoration(
                           boxShadow: [
@@ -66,7 +73,6 @@ class StateAuth extends State<AuthPage>{
                               color: Color(0xff000000)
                           )
                       ),
-                      width: Get.width-28,
                       child: Center(
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -94,11 +100,17 @@ class StateAuth extends State<AuthPage>{
                           )
                       )
                   ),
-                ),
-                GestureDetector(
-                  child: Container(
+                    onPressed: (){},
+                )),
+                Container(
+                    margin: EdgeInsets.only(top: 21),
+                    child: FlatButton(
+                      padding: EdgeInsets.all(1),
+                      minWidth: Get.width-50,
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      child: Container(
                       height: 50,
-                      margin: EdgeInsets.only(left: 25,right: 25,top: 15),
+                      width: Get.width-50,
                       padding: EdgeInsets.all(12),
                       decoration: BoxDecoration(
                           color: Colors.white,
@@ -116,7 +128,6 @@ class StateAuth extends State<AuthPage>{
                               color: Color(0xff000000)
                           )
                       ),
-                      width: Get.width-28,
                       child: Center(
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -143,10 +154,12 @@ class StateAuth extends State<AuthPage>{
                           )
                       )
                   ),
-                ),
-                SizedBox(height: 15),
-               GestureDetector(
-                 child: Container(
+                  onPressed: (){},
+                )),
+                FlatButton(
+                  minWidth: Get.width-28,
+
+                  child: Container(
                      width: Get.width-28,
                      child:  Center(
                        child: Text(
@@ -155,7 +168,7 @@ class StateAuth extends State<AuthPage>{
                        ),
                      )
                  ),
-                 onTap: (){
+                 onPressed: (){
                    if(!_mainController.auth.value) {
                      print("213");
                      _mainController.widgets.removeAt(4);
@@ -184,6 +197,8 @@ class StateAuth extends State<AuthPage>{
   Widget makeTextFieldLog(){
     return Container(
       height: 50,
+      width: Get.width-50,
+
       padding: EdgeInsets.only(left: 20),
       margin: EdgeInsets.only(left: 25,right: 25,top: 26),
       decoration: BoxDecoration(
@@ -227,8 +242,8 @@ class StateAuth extends State<AuthPage>{
   Widget makeTextFieldPass(){
     return Container(
       height: 50,
+      width: Get.width-50,
       padding: EdgeInsets.only(left: 20),
-
       margin: EdgeInsets.only(left: 25,right: 25,top: 20),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
@@ -295,56 +310,67 @@ class StateAuth extends State<AuthPage>{
   }
 
   Widget makeButton(){
-    return GestureDetector(
-      child: Container(
-        height: 50,
-        margin: EdgeInsets.only(left: 25,right: 25,bottom: 22,top: 20),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-              border: Border.all(
-                  width: 1,
-                  color: Color(0xff000000)
+    return Container(
+        margin: EdgeInsets.only(bottom: 22,top: 20,left: 25,right: 25),
+        child: FlatButton(
+          padding: EdgeInsets.all(1),
+
+          minWidth: Get.width-50,
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          child: Container(
+              height: 50,
+              width: Get.width-50,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(
+                      width: 1,
+                      color: Color(0xff000000)
+                  )
+              ),
+              child: Center(
+                child: Text(
+                  "Продолжить",
+                  style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,height: 1,fontFamily: "Raleway"),
+                ),
               )
           ),
-        child: Center(
-          child: Text(
-            "Продолжить",
-            style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,height: 1,fontFamily: "Raleway"),
-          ),
+          onPressed: ()async{
+            if(_authController.phoneEditingController.text!=null){
+              dios.Response responce =await Backend().auth(email: _authController.phoneEditingController.text,pas: _authController.passEditingController.text);
+              if(responce.statusCode==200&&!responce.data[0]['error']){
+                print(responce.data);
+                await box.write("auth", true);
+                _mainController.profile={}.obs;
+                print(responce.data);
+                print(responce.data[0]);
+                print(responce.data[0]['id']);
+                await box.write("id", responce.data[0]['id']);
+                dios.Response responces =await Backend().getUser(id:responce.data[0]['id']);
+
+                dios.Response getUservideo_cab =await Backend().getUservideo_cab(id:responce.data[0]['id']);
+                dios.Response getUservideo_time =await Backend().getUservideo_time(id:responce.data[0]['id']);
+                dios.Response getUservideo_time_all =await Backend().getUservideo_time_all(id:responce.data[0]['id']);
+                dios.Response getStats =await Backend().getStat(id:responce.data[0]['id']);
+                _mainController.profile.value=responces.data['clients'][0];
+                _mainController.getStats.value=getStats.data['user_stats'][0];
+                _mainController.getUservideo_cab.value=getUservideo_cab.data['lessons_cabinet'];
+                _mainController.getUservideo_time.value=getUservideo_time.data['lessons'];
+                _mainController.getUservideo_time_all.value=getUservideo_time_all.data['lessons'];
+                print(responces.data['clients'][0]['name']);
+                _mainController.auth.value=true;
+                _mainController.widgets.removeAt(4);
+                _mainController.widgets.add(ProfilePage());
+                _mainController.currentIndex.value=0;
+                setState(() {
+
+                });
+              }else{
+                Get.snackbar("",  "",backgroundColor: Colors.white,colorText: Colors.blue,snackPosition: SnackPosition.BOTTOM,messageText: Text("Неверный Email или Пароль",textAlign: TextAlign.center,style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Colors.red),));
+
+              }
+            }
+          },
         )
-      ),
-      onTap: ()async{
-        if(_authController.phoneEditingController.text!=null){
-          dios.Response responce =await Backend().auth(email: _authController.phoneEditingController.text,pas: _authController.passEditingController.text);
-          if(responce.statusCode==200){
-            print(responce.data);
-            await box.write("auth", true);
-
-            _mainController.profile={}.obs;
-            print(responce.data);
-            print(responce.data[0]);
-            print(responce.data[0]['id']);
-            await box.write("id", responce.data[0]['id']);
-            dios.Response responces =await Backend().getUser(id:responce.data[0]['id']);
-            _mainController.profile.value=responces.data['clients'][0];
-            dios.Response getUservideo_cab =await Backend().getUservideo_cab(id:responce.data[0]['id']);
-            dios.Response getUservideo_time =await Backend().getUservideo_time(id:responce.data[0]['id']);
-            dios.Response getUservideo_time_all =await Backend().getUservideo_time_all(id:responce.data[0]['id']);
-            dios.Response getStats =await Backend().getStat(id:responce.data[0]['id']);
-            _mainController.getStats.value=getStats.data['user_stats'][0];
-            _mainController.getUservideo_cab.value=getUservideo_cab.data['lessons_cabinet'];
-            _mainController.getUservideo_time.value=getUservideo_time.data['lessons'];
-            _mainController.getUservideo_time_all.value=getUservideo_time_all.data['lessons'];
-             print(responces.data['clients'][0]['name']);
-
-            _mainController.auth.value=true;
-            _mainController.widgets.removeAt(4);
-            _mainController.widgets.add(ProfilePage());
-            _mainController.currentIndex.value=0;
-
-          }
-        }
-      },
     );
   }
 }

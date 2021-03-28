@@ -255,7 +255,7 @@ class StateCourse extends State<CourseScreen>{
                             ),
                             child: Stack(
                                 children:[
-                                  Item(_homeController.videos['lessons'].reversed.toList()[i],false,_homeController,_mainController),
+                                  Item(_homeController.videos['lessons'].reversed.toList()[i],false,_homeController,_mainController,i),
                                   Positioned(
                                       bottom: 80,
                                       right: 24,
@@ -273,7 +273,7 @@ class StateCourse extends State<CourseScreen>{
                               key: ObjectKey(
                                   "${_homeController.videos['lessons'].reversed.toList()[i]['video_image']}"
                               ),
-                              child: Item(_homeController.videos['lessons'].reversed.toList()[i],true,_homeController,_mainController),
+                              child: Item(_homeController.videos['lessons'].reversed.toList()[i],true,_homeController,_mainController,i),
                               onTap:(){
 
                               }
@@ -475,12 +475,12 @@ class StateCourse extends State<CourseScreen>{
 class Item extends StatefulWidget{
   var homeController;
   var lock;
-
+  var index;
   var mainController;
 
   var lesson;
 
-  Item(this.lesson, this.lock,this.homeController,this.mainController);
+  Item(this.lesson, this.lock,this.homeController,this.mainController,this.index);
 
   @override
   State<StatefulWidget> createState() {
@@ -586,13 +586,15 @@ class StateItem extends State<Item>{
         ),
       onTap: ()async{
         if( widget.lock){
-         await Get.dialog(VideoScreen(widget.lesson));
+         await Get.dialog(VideoScreen(widget.lesson,index:widget.index));
+         SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
          SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
              statusBarColor: Colors.white,
              statusBarIconBrightness: Brightness.dark,
              statusBarBrightness: Brightness.dark,
              systemNavigationBarColor: Colors.white
          ));
+
          setState(() {
          });
         }

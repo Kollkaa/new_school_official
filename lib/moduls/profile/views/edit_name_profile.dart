@@ -37,7 +37,7 @@ class StateEdit extends State<EditProfile>{
             leading: GestureDetector(
               child: Row(
                 children: [
-                  SizedBox(width: 11,),
+                  SizedBox(width: 15,),
                   Icon(Icons.arrow_back_ios,color: Color(0xff000000),),
                   SizedBox(width: 3,),
                   Text(
@@ -47,7 +47,7 @@ class StateEdit extends State<EditProfile>{
                 ],
               ),
               onTap: (){
-                Get.back();
+                Navigator.pop(context);
               },
             ),
 
@@ -57,7 +57,6 @@ class StateEdit extends State<EditProfile>{
               children: [
                 GestureDetector(
                   child: Container(
-                    padding: EdgeInsets.all(10),
                     height: 120,
                     width: 120,
                     decoration: BoxDecoration(
@@ -72,20 +71,27 @@ class StateEdit extends State<EditProfile>{
                               )
                           )
                         ],
-                        image: DecorationImage(
-                            fit: BoxFit.fill,
-                            image:_image!=null?FileImage(_image):_mainController.profile['avatar']!=null
-                                ?NetworkImage("${_mainController.profile['avatar']}")
-                                : AssetImage("assets/images/60 x 60.jpg",)
 
-                        )
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                    child:Stack(
                       children: [
-                        SvgPicture.asset("assets/icons/camera-2 1.svg")
+                        ClipOval(
+                          child: _image!=null?Image.file(_image,width: 120,height: 120,fit: BoxFit.cover,):_mainController.profile['avatar']!=null
+                              ?Image.network("${_mainController.profile['avatar']}",height: 120,width: 120,fit: BoxFit.cover)
+                              : SvgPicture.asset("assets/icons/Group 242.svg",height: 120,width: 120,fit: BoxFit.cover,)
+                        ),
+                        Container(
+                          width: 120,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              SvgPicture.asset("assets/icons/camera-2 1.svg"),
+                              SizedBox(height: 10,)
+                            ],
+                          ),
+                        )
                       ],
-                    ),
+                    )
                   ),
                   onTap: ()async{
                     await getImage();
@@ -187,10 +193,16 @@ class StateEdit extends State<EditProfile>{
   }
 
   Widget makeButton(){
-    return GestureDetector(
+    return  Container(
+        margin: EdgeInsets.only(bottom: 22,top: 20,left: 25,right: 25),
+        child: FlatButton(
+          padding: EdgeInsets.all(1),
+
+          minWidth: Get.width-50,
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       child: Container(
+        width: Get.width-50,
           height: 50,
-          margin: EdgeInsets.only(left: 25,right: 25,bottom: 22,top: 20),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
               border: Border.all(
@@ -205,22 +217,25 @@ class StateEdit extends State<EditProfile>{
             ),
           )
       ),
-      onTap: ()async{
+      onPressed: ()async{
         var response= await Backend().editNameSurname(box.read("id"), _mainController.nameEditingController.text, _mainController.lastnameEditingController.text);
         print(response.data);
         var responces =await Backend().getUser(id:box.read("id"));
         _mainController.profile.value=responces.data['clients'][0];
-
          if(_image!=null){
            var responce=await Backend().editImage(box.read("id"),_image);
+
            var responces =await Backend().getUser(id:box.read("id"));
            print(responces);
            _mainController.profile.value=responces.data['clients'][0];
            setState(() {
            });
          }
+         Navigator.pop(context);
+         Navigator.pop(context);
+
       },
-    );
+    ));
   }
   File _image;
   final picker = ImagePicker();

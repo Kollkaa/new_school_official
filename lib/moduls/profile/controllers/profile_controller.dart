@@ -28,9 +28,10 @@ class ProfileController extends GetxController {
 
   }
   void getCode()async{
-        box.write("auth", false);
-        _mainController.auth.value=false;
-        _mainController.widgets.removeAt(4);
-        _mainController.widgets.add(AuthPage());
+        await box.write("auth", false);
+        await (_mainController.auth.value=false);
+        await  _mainController.widgets.removeAt(4);
+        await _mainController.widgets.add(AuthPage());
+        Get.appUpdate();
    }
 }

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -34,20 +35,17 @@ class StateEmailEdit extends State<EditEmailProfile>{
             leading: GestureDetector(
               child: Row(
                 children: [
-                  SizedBox(width: 11,),
-                  Icon(Icons.arrow_back_ios, color: Color(0xff000000),),
+                  SizedBox(width: 15,),
+                  Icon(Icons.arrow_back_ios,color: Color(0xff000000),),
                   SizedBox(width: 3,),
                   Text(
                     "Назад",
-                    style: TextStyle(fontSize: 15,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.black,
-                        fontFamily: 'Raleway'),
+                    style: TextStyle(fontSize: 15,fontWeight: FontWeight.w400,color: Colors.black,fontFamily: 'Raleway'),
                   ),
                 ],
               ),
-              onTap: () {
-                Get.back();
+              onTap: (){
+                Navigator.pop(context);
               },
             ),
 
@@ -116,18 +114,24 @@ class StateEmailEdit extends State<EditEmailProfile>{
   }
 
   Widget makeButton() {
-    return GestureDetector(
-      child: Container(
-          height: 50,
-          margin: EdgeInsets.only(left: 25, right: 25, bottom: 22, top: 20),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              border: Border.all(
-                  width: 1,
-                  color: Color(0xff000000)
-              )
-          ),
-          child: Center(
+    return Container(
+        margin: EdgeInsets.only(bottom: 22,top: 20,left: 25,right: 25),
+        child: FlatButton(
+          padding: EdgeInsets.all(1),
+
+          minWidth: Get.width-50,
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          child: Container(
+              width: Get.width-50,
+              height: 50,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(
+                      width: 1,
+                      color: Color(0xff000000)
+                  )
+              ),
+              child: Center(
             child: Text(
               "Сохранить",
               style: TextStyle(fontSize: 14,
@@ -137,19 +141,23 @@ class StateEmailEdit extends State<EditEmailProfile>{
             ),
           )
       ),
-      onTap: () async {
+      onPressed: () async {
         if(_mainController.emailConfEditEditingController.text==_mainController.emailEditEditingController.text&&
         _mainController.emailEditEditingController.text!=""&&_mainController.emailEditEditingController.text.contains("@")
         ){
-          print(12);
-          var response = await Backend().editEmail(
-              box.read("id"), _mainController.emailEditEditingController.text,);
+          var response =await Backend().editEmail(
+            box.read("id"), _mainController.emailEditEditingController.text,);
+
           print(response.data);
-          var responces = await Backend().getUser(id: box.read("id"));
-          _mainController.profile.value = responces.data['clients'][0];
+
+          if(response.statusCode==200){
+            Get.snackbar("",  "",duration:Duration(seconds: 1),backgroundColor: Colors.white,colorText: Colors.blue,snackPosition: SnackPosition.BOTTOM,messageText: Text("email изменен",textAlign: TextAlign.center,style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Colors.green),));
+            var responces = await Backend().getUser(id: box.read("id"));
+            _mainController.profile.value = responces.data['clients'][0];
+          }
         }
       },
-    );
+    ));
   }
 
   Widget makeTextFieldEmailConf() {

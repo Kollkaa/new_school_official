@@ -94,7 +94,7 @@ class Backend {
   }
   Future<dios.Response> register({String email,String pas}) {
     var response;
-    response= dio.post("/api/api.php",data:dios.FormData.fromMap({'type': "register ",
+    response= dio.post("/api/api.php",data:dios.FormData.fromMap({'type': "register",
       "apiKey": "2xdCQ9nH",
       "email": email,
       "password": pas
@@ -138,20 +138,21 @@ class Backend {
   }
 
   Future<dios.Response> editEmail(id,email) {
-    var response;
-    response=  dio.post("/api/api.php",data:dios.FormData.fromMap({'type': 'client_edit_email ',
+    print(baseUrl);
+    return  dio.post("/api/api.php",data:dios.FormData.fromMap({
+      'type': 'client_edit_email',
       'apiKey': '2xdCQ9nH',
       'client_id':id,
       'client_email':email
     }));
-    return response;
+     ;
 
 
   }
 
   Future<dios.Response> editPassword(id,pass) {
     var response;
-    response= dio.post("/api/api.php",data:dios.FormData.fromMap({'type': 'client_edit_password ',
+    response= dio.post("/api/api.php",data:dios.FormData.fromMap({'type': 'client_edit_password',
       'apiKey': '2xdCQ9nH',
       'client_id':id,
       'client_password':pass

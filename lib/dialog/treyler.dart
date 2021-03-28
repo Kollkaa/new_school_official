@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
@@ -5,10 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:new_school_official/moduls/home/controllers/home_controller.dart';
-import 'package:new_school_official/routes/app_pages.dart';
 import 'package:video_player/video_player.dart';
 
 class TrailerScreen extends StatefulWidget {
@@ -25,6 +24,8 @@ class _ChewieDemoState extends State<TrailerScreen> {
   ChewieController _chewieController;
   HomeController _homeController=Get.find();
 
+  bool cansel=false;
+
   @override
   void initState() {
     super.initState();
@@ -37,7 +38,6 @@ class _ChewieDemoState extends State<TrailerScreen> {
     _chewieController.dispose();
     super.dispose();
   }
-
   Future<void> initializePlayer() async {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         statusBarColor: Colors.black,
@@ -49,10 +49,10 @@ class _ChewieDemoState extends State<TrailerScreen> {
 
     });
     print( _homeController.course['kurses'][0]['trailer']);
+
     _videoPlayerController1 = VideoPlayerController.network(
         _homeController.course['kurses'][0]['trailer']);
     await _videoPlayerController1.initialize();
-
     _chewieController = ChewieController(
       allowFullScreen: false,
       videoPlayerController: _videoPlayerController1,
@@ -60,7 +60,6 @@ class _ChewieDemoState extends State<TrailerScreen> {
       looping: false,
       showControls: true,
     );
-
     setState(() {});
   }
 
@@ -80,8 +79,11 @@ class _ChewieDemoState extends State<TrailerScreen> {
                 color: Colors.black,
                 height: Get.height,
                 width: Get.width,
-                child: Center(
-                  child: _chewieController != null &&
+                child:  Center(
+                  // child:  BetterPlayer(
+                  //   controller: _betterPlayerController,
+                  // ),
+                  child:  _chewieController != null &&
                       _chewieController
                           .videoPlayerController.value.initialized
                       ?  Chewie(
@@ -94,6 +96,7 @@ class _ChewieDemoState extends State<TrailerScreen> {
                       CircularProgressIndicator(),
                     ],
                   ),
+
                 ),
               ),
 

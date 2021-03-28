@@ -22,7 +22,7 @@ dependencies:
   pin_code_fields: 6.1.0
   auto_size_text: 2.1.0
   chewie: 0.10.1
-  video_player: 1.0.1
+  video_player: any
   shimmer: 1.1.2
   cached_network_image: 2.5.1
   share: 0.6.5+4
@@ -31,7 +31,7 @@ dependencies:
   charts_flutter: 0.10.0
   http : any
   image_picker: any
-  heatmap_calendar: ^1.2.8
+
 
 dev_dependencies:
   flutter_test:

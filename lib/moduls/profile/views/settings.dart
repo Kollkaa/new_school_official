@@ -23,7 +23,7 @@ class SettingPage extends StatelessWidget{
             leading: GestureDetector(
               child: Row(
                 children: [
-                  SizedBox(width: 11,),
+                  SizedBox(width: 15,),
                   Icon(Icons.arrow_back_ios,color: Color(0xff000000),),
                   SizedBox(width: 3,),
                   Text(
@@ -33,7 +33,7 @@ class SettingPage extends StatelessWidget{
                 ],
               ),
               onTap: (){
-                Get.back();
+                Navigator.pop(context);
               },
             ),
             title: Text(
@@ -180,35 +180,32 @@ class SettingPage extends StatelessWidget{
                     ],
                   )
               ),
-              GestureDetector(
-                child: Container(
-                  margin: EdgeInsets.symmetric(horizontal: 25,vertical: 32),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: Colors.white,
-                    border: Border.all(width: 1,color: Colors.black),
-                    boxShadow: [
-                      BoxShadow(
-                          color: Color.fromRGBO(50, 50, 71, 0.06),
-                          offset: Offset(0,2),
-                          spreadRadius: 4,
-                          blurRadius: 2
-                      )
-                    ],
-                  ),
-                  height: 50,
-                  child: Center(
-                    child: Text(
-                      "Выйти из аккаунта",
-                      style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Colors.black,fontFamily: 'Raleway'),
+              Container(
+                  margin: EdgeInsets.only(bottom: 22,top: 20,left: 25,right: 25),
+                  child: FlatButton(
+                    padding: EdgeInsets.all(1),
+                    minWidth: Get.width-50,
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    child: Container(
+                        width: Get.width-50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(width: 1,color: Colors.black),
+                        ),
+                        child: Center(
+                          child: Text(
+                            "Выйти из аккаунта",
+                            style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Colors.black,fontFamily: 'Raleway'),
 
+                          ),
+                        )
                     ),
-                  )
-                ),
-                onTap: (){
-                  _profileController.getCode();
-                },
-              )
+                    onPressed: (){
+                      _profileController.getCode();
+                      Navigator.pop(context);
+                      },
+                  ))
             ],
           ),
         )

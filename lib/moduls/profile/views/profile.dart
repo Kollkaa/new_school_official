@@ -56,15 +56,22 @@ class StateProfile extends State<ProfilePage>{
                               "Профиль",style: TextStyle(fontSize: 25,fontWeight: FontWeight.w700,color: Colors.black,fontFamily: 'Raleway'),
                             ),
                           ),
-                          GestureDetector(
-                            child: Container(
-                                margin: EdgeInsets.only(right: 14,top: 27),
-                                child: SvgPicture.asset("assets/icons/logout 1.svg")
-                            ),
-                            onTap: (){
-                              _profileController.getCode();
-                            },
-                          )
+                         Container(
+                           margin: EdgeInsets.only(top: 27,right: 0),
+
+                           child:  FlatButton(
+                             padding: EdgeInsets.all(1),
+                             minWidth: 25,
+                             child: Container(
+                                 height: 25,
+                                 width: 25,
+                                 child: SvgPicture.asset("assets/icons/logout 1.svg")
+                             ),
+                             onPressed: (){
+                               _profileController.getCode();
+                             },
+                           ),
+                         )
                         ],
                       )
                     ],
@@ -75,42 +82,52 @@ class StateProfile extends State<ProfilePage>{
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          width:120,
                           height: 120,
+                          width: 120,
                           decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                fit: BoxFit.cover,
-                                  image:_mainController.profile['avatar']!=null?NetworkImage("${_mainController.profile['avatar']}"): AssetImage("assets/images/60 x 60.jpg",)
-                              )
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white,
+                            ),
+                          ),
+                          child: ClipOval(
+                            child: _mainController.profile['avatar']!=null?Image.network("${_mainController.profile['avatar']}",height: 120,width: 120,fit: BoxFit.cover,): SvgPicture.asset("assets/icons/Group 242.svg",height: 120,width: 120,),
                           ),
                         ),
                         Obx(
                             ()=>Container(
                               margin: EdgeInsets.only(top: 10),
                               child: Text(
-                                "${_mainController.profile['name']} ${_mainController.profile['lastname']}",style: TextStyle(fontSize: 18,fontWeight: FontWeight.w700,color: Colors.black,fontFamily: 'Raleway'),
+                                "${_mainController.profile['name']!=null?_mainController.profile['name']:"Имя"} ${_mainController.profile['lastname']!=null?_mainController.profile['lastname']:"Фамилия"}",style: TextStyle(fontSize: 18,fontWeight: FontWeight.w700,color: Colors.black,fontFamily: 'Raleway'),
                               ),
                             ),
                         ),
-                        GestureDetector(
-                          child:  Container(
-                            margin: EdgeInsets.only(top: 5),
+                       Container(
+                         height: 20,
+                         child:  Padding(
+                           padding: EdgeInsets.all(1.0),
+                           child:  FlatButton(
+                             padding: EdgeInsets.all(1),
+                             child:  Container(
+                               child: Text(
+                                 "Настройки",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w400,color: Color(0xff6a6a6a),fontFamily: 'Raleway'),
+                               ),
+                             ),
+                             onPressed: ()async{
+                               await showDialog(context: context,builder:(c){
+                                 return SettingPage();
+                               } );
+                               var responces =await Backend().getUser(id:box.read("id"));
+                               print(responces);
+                               _mainController.profile.value=responces.data['clients'][0];
+                               setState(() {
+                               });
+                             },
+                           )
+                         ),
+                       ),
 
-                            child: Text(
-                              "Настройки",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w400,color: Color(0xff6a6a6a),fontFamily: 'Raleway'),
-                            ),
-                          ),
-                          onTap: ()async{
-                           await Get.dialog(
-                                SettingPage() );
-                           var responces =await Backend().getUser(id:box.read("id"));
-                           print(responces);
-                           _mainController.profile.value=responces.data['clients'][0];
-                           setState(() {
-                           });
-                          },
-                        )
                       ],
                     ),
                   ),

@@ -46,111 +46,121 @@ class StateRegister extends State<RegisterPage>{
                   makeTextFieldPass(),
                   makeButton(),
                   Text("или",style: TextStyle(fontSize: 14,color: Color(0xff999999),fontWeight: FontWeight.w400,height: 1,fontFamily: "Raleway"),),
-                  GestureDetector(
-                    child: Container(
-                        margin: EdgeInsets.only(left: 25,right: 25,top: 21),
-                        height: 50,
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Color.fromRGBO(50, 50, 71, 0.06),
-                                  offset: Offset(0,2),
-                                  spreadRadius: 4,
-                                  blurRadius: 2
-                              )
-                            ],
-                            color: Colors.black,
-                            borderRadius: BorderRadius.circular(5),
-                            border: Border.all(
-                                width: 1,
-                                color: Color(0xff000000)
-                            )
-                        ),
-                        width: Get.width-28,
-                        child: Center(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                SvgPicture.asset("assets/icons/apple.svg"),
-                                Container(
-                                  height: 30,
-                                  decoration: BoxDecoration(
-                                      border: Border(left: BorderSide(width: 1,color: Colors.white.withOpacity(0.3)))
-                                  ),
-                                  width: Get.width-122,
-                                  child:  Center(
-                                    child:  Text(
-                                      "Вход с Apple ID",
-                                      style: TextStyle(fontSize: 14,color: Colors.white,fontWeight: FontWeight.w400,height: 1,fontFamily: "Raleway"),
-                                    ),
-                                  ),
-                                ),
-                                Opacity(opacity: 0,
-                                  child:   SvgPicture.asset("assets/icons/apple.svg"),
-                                )
+                  Container(
+                      margin: EdgeInsets.only(top: 21),
+                      child: FlatButton(
+                        padding: EdgeInsets.all(1),
 
-                              ],
-                            )
-                        )
-                    ),
-                    onTap: _authController.getCode,
-                  ),
-                  GestureDetector(
-                    child: Container(
-                        height: 50,
-                        margin: EdgeInsets.only(left: 25,right: 25,top: 15),
-                        padding: EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                  color: Color.fromRGBO(50, 50, 71, 0.06),
-                                  offset: Offset(0,2),
-                                  spreadRadius: 4,
-                                  blurRadius: 2
-                              )
-                            ],
-                            borderRadius: BorderRadius.circular(5),
-                            border: Border.all(
-                                width: 1,
-                                color: Color(0xff000000)
+                        minWidth: Get.width-50,
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        child: Container(
+                            height: 50,
+                            width: Get.width-50,
+
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Color.fromRGBO(50, 50, 71, 0.06),
+                                      offset: Offset(0,2),
+                                      spreadRadius: 4,
+                                      blurRadius: 2
+                                  )
+                                ],
+                                color: Colors.black,
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(
+                                    width: 1,
+                                    color: Color(0xff000000)
+                                )
+                            ),
+                            child: Center(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    SvgPicture.asset("assets/icons/apple.svg"),
+                                    Container(
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                          border: Border(left: BorderSide(width: 1,color: Colors.white.withOpacity(0.3)))
+                                      ),
+                                      width: Get.width-122,
+                                      child:  Center(
+                                        child:  Text(
+                                          "Вход с Apple ID",
+                                          style: TextStyle(fontSize: 14,color: Colors.white,fontWeight: FontWeight.w400,height: 1,fontFamily: "Raleway"),
+                                        ),
+                                      ),
+                                    ),
+                                    Opacity(opacity: 0,
+                                      child:   SvgPicture.asset("assets/icons/apple.svg"),
+                                    )
+
+                                  ],
+                                )
                             )
                         ),
-                        width: Get.width-28,
-                        child: Center(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Image.asset("assets/images/ddjvludx0aa77mu 1.jpg"),
-                                Container(
-                                  height: 30,
-                                  decoration: BoxDecoration(
-                                      border: Border(left: BorderSide(width: 1,color: Colors.white.withOpacity(0.3)))
-                                  ),
-                                  width: Get.width-124,
-                                  child:  Center(
-                                    child: Text(
-                                      "Вход с Google",
-                                      style: TextStyle(fontSize: 14,color: Colors.black,fontWeight: FontWeight.w400,height: 1,fontFamily: "Raleway"),
-                                    ),
-                                  ),
-                                ),
-                                Opacity(opacity: 0,
-                                  child:                                   Image.asset("assets/images/ddjvludx0aa77mu 1.jpg"),
+                        onPressed: (){},
+                      )),
+                  Container(
+                      margin: EdgeInsets.only(top: 21),
+                      child: FlatButton(
+                        padding: EdgeInsets.all(1),
+                        minWidth: Get.width-50,
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        child: Container(
+                            height: 50,
+                            width: Get.width-50,
+                            padding: EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Color.fromRGBO(50, 50, 71, 0.06),
+                                      offset: Offset(0,2),
+                                      spreadRadius: 4,
+                                      blurRadius: 2
+                                  )
+                                ],
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(
+                                    width: 1,
+                                    color: Color(0xff000000)
                                 )
-                              ],
+                            ),
+                            child: Center(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Image.asset("assets/images/ddjvludx0aa77mu 1.jpg"),
+                                    Container(
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                          border: Border(left: BorderSide(width: 1,color: Colors.white.withOpacity(0.3)))
+                                      ),
+                                      width: Get.width-124,
+                                      child:  Center(
+                                        child: Text(
+                                          "Вход с Google",
+                                          style: TextStyle(fontSize: 14,color: Colors.black,fontWeight: FontWeight.w400,height: 1,fontFamily: "Raleway"),
+                                        ),
+                                      ),
+                                    ),
+                                    Opacity(opacity: 0,
+                                      child:                                   Image.asset("assets/images/ddjvludx0aa77mu 1.jpg"),
+                                    )
+                                  ],
+                                )
                             )
-                        )
-                    ),
-                    onTap: _authController.getCode,
-                  ),
-                  SizedBox(height: 15),
-                  GestureDetector(
+                        ),
+                        onPressed: (){},
+                      )),
+                  FlatButton(
                     child: Container(
-                        width: Get.width-28,
+                        height: 50,
+                        width: Get.width-50,
                         child:  Center(
                           child: Text(
                             "Уже есть аккаунт?", textAlign: TextAlign.center,
@@ -158,7 +168,7 @@ class StateRegister extends State<RegisterPage>{
                           ),
                         )
                     ),
-                    onTap: (){
+                    onPressed: (){
                       if(!_mainController.auth.value) {
                         _mainController.widgets.removeAt(4);
                         _mainController.widgets.add(AuthPage());
@@ -268,10 +278,16 @@ class StateRegister extends State<RegisterPage>{
   }
 
   Widget makeButton(){
-    return GestureDetector(
+    return Container(
+        margin: EdgeInsets.only(bottom: 22,top: 20,left: 25,right: 25),
+        child: FlatButton(
+          padding: EdgeInsets.all(1),
+
+          minWidth: Get.width-50,
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       child: Container(
           height: 50,
-          margin: EdgeInsets.only(left: 25,right: 25,bottom: 22,top: 20),
+          width: Get.width-50,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
               border: Border.all(
@@ -286,19 +302,39 @@ class StateRegister extends State<RegisterPage>{
             ),
           )
       ),
-      onTap:()async{
+      onPressed:()async{
         if(_authController.phoneRegEditingController.text!=null){
           dios.Response responce =await Backend().register(email: _authController.phoneRegEditingController.text,pas: _authController.passRegEditingController.text);
           if(responce.statusCode==200){
             print(responce.data);
-            box.write("auth", true);
+            await box.write("auth", true);
+            _mainController.profile={}.obs;
+            print(responce.data);
+            print(responce.data[0]);
+            print(responce.data[0]['id']);
+            await box.write("id", responce.data[0]['id']);
+            dios.Response responces =await Backend().getUser(id:responce.data[0]['id']);
+
+            dios.Response getUservideo_cab =await Backend().getUservideo_cab(id:responce.data[0]['id']);
+            dios.Response getUservideo_time =await Backend().getUservideo_time(id:responce.data[0]['id']);
+            dios.Response getUservideo_time_all =await Backend().getUservideo_time_all(id:responce.data[0]['id']);
+            dios.Response getStats =await Backend().getStat(id:responce.data[0]['id']);
+            _mainController.profile.value=responces.data['clients'][0];
+            _mainController.getStats.value=getStats.data['user_stats'][0];
+            _mainController.getUservideo_cab.value=getUservideo_cab.data['lessons_cabinet'];
+            _mainController.getUservideo_time.value=getUservideo_time.data['lessons'];
+            _mainController.getUservideo_time_all.value=getUservideo_time_all.data['lessons'];
+            print(responces.data['clients'][0]['name']);
             _mainController.auth.value=true;
             _mainController.widgets.removeAt(4);
             _mainController.widgets.add(ProfilePage());
-            _mainController.profile={}.obs;
+            _mainController.currentIndex.value=0;
+            setState(() {
+
+            });
           }
         }
       },
-    );
+    ));
   }
 }

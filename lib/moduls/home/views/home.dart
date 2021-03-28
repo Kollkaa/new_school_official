@@ -86,7 +86,7 @@ class Statehome extends State<HomePage>{
                                     width: 7,
                                   ),
                                   _mainController.auth.value?
-                                  Text("${_mainController.profile['name']}",style: grey_text_title2,):
+                                  Text("${_mainController.profile['name']!=null?_mainController.profile['name']:"Имя"}",style: grey_text_title2,):
                                   Text("Вход",style: grey_text_title2,),
                                 ],
                               ), onTap: (){
@@ -323,7 +323,7 @@ class Statehome extends State<HomePage>{
                                     scrollDirection: Axis.horizontal,
                                     itemCount: _homeController.news.length,
                                     itemBuilder: (c,i){
-                                      return  Item("${_homeController.news[i]['name']}","${_homeController.news[i]['banner_small']}",_homeController.popular[i]['id'],_homeController,_mainController);
+                                      return  Item("${_homeController.news[i]['name']}","${_homeController.news[i]['banner_small']}",_homeController.news[i]['id'],_homeController,_mainController);
                                     }
                                 ),
                               )
@@ -617,8 +617,9 @@ class Statehome extends State<HomePage>{
          //     statusBarBrightness: Brightness.light,
          //     systemNavigationBarColor: Colors.white
          // ));
-        Get.toNamed(Routes.COURSE,arguments:widget.id);
-        widget.homeController.videos={}.obs;
+         widget.homeController.videos={}.obs;
+         Get.appUpdate();
+         Get.toNamed(Routes.COURSE,arguments:widget.id);
        },
      );
    }
@@ -763,7 +764,7 @@ class StateItemCont extends State<ItemCont>{
     var response= await Backend().getGetVideo(widget.idVideo);
     course=responce.data['kurses'][0];
     video =response.data['lessons'][0];
-   image= course['banner_big'];
+   image= course['banner_small'];
     initImage();
   }
 

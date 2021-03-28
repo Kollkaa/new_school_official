@@ -57,36 +57,8 @@ class AuthController extends GetxController {
     phoneEditingController.dispose();
     super.onClose();
   }
-  void getCode()async{
-    if(phoneEditingController.text!=null){
-      dios.Response responce =await Backend().auth(email: phoneEditingController.text,pas: passEditingController.text);
-      if(responce.statusCode==200){
-        print(responce.data);
-        box.write("auth", true);
-       mainController.auth.value=true;
-        mainController.widgets.removeAt(4);
-        mainController.widgets.add(ProfilePage());
-        mainController.profile={}.obs;
-        dios.Response responces =await Backend().getUser(id:responce.data[0]['id']);
-        mainController.profile.value=responces.data['clients'][0];
 
 
-      }
-    }
-  }
-  void getRegister()async{
-    if(phoneRegEditingController.text!=null){
-      dios.Response responce =await Backend().register(email: phoneRegEditingController.text,pas: passRegEditingController.text);
-      if(responce.statusCode==200){
-        print(responce.data);
-        box.write("auth", true);
-        mainController.auth.value=true;
-        mainController.widgets.removeAt(4);
-        mainController.widgets.add(ProfilePage());
-        mainController.profile={}.obs;
-      }
-    }
-  }
   void onChange(sting) {
     if(phoneEditingController.text.length>=12){
       focusNode.unfocus();
