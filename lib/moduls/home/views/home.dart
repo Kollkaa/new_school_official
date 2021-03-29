@@ -2,11 +2,9 @@ import 'dart:async';
 import 'dart:ui';
 import 'package:get_storage/get_storage.dart';
 import 'package:new_school_official/dialog/atuhor.dart';
-import 'package:new_school_official/dialog/dialog_full_access.dart';
 import 'package:new_school_official/moduls/video/views/video_view.dart';
 import 'package:flutter/services.dart';
 import 'package:dio/dio.dart' as dios;
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -115,7 +113,8 @@ class Statehome extends State<HomePage>{
                                       _mainController.currentIndex.value=4;
                                     }else{
                                       await Get.dialog(
-                                          SettingPage() );
+                                          SettingPage()
+                                      );
                                       var responces =await Backend().getUser(id:box.read("id"));
                                       print(responces);
                                       _mainController.profile.value=responces.data['clients'][0];
@@ -149,11 +148,10 @@ class Statehome extends State<HomePage>{
                               width: Get.width,
                               height: 223,
                               child: ListView.builder(
-                                padding: EdgeInsets.only(left: 15,right: 15),
+                                padding: EdgeInsets.only(left: 15),
                                 scrollDirection: Axis.horizontal,
                                 itemCount: _mainController.getUservideo_time.length,
                                 itemBuilder: (c,i){
-                                  print(_mainController.getUservideo_time[i]);
                                   return ItemCont(
                                       _mainController.getUservideo_time[i]['lesson_id']
                                       ,_mainController.getUservideo_time[i]['course_id']
@@ -764,10 +762,12 @@ class StateItemCont extends State<ItemCont>{
   void getVideo() async{
     var responce= await Backend().getCourse(widget.idCourse);
     var response= await Backend().getGetVideo(widget.idVideo);
-    course=responce.data['kurses'][0];
-    video =response.data['lessons'][0];
-   image= course['banner_small'];
-    initImage();
+    print(response);
+    print(responce);
+    course=responce.data.length!=0?responce.data['kurses'][0]:null;
+    video =response.data.length!=0?response.data['lessons'][0]:null;
+   image= course!=null?course['banner_small']:null;
+    course!=null?initImage():null;
   }
 
   var _image;
@@ -790,7 +790,7 @@ class StateItemCont extends State<ItemCont>{
 
   @override
   Widget build(BuildContext context) {
-    return _loading ?Container(
+    return course!=null? _loading ?Container(
       margin: EdgeInsets.only(right: 12),
       height: 142,
       width: 142,
@@ -856,18 +856,11 @@ class StateItemCont extends State<ItemCont>{
       ),
       onTap: ()async{
         Get.toNamed(Routes.COURSE,arguments:widget.idCourse);
-        await Future.delayed(Duration(seconds: 3));
-        await  Get.dialog(VideoScreen(video,duration: widget.duration));
-        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-            statusBarColor: Colors.white,
-            statusBarIconBrightness: Brightness.dark,
-            statusBarBrightness: Brightness.dark,
-            systemNavigationBarColor: Colors.white
-        ));
+
         setState(() {
         });
       },
-    );
+    ):Container();
   }
 
 

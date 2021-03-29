@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:new_school_official/custom/controlls.dart';
 import 'package:new_school_official/moduls/home/controllers/home_controller.dart';
+import 'package:new_school_official/service/backend.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoScreen extends StatefulWidget {
@@ -30,6 +32,7 @@ class _ChewieDemoState extends State<VideoScreen> {
   void initState() {
     super.initState();
     initializePlayer();
+    oldPos=widget.duration!=null?widget.duration:0;
   }
   @override
   void dispose() {
@@ -49,6 +52,12 @@ class _ChewieDemoState extends State<VideoScreen> {
         statusBarBrightness: Brightness.light,
         systemNavigationBarColor: Colors.black
     ));
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     setState(() {
     });
     print(widget.lesson['videos'][0]['video_url']);
@@ -88,9 +97,16 @@ class _ChewieDemoState extends State<VideoScreen> {
     @required BuildContext context,
   }) {
     return new OverlayEntry(
-        builder: (context) => Positioned(child: CupertinoControls(chewieController: _chewieController,backgroundColor: Color(0xff232323),iconColor: Colors.white,),));;
+        builder: (context) => Positioned(child: CupertinoControls(chewieController: _chewieController,backgroundColor: Color(0xff232323),image: _homeController.videos['lessons'].reversed.toList()[widget.index+1]['video_image'],iconColor: Colors.white,method:(){
+          Get.back();
+          if((widget.index+1)<=_homeController.videos['lessons'].length-1){
+            print("12");
+            Get.dialog(VideoScreen(_homeController.videos['lessons'].reversed.toList()[(widget.index+1)],index:widget.index+1));
+          }else{
+            print("123");
+          }
+        },),));;
   }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -147,45 +163,80 @@ class _ChewieDemoState extends State<VideoScreen> {
                     child: ValueListenableBuilder(
                       valueListenable: _chewieController.videoPlayerController,
                       builder: (context, var value, child) {
+                        if(oldPos+10<=value.position.inSeconds){
+                          print(oldPos);
+                          oldPos=value.position.inSeconds;
+                          StreamController<int> controller = StreamController<int>();
+                          Stream stream = controller.stream;
+                          stream.listen((value) async{
+                           var res=await Backend().setPos(
+                               _homeController.videos['lessons'].reversed.toList()[(widget.index)]['kurs_id'],
+                               _homeController.videos['lessons'].reversed.toList()[(widget.index)]['id'],
+                               value,
+                               _chewieController.videoPlayerController.value.duration.inSeconds);
+                           print(res.data);
+                          });
+                          controller.add(oldPos);
 
+                        }else{
+                          print(oldPos);
+                        }
                         if(value.position.inSeconds==(_chewieController.videoPlayerController.value.duration.inSeconds))
                         {
                           Get.back();
                           if((widget.index+1)<=_homeController.videos['lessons'].length-1){
                             Get.dialog(VideoScreen(_homeController.videos['lessons'].reversed.toList()[(widget.index+1)],index:widget.index+1));
                           }else{
+                            return Container();
                           }
                         }
                         if(value.position.inSeconds>=(_chewieController.videoPlayerController.value.duration.inSeconds-15)){
+                          oldPos=value.position.inSeconds;
+                          StreamController<int> controller = StreamController<int>();
+                          Stream stream = controller.stream;
+                          stream.listen((value) async{
+                            var res=await Backend().setPos(
+                                _homeController.videos['lessons'].reversed.toList()[(widget.index)]['id'],
+                                _homeController.videos['lessons'].reversed.toList()[(widget.index)]['kurs_id'],
+                                value,
+                                _chewieController.videoPlayerController.value.duration.inSeconds);
+                            print(res.data);
+                          });
+                          controller.add(oldPos);
                           if((widget.index+1)<_homeController.videos['lessons'].length-1){
-                            return  GestureDetector(
-                              child: Container(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      height: 80,
-                                      width: 120,
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                                          color: Colors.black.withOpacity(0.04),
-                                          image: DecorationImage(image: NetworkImage(
-                                              _homeController.videos['lessons'].reversed.toList()[widget.index+1]['video_image']
-                                          ),fit: BoxFit.fill)
-                                      ),),
-                                    Text("Следующее видео",style: TextStyle(color: Colors.white),),
+                            return Container();
+                            // return  GestureDetector(
+                            //   child: Container(
+                            //     child: Column(
+                            //       crossAxisAlignment: CrossAxisAlignment.center,
+                            //       children: [
+                            //         Container(
+                            //           height: 80,
+                            //           width: 120,
+                            //           decoration: BoxDecoration(
+                            //               borderRadius: BorderRadius.all(Radius.circular(10)),
+                            //               color: Colors.black.withOpacity(0.04),
+                            //               image: DecorationImage(image: NetworkImage(
+                            //                   _homeController.videos['lessons'].reversed.toList()[widget.index+1]['video_image']
+                            //               ),fit: BoxFit.fill)
+                            //           ),),
+                            //         SizedBox(height: 5,),
+                            //         Text("Следующий урок",style: TextStyle(color: Colors.white),),
+                            //
+                            //       ],
+                            //     ),
+                            //   ),
+                            //   onTap: (){
+                            //     Get.back();
+                            //     if((widget.index+1)<=_homeController.videos['lessons'].length-1){
+                            //       print("12");
+                            //       Get.dialog(VideoScreen(_homeController.videos['lessons'].reversed.toList()[(widget.index+1)],index:widget.index+1));
+                            //     }else{
+                            //       print("123");
+                            //     }
+                            //   },
+                            // );
 
-                                  ],
-                                ),
-                              ),
-                              onTap: (){
-                                Get.back();
-                                if((widget.index+1)<=_homeController.videos['lessons'].length-1){
-                                  Get.dialog(VideoScreen(_homeController.videos['lessons'].reversed.toList()[(widget.index+1)],index:widget.index+1));
-                                }else{
-                                }
-                              },
-                            );
                           }else{
                             return Container();
                           }

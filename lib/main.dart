@@ -20,6 +20,9 @@ void main()async {
       statusBarBrightness: Brightness.dark,
     systemNavigationBarColor: Colors.white
   ));
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
   runApp(
       new Localizations(
   locale: const Locale('en', 'US'),

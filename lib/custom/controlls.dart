@@ -16,9 +16,13 @@ import 'form.dart';
 class CupertinoControls extends StatefulWidget {
   CupertinoControls({
     this.chewieController,
+    this.method,
+    this.image,
     @required this.backgroundColor,
     @required this.iconColor,
   });
+  var image;
+  Function method;
   var chewieController;
   final Color backgroundColor;
   final Color iconColor;
@@ -82,6 +86,51 @@ class _CupertinoControlsState extends State<CupertinoControls> {
               _buildTopBar(
                   backgroundColor, iconColor, barHeight, buttonPadding),
               _buildHitArea(),
+              widget.chewieController != null &&
+                  widget.chewieController
+                      .videoPlayerController.value.initialized
+                  ?  Container(
+                padding: EdgeInsets.only(bottom: 10),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children:[
+                      ValueListenableBuilder(
+                        valueListenable:  widget.chewieController.videoPlayerController,
+                        builder: (context, var value, child) {
+                          if(value.position.inSeconds>= widget.chewieController.videoPlayerController.value.duration.inSeconds-15){
+                            return  FlatButton(
+                                padding: EdgeInsets.all(0),
+                                child: Container(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        height: 80,
+                                        width: 120,
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                                            color: Colors.black.withOpacity(0.04),
+                                            image: DecorationImage(image: NetworkImage(
+                                                widget.image
+                                            ),fit: BoxFit.fill)
+                                        ),),
+                                      SizedBox(height: 5,),
+                                      Text("Следующий урок",style: TextStyle(color: Colors.white),),
+
+                                    ],
+                                  ),
+                                ),
+                                onPressed: widget.method
+                            );
+                          }else{
+                            return Container();
+                          }
+                        },
+                      ),
+                      SizedBox(width: 15,)
+                    ]
+                ),
+              ):Container(),
               _buildBottomBar(backgroundColor, iconColor, barHeight),
             ],
           ),
@@ -336,17 +385,19 @@ class _CupertinoControlsState extends State<CupertinoControls> {
   Widget _buildPosition(Color iconColor) {
     final position =
     _latestValue != null ? _latestValue.position : Duration(seconds: 0);
-
-    return FlatButton(
-      padding: EdgeInsets.all(0),
-      child:Text(
-        formatDuration(position),
-        style: TextStyle(
-          color: iconColor,
-          fontSize: 12.0,
+    return Container(
+      width: 50,
+      child: FlatButton(
+        padding: EdgeInsets.all(0),
+        child:Text(
+          formatDuration(position),
+          style: TextStyle(
+            color: iconColor,
+            fontSize: 12.0,
+          ),
         ),
+        onPressed: (){},
       ),
-      onPressed: (){},
     );
   }
 
@@ -369,7 +420,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
       child: Container(
         height: barHeight,
         color: Colors.transparent,
-        margin: EdgeInsets.only(left: 10.0),
+        margin: EdgeInsets.only(left: 10.0,right: 10),
         padding: EdgeInsets.only(
           left: 6.0,
           right: 6.0,
@@ -400,7 +451,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
           right: 8.0,
         ),
         margin: EdgeInsets.only(
-          right: 8.0,
+          right: 8.0,left: 10
         ),
         child: Icon(
           OpenIconicIcons.reload,
@@ -560,14 +611,14 @@ class _CupertinoControlsState extends State<CupertinoControls> {
   void _skipBack() {
     _cancelAndRestartTimer();
     final beginning = Duration(seconds: 0).inMilliseconds;
-    final skip = (_latestValue.position - Duration(seconds: 15)).inMilliseconds;
+    final skip = (_latestValue.position - Duration(seconds: 10)).inMilliseconds;
     controller.seekTo(Duration(milliseconds: math.max(skip, beginning)));
   }
 
   void _skipForward() {
     _cancelAndRestartTimer();
     final end = _latestValue.duration.inMilliseconds;
-    final skip = (_latestValue.position + Duration(seconds: 15)).inMilliseconds;
+    final skip = (_latestValue.position + Duration(seconds: 10)).inMilliseconds;
     controller.seekTo(Duration(milliseconds: math.min(skip, end)));
   }
 

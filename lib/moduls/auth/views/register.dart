@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:new_school_official/dialog/dialog_payment.dart';
 import 'package:new_school_official/moduls/auth/controllers/auth_controller.dart';
 import 'package:new_school_official/moduls/main/controllers/main_controller.dart';
 import 'package:new_school_official/moduls/profile/views/profile.dart';
@@ -328,7 +329,11 @@ class StateRegister extends State<RegisterPage>{
             _mainController.auth.value=true;
             _mainController.widgets.removeAt(4);
             _mainController.widgets.add(ProfilePage());
-            _mainController.currentIndex.value=0;
+            if(responces.data['clients'][0]['subscriber']==1){
+              _mainController.currentIndex.value=0;
+            }else{
+              Get.dialog(Payment());
+            }
             setState(() {
 
             });

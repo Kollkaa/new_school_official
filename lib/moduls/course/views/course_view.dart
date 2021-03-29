@@ -1,12 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:chewie/chewie.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:new_school_official/dialog/dialog_full_access.dart';
+import 'package:new_school_official/dialog/atuhor.dart';
 import 'package:new_school_official/dialog/treyler.dart';
 import 'package:new_school_official/moduls/auth/views/register.dart';
 import 'package:new_school_official/moduls/course/controllers/course_controller.dart';
@@ -178,20 +177,27 @@ class StateCourse extends State<CourseScreen>{
                                     ),
                                     onTap: ()async{
                                       if(_mainController.auth.value){
-                                        // if(_mainController.getUservideo_time.indexWhere((element) => element['course_id']==_courseController.id)>=0){
-                                        //   print(_homeController.videos['lessons'].where((element)=> _mainController.getUservideo_time.contains(element['id'])).length);
-                                        //   // await Get.dialog(VideoScreen(widget.lesson,index:widget.index));
-                                        //   SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
-                                        //   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-                                        //       statusBarColor: Colors.white,
-                                        //       statusBarIconBrightness: Brightness.dark,
-                                        //       statusBarBrightness: Brightness.dark,
-                                        //       systemNavigationBarColor: Colors.white
-                                        //   ));
-                                        //
-                                        //   setState(() {
-                                        //   });
-                                        // }
+                                        if(_mainController.getUservideo_time.indexWhere((element) => element['course_id']==_courseController.id)>=0){
+                                          var les=_homeController.videos['lessons'].where((element)=> (_mainController.getUservideo_time.where((ele)=>ele['lesson_id']==element['id']).length>0)).toList()[0];
+                                          print(_homeController.videos['lessons'].where((element)=> (_mainController.getUservideo_time.where((ele)=>ele['lesson_id']==element['id']).length>0)).length);
+                                          var index=_homeController.videos['lessons'].reversed.toList().indexWhere((el)=> les==el);
+                                         print(_homeController.videos['lessons'].length-1-index);
+                                          await Get.dialog(VideoScreen(les,index:index));
+                                          SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
+                                          SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+                                              statusBarColor: Colors.white,
+                                              statusBarIconBrightness: Brightness.dark,
+                                              statusBarBrightness: Brightness.dark,
+                                              systemNavigationBarColor: Colors.white
+                                          ));
+                                          SystemChrome.setPreferredOrientations([
+
+                                            DeviceOrientation.portraitUp,
+
+                                          ]);
+                                          setState(() {
+                                          });
+                                        }
                                       }else{
                                         // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
                                         //     statusBarColor: Colors.white,
@@ -201,7 +207,7 @@ class StateCourse extends State<CourseScreen>{
                                         // ));
                                         _mainController.widgets.removeAt(4);
                                         _mainController.widgets.add(RegisterPage());
-                                        Get.dialog(GetFullAccess());
+                                        Get.dialog(Author());
                                       }
                                     },
                                   ),
@@ -283,19 +289,60 @@ class StateCourse extends State<CourseScreen>{
                             onTap: (){
                               _mainController.widgets.removeAt(4);
                               _mainController.widgets.add(RegisterPage());
-                              Get.dialog(GetFullAccess());
+                              Get.dialog(Author());
                             },
                           );
                         } else{
-                          return GestureDetector(
-                              key: ObjectKey(
-                                  "${_homeController.videos['lessons'].reversed.toList()[i]['video_image']}"
-                              ),
-                              child: Item(_homeController.videos['lessons'].reversed.toList()[i],true,_homeController,_mainController,i),
-                              onTap:(){
+                          var index_done=_mainController.getUservideo_time_all.indexWhere((element) => element['lesson_id']==_homeController.videos['lessons'][i]['id']);
+                          if(index_done<0){
+                           if(i!=0){
+                             var last=_mainController.getUservideo_time_all.indexWhere((element) => element['lesson_id']==_homeController.videos['lessons'][i-1]['id']);
+                             if(int.tryParse(_mainController.getUservideo_time_all[last]['done'])==0)
+                             {
+                               return GestureDetector(
+                                 key: ObjectKey(
+                                     "${_homeController.videos['lessons'].reversed.toList()[i]['video_image']}"
+                                 ),
+                                 child: Stack(
+                                     children:[
+                                       Item(_homeController.videos['lessons'].reversed.toList()[i],false,_homeController,_mainController,i),
+                                       Positioned(
+                                           bottom: 80,
+                                           right: 24,
+                                           child: Image.asset("assets/images/padlock 1.png",width: 13,height: 16,)
+                                       ),
 
-                              }
-                          );
+                                     ]
+                                 ),
+                                 onTap: (){
+                                   _mainController.widgets.removeAt(4);
+                                   _mainController.widgets.add(RegisterPage());
+                                   Get.dialog(Author());
+                                 },
+                               );
+                             }else{
+                               return GestureDetector(
+                                   key: ObjectKey(
+                                       "${_homeController.videos['lessons'].reversed.toList()[i]['video_image']}"
+                                   ),
+                                   child: Item(_homeController.videos['lessons'].reversed.toList()[i],true,_homeController,_mainController,i),
+                                   onTap:(){
+                                   }
+                               );
+                             }
+                           }
+                          }else{
+                            return GestureDetector(
+                                key: ObjectKey(
+                                    "${_homeController.videos['lessons'].reversed.toList()[i]['video_image']}"
+                                ),
+                                child: Item(_homeController.videos['lessons'].reversed.toList()[i],true,_homeController,_mainController,i),
+                                onTap:(){
+
+                                }
+                            );
+                          }
+
                         }
                       },
                     ),
@@ -479,12 +526,12 @@ class StateCourse extends State<CourseScreen>{
 
               )
             ],),
-    onTap: (){
-    Get.bottomSheet(
-    SpeakerDialog(),
-    isScrollControlled: true
-    );
-    },)]
+            onTap: (){
+              Get.bottomSheet(
+                  SpeakerDialog(),
+                  isScrollControlled: true
+              );
+            },)]
       ),
     );
   }
@@ -612,14 +659,16 @@ class StateItem extends State<Item>{
              statusBarBrightness: Brightness.dark,
              systemNavigationBarColor: Colors.white
          ));
-
+         SystemChrome.setPreferredOrientations([
+           DeviceOrientation.portraitUp,
+         ]);
          setState(() {
          });
         }
         else{
           widget.mainController.widgets.removeAt(4);
           widget.mainController.widgets.add(RegisterPage());
-          Get.dialog(GetFullAccess());
+          Get.dialog(Author());
         }
       },
     );

@@ -368,7 +368,7 @@ class StateReg extends State<Reg>{
                 _mainController.getUservideo_cab.value=getUservideo_cab.data['lessons_cabinet'];
                 _mainController.getUservideo_time.value=getUservideo_time.data['lessons'];
                 _mainController.getUservideo_time_all.value=getUservideo_time_all.data['lessons'];
-                print(responces.data['clients'][0]['name']);
+                print(responces.data['clients']);
                 _mainController.auth.value=true;
                 _mainController.widgets.removeAt(4);
                 _mainController.widgets.add(ProfilePage());

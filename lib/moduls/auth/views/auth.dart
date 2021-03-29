@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:new_school_official/dialog/dialog_payment.dart';
 import 'package:new_school_official/moduls/auth/controllers/auth_controller.dart';
 import 'package:new_school_official/moduls/auth/views/register.dart';
 import 'package:new_school_official/moduls/main/controllers/main_controller.dart';
@@ -356,11 +357,15 @@ class StateAuth extends State<AuthPage>{
                 _mainController.getUservideo_cab.value=getUservideo_cab.data['lessons_cabinet'];
                 _mainController.getUservideo_time.value=getUservideo_time.data['lessons'];
                 _mainController.getUservideo_time_all.value=getUservideo_time_all.data['lessons'];
-                print(responces.data['clients'][0]['name']);
+                print(responces.data['clients']);
                 _mainController.auth.value=true;
                 _mainController.widgets.removeAt(4);
                 _mainController.widgets.add(ProfilePage());
-                _mainController.currentIndex.value=0;
+                if(int.tryParse(responces.data['clients'][0]['subscriber'])!=1){
+                  Get.dialog(Payment());
+                }else{
+                  _mainController.currentIndex.value=0;
+                }
                 setState(() {
 
                 });

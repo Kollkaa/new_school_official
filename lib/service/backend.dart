@@ -233,5 +233,20 @@ class Backend {
     return response;
   }
 
+   setPos(course_id,lesson_id,value,video_duration) {
+    var response;
+    response=dio.post("/api/api.php",data:dios.FormData.fromMap({
+      'type': 'client_view_lesson',
+      'apiKey': '2xdCQ9nH',
+      'client_id': storage.read('id'),
+      'lesson_id':lesson_id,
+      'course_id':course_id,
+      'video_time':value,
+      'video_duration':video_duration,
+
+    }));
+    return response;
+  }
+
 
 }
