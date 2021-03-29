@@ -17,6 +17,7 @@ import 'package:new_school_official/routes/app_pages.dart';
 import 'package:new_school_official/service/backend.dart';
 import 'package:new_school_official/storage/colors/main_color.dart';
 import 'package:new_school_official/storage/styles/text_style.dart';
+import 'package:dio/dio.dart' as dios;
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -30,7 +31,12 @@ class StateProfile extends State<ProfilePage>{
   HomeController _homeController =Get.find();
   MainController _mainController = Get.find();
   final GetStorage box = GetStorage();
+  @override
+  void initState() {
+    super.initState();
+    initStat();
 
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -131,7 +137,7 @@ class StateProfile extends State<ProfilePage>{
                       ],
                     ),
                   ),
-                  getStatistik(),
+                  getStatistikAuth(),
                   getType("Мой список",_homeController.news.length,
                       getitemOtherCard,_homeController.news
                   ),
@@ -154,7 +160,7 @@ class StateProfile extends State<ProfilePage>{
     );
   }
 
-  Widget getStatistik(){
+  Widget getStatistikAuth(){
     return Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -163,7 +169,7 @@ class StateProfile extends State<ProfilePage>{
           )
       ),
       height: 68,
-      margin: EdgeInsets.only(left: 20,right: 20,top:57,bottom: 40),
+      margin: EdgeInsets.only(top:_mainController.auth.value?27:57,left: 20,right: 20,bottom: 57),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -172,9 +178,9 @@ class StateProfile extends State<ProfilePage>{
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                  "9"
+                  "${_mainController.getStats['coursesStarted']}"
                   ,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w500,letterSpacing: 0.5,color: Colors.black)),
-              SizedBox(height: 4,),
+              SizedBox(height: 2,),
               Text(
                   "Курса в процессе"
                   ,style: TextStyle(fontSize: 10,fontWeight: FontWeight.w500,letterSpacing: 0.5,color: Color(0xff666666)))
@@ -186,9 +192,9 @@ class StateProfile extends State<ProfilePage>{
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                  "248"
+                  "${_mainController.getStats['lessonsHours']}"
                   ,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w500,letterSpacing: 0.5,color: Colors.black)),
-              SizedBox(height: 4,),
+              SizedBox(height: 2,),
               Text(
                   "Часов обучено"
                   ,style: TextStyle(fontSize: 10,fontWeight: FontWeight.w500,letterSpacing: 0.5,color: Color(0xff666666)))
@@ -200,9 +206,10 @@ class StateProfile extends State<ProfilePage>{
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                  "1"
+                  "${_mainController.getStats['coursesEnded']}"
                   ,style: TextStyle(fontSize: 20,fontWeight: FontWeight.w500,letterSpacing: 0.5,color: Colors.black)),
-              SizedBox(height: 4,),
+              SizedBox(height: 2,),
+
               Text(
                   "Курсов пройдено"
                   ,style: TextStyle(fontSize: 10,fontWeight: FontWeight.w500,letterSpacing: 0.5,color: Color(0xff666666)))
@@ -212,6 +219,7 @@ class StateProfile extends State<ProfilePage>{
       ),
     );
   }
+
 
   Widget getType(text,length,item,type){
     return Container(
@@ -296,6 +304,12 @@ class StateProfile extends State<ProfilePage>{
     );
   }
 
+  void initStat() async{
+    dios.Response getStats =await Backend().getStat(id:box.read('id'));
+    _mainController.getStats.value=getStats.data['user_stats'][0];
+    setState(() {
 
+    });
+  }
 
 }

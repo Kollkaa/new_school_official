@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:new_school_official/dialog/dialog_full_access.dart';
 import 'package:new_school_official/dialog/treyler.dart';
 import 'package:new_school_official/moduls/auth/views/register.dart';
 import 'package:new_school_official/moduls/course/controllers/course_controller.dart';
@@ -171,23 +172,36 @@ class StateCourse extends State<CourseScreen>{
                                       ),
                                       child: Center(
                                         child: Text(
-                                            'Начать учиться',style: TextStyle(fontSize: 14,letterSpacing: 0.5,fontFamily: "Raleway",fontWeight: FontWeight.w400,color: Colors.white)
+                                            '${_mainController.auth.value?"Продолжить":"Начать учиться"}',style: TextStyle(fontSize: 14,letterSpacing: 0.5,fontFamily: "Raleway",fontWeight: FontWeight.w400,color: Colors.white)
                                         ),
                                       ),
                                     ),
-                                    onTap: (){
-                                      _homeController.videos={}.obs;
-                                      if(!_mainController.auth.value){
+                                    onTap: ()async{
+                                      if(_mainController.auth.value){
+                                        // if(_mainController.getUservideo_time.indexWhere((element) => element['course_id']==_courseController.id)>=0){
+                                        //   print(_homeController.videos['lessons'].where((element)=> _mainController.getUservideo_time.contains(element['id'])).length);
+                                        //   // await Get.dialog(VideoScreen(widget.lesson,index:widget.index));
+                                        //   SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
+                                        //   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+                                        //       statusBarColor: Colors.white,
+                                        //       statusBarIconBrightness: Brightness.dark,
+                                        //       statusBarBrightness: Brightness.dark,
+                                        //       systemNavigationBarColor: Colors.white
+                                        //   ));
+                                        //
+                                        //   setState(() {
+                                        //   });
+                                        // }
+                                      }else{
                                         // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
                                         //     statusBarColor: Colors.white,
                                         //     statusBarIconBrightness: Brightness.dark,
                                         //     statusBarBrightness: Brightness.dark,
                                         //     systemNavigationBarColor: Colors.white
                                         // ));
-                                        Get.back();
                                         _mainController.widgets.removeAt(4);
                                         _mainController.widgets.add(RegisterPage());
-                                        _mainController.currentIndex.value=4;
+                                        Get.dialog(GetFullAccess());
                                       }
                                     },
                                   ),
@@ -267,7 +281,9 @@ class StateCourse extends State<CourseScreen>{
                                 ]
                             ),
                             onTap: (){
-
+                              _mainController.widgets.removeAt(4);
+                              _mainController.widgets.add(RegisterPage());
+                              Get.dialog(GetFullAccess());
                             },
                           );
                         } else{
@@ -601,11 +617,9 @@ class StateItem extends State<Item>{
          });
         }
         else{
-        print("eqw");
-        Get.back();
-        widget.mainController.widgets.removeAt(4);
-        widget.mainController.widgets.add(RegisterPage());
-        widget.mainController.currentIndex.value=4;
+          widget.mainController.widgets.removeAt(4);
+          widget.mainController.widgets.add(RegisterPage());
+          Get.dialog(GetFullAccess());
         }
       },
     );

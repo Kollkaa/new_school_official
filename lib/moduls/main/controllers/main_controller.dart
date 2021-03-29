@@ -80,13 +80,13 @@ class MainController extends GetxController {
     dios.Response getUservideo_time =await Backend().getUservideo_time(id:id);
     dios.Response getUservideo_time_all =await Backend().getUservideo_time_all(id:id);
     print(getUservideo_time.data['lessons']);
-    dios.Response getStats =await Backend().getStat(id:id);
-    this.getStats.value=getStats.data['user_stats'][0];
-
+   // dios.Response getStats =await Backend().getStat(id:id);
+    //this.getStats.value=getStats.data['user_stats'][0];
+    print(this.getUservideo_time);
     this.getUservideo_cab.value=getUservideo_cab.data['lessons_cabinet'];
     this.getUservideo_time.value=getUservideo_time.data['lessons']!=null?getUservideo_time.data['lessons']:[];
+
     this.getUservideo_time_all.value=getUservideo_time_all.data['lessons'];
-    print(this.getUservideo_time.length);
   }
   @override
   void onReady() {

@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:ui';
 import 'package:get_storage/get_storage.dart';
+import 'package:new_school_official/dialog/atuhor.dart';
+import 'package:new_school_official/dialog/dialog_full_access.dart';
 import 'package:new_school_official/moduls/video/views/video_view.dart';
 import 'package:flutter/services.dart';
 import 'package:dio/dio.dart' as dios;
@@ -130,7 +132,8 @@ class Statehome extends State<HomePage>{
                         )
                     ),
                     Obx(
-                          ()=>_homeController.banner.value?Container(
+                          ()=>_homeController.banner.value
+                              ? Container(
                         padding: EdgeInsets.only(top: 20),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,6 +153,7 @@ class Statehome extends State<HomePage>{
                                 scrollDirection: Axis.horizontal,
                                 itemCount: _mainController.getUservideo_time.length,
                                 itemBuilder: (c,i){
+                                  print(_mainController.getUservideo_time[i]);
                                   return ItemCont(
                                       _mainController.getUservideo_time[i]['lesson_id']
                                       ,_mainController.getUservideo_time[i]['course_id']
@@ -217,12 +221,9 @@ class Statehome extends State<HomePage>{
                                             ),
                                           ),
                                           onTap: ()async{
-
                                             _mainController.widgets.removeAt(4);
                                             _mainController.widgets.add(RegisterPage());
-                                            _mainController.currentIndex.value=4;
-
-
+                                            Get.dialog(Author());
                                           },
                                         ),
                                         opacity: 0.7,
@@ -242,7 +243,8 @@ class Statehome extends State<HomePage>{
                             ),
                           ],
                         ),
-                      ):Container(),
+                      )
+                              :Container(),
                     ),
 
                     Obx(

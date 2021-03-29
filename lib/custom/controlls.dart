@@ -337,19 +337,16 @@ class _CupertinoControlsState extends State<CupertinoControls> {
     final position =
     _latestValue != null ? _latestValue.position : Duration(seconds: 0);
 
-    return Padding(
-      padding: EdgeInsets.only(right: 12.0),
-      child: FlatButton(
-        padding: EdgeInsets.all(0),
-        child:Text(
-          formatDuration(position),
-          style: TextStyle(
-            color: iconColor,
-            fontSize: 12.0,
-          ),
+    return FlatButton(
+      padding: EdgeInsets.all(0),
+      child:Text(
+        formatDuration(position),
+        style: TextStyle(
+          color: iconColor,
+          fontSize: 12.0,
         ),
-        onPressed: (){},
-      )
+      ),
+      onPressed: (){},
     );
   }
 
@@ -358,15 +355,12 @@ class _CupertinoControlsState extends State<CupertinoControls> {
         ? _latestValue.duration - _latestValue.position
         : Duration(seconds: 0);
 
-    return Padding(
-      padding: EdgeInsets.only(right: 12.0),
-      child: FlatButton(
+    return FlatButton(
       padding: EdgeInsets.all(0),
-    child:Text(
+      child:Text(
         '-${formatDuration(position)}',
         style: TextStyle(color: iconColor, fontSize: 12.0),
-      ),)
-    );
+      ),);
   }
 
   GestureDetector _buildSkipBack(Color iconColor, double barHeight) {
@@ -491,48 +485,45 @@ class _CupertinoControlsState extends State<CupertinoControls> {
 
   Widget _buildProgressBar() {
     return Expanded(
-      child: Container(
-        width: 100,
-        child: Padding(
-          padding: EdgeInsets.only(right: 12.0),
-          child: CupertinoVideoProgressBar(
-            controller,
-            onDragStart: () {
-              _hideTimer?.cancel();
-            },
-            onDragEnd: () {
-              _startHideTimer();
-            },
-            colors: chewieController.cupertinoProgressColors ??
-                ChewieProgressColors(
-                  playedColor: Color.fromARGB(
-                    120,
-                    255,
-                    255,
-                    255,
-                  ),
-                  handleColor: Color.fromARGB(
-                    255,
-                    255,
-                    255,
-                    255,
-                  ),
-                  bufferedColor: Color.fromARGB(
-                    60,
-                    255,
-                    255,
-                    255,
-                  ),
-                  backgroundColor: Color.fromARGB(
-                    20,
-                    255,
-                    255,
-                    255,
-                  ),
+      child: Padding(
+        padding: EdgeInsets.only(right: 12.0),
+        child: CupertinoVideoProgressBar(
+          controller,
+          onDragStart: () {
+            _hideTimer?.cancel();
+          },
+          onDragEnd: () {
+            _startHideTimer();
+          },
+          colors: chewieController.cupertinoProgressColors ??
+              ChewieProgressColors(
+                playedColor: Color.fromARGB(
+                  120,
+                  255,
+                  255,
+                  255,
                 ),
-          ),
+                handleColor: Color.fromARGB(
+                  255,
+                  255,
+                  255,
+                  255,
+                ),
+                bufferedColor: Color.fromARGB(
+                  60,
+                  255,
+                  255,
+                  255,
+                ),
+                backgroundColor: Color.fromARGB(
+                  20,
+                  255,
+                  255,
+                  255,
+                ),
+              ),
         ),
-      )
+      ),
     );
   }
 

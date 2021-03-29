@@ -31,7 +31,7 @@ dependencies:
   charts_flutter: 0.10.0
   http : any
   image_picker: any
-
+  webview_flutter: any
 
 dev_dependencies:
   flutter_test:
@@ -44,6 +44,9 @@ flutter:
     - family: Raleway
       fonts:
         - asset: assets/fonts/Montserrat-Regular.ttf
+    - family: Bold
+      fonts:
+         - asset: assets/fonts/Montserrat-ExtraBold.ttf
 
 
   assets:

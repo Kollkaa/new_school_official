@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:new_school_official/dialog/atuhor.dart';
 import 'package:new_school_official/dialog/treyler.dart';
 import 'package:new_school_official/moduls/auth/views/register.dart';
 import 'package:new_school_official/moduls/home/controllers/home_controller.dart';
@@ -234,10 +235,9 @@ class StateStaticScreen extends State<StaticScreen>{
                               ),
                             ),
                             onTap: ()async{
-
                               _mainController.widgets.removeAt(4);
                               _mainController.widgets.add(RegisterPage());
-                              _mainController.currentIndex.value=4;
+                              Get.dialog(Author());
                             },
                           ),
                           opacity: 0.7,

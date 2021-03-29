@@ -44,7 +44,6 @@ class _VideoProgressBarState extends State<CupertinoVideoProgressBar> {
 
   @override
   void deactivate() {
-    controller.removeListener(listener);
     super.deactivate();
   }
 
