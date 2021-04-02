@@ -163,7 +163,6 @@ class Backend {
 
   }
 
-
   Future<dios.Response> getCourse(id) {
     var response;
     response= dio.post("/api/api.php",data:dios.FormData.fromMap({'type': 'course',
@@ -187,6 +186,34 @@ class Backend {
     var response;
     response= dio.post("/api/api.php",data:dios.FormData.fromMap({'type': 'categories',
       'apiKey': '2xdCQ9nH'
+    }));
+    return response;
+
+  }
+
+  Future<dios.Response> getStatCourse(course_id) {
+    var response;
+    response= dio.post("/api/api.php",data:dios.FormData.fromMap({'type': 'course_stats',
+      'apiKey': '2xdCQ9nH',
+      'course_id':course_id
+    }));
+    return response;
+
+  }
+  Future<dios.Response> createPayment(email) {
+    var response;
+    response= dio.post("/api/api.php",data:dios.FormData.fromMap({'type': 'create_payment',
+      'apiKey': '2xdCQ9nH',
+      'client_email':email
+    }));
+    return response;
+
+  }
+  Future<dios.Response> getStatusPayment(email) {
+    var response;
+    response= dio.post("/api/api.php",data:dios.FormData.fromMap({'type': 'payment_status',
+      'apiKey': '2xdCQ9nH',
+      'client_email':email
     }));
     return response;
 

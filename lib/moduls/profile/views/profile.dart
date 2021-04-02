@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:new_school_official/moduls/auth/views/auth.dart';
 import 'package:new_school_official/moduls/course/views/course_view.dart';
 import 'package:new_school_official/moduls/home/controllers/home_controller.dart';
 import 'package:new_school_official/moduls/main/controllers/main_controller.dart';
@@ -65,18 +66,31 @@ class StateProfile extends State<ProfilePage>{
                          Container(
                            margin: EdgeInsets.only(top: 27,right: 0),
 
-                           child:  FlatButton(
-                             padding: EdgeInsets.all(1),
-                             minWidth: 25,
-                             child: Container(
-                                 height: 25,
-                                 width: 25,
-                                 child: SvgPicture.asset("assets/icons/logout 1.svg")
-                             ),
-                             onPressed: (){
-                               _profileController.getCode();
-                             },
-                           ),
+                           child: Row(
+                             children: [
+                               GestureDetector(
+                                 child: SvgPicture.asset("assets/icons/settings.svg"),
+                                 onTap: ()async {
+                                   if(!_mainController.auth.value){
+                                     _mainController.widgets.removeAt(4);
+                                     _mainController.widgets.add(AuthPage());
+                                     _mainController.currentIndex.value=4;
+                                   }else{
+                                     await Get.dialog(
+                                         SettingPage()
+                                     );
+                                     var responces =await Backend().getUser(id:box.read("id"));
+                                     print(responces);
+                                     _mainController.profile.value=responces.data['clients'][0];
+                                     setState(() {
+                                     });
+                                   }
+                                 },
+                               ),
+                               SizedBox(width: 15,),
+                             ],
+                           )
+
                          )
                         ],
                       )
@@ -117,7 +131,7 @@ class StateProfile extends State<ProfilePage>{
                              padding: EdgeInsets.all(1),
                              child:  Container(
                                child: Text(
-                                 "Настройки",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w400,color: Color(0xff6a6a6a),fontFamily: 'Raleway'),
+                                 "${_mainController.profile['email']}",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w400,color: Color(0xff6a6a6a),fontFamily: 'Raleway'),
                                ),
                              ),
                              onPressed: ()async{

@@ -353,25 +353,8 @@ class StateReg extends State<Reg>{
                 print(responce.data);
                 await box.write("auth", true);
                 _mainController.profile={}.obs;
-                print(responce.data);
-                print(responce.data[0]);
-                print(responce.data[0]['id']);
-                await box.write("id", responce.data[0]['id']);
-                dios.Response responces =await Backend().getUser(id:responce.data[0]['id']);
-
-                dios.Response getUservideo_cab =await Backend().getUservideo_cab(id:responce.data[0]['id']);
-                dios.Response getUservideo_time =await Backend().getUservideo_time(id:responce.data[0]['id']);
-                dios.Response getUservideo_time_all =await Backend().getUservideo_time_all(id:responce.data[0]['id']);
-                dios.Response getStats =await Backend().getStat(id:responce.data[0]['id']);
-                _mainController.profile.value=responces.data['clients'][0];
-                _mainController.getStats.value=getStats.data['user_stats'][0];
-                _mainController.getUservideo_cab.value=getUservideo_cab.data['lessons_cabinet'];
-                _mainController.getUservideo_time.value=getUservideo_time.data['lessons'];
-                _mainController.getUservideo_time_all.value=getUservideo_time_all.data['lessons'];
-                print(responces.data['clients']);
-                _mainController.auth.value=true;
-                _mainController.widgets.removeAt(4);
-                _mainController.widgets.add(ProfilePage());
+                _mainController.email.value=_authController.phoneRegEditingController.text;
+                _mainController.password.value=_authController.passRegEditingController.text;
                 Get.dialog(Payment());
 
               }

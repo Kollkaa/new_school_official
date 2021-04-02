@@ -1,12 +1,17 @@
 import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
+import 'package:dio/dio.dart' as dios;
 
 
 import 'package:chewie/chewie.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:new_school_official/moduls/main/controllers/main_controller.dart';
+import 'package:new_school_official/service/backend.dart';
 import 'package:open_iconic_flutter/open_iconic_flutter.dart';
 import 'package:video_player/video_player.dart';
 
@@ -14,13 +19,20 @@ import 'cupProg.dart';
 import 'form.dart';
 
 class CupertinoControls extends StatefulWidget {
+
+
   CupertinoControls({
     this.chewieController,
     this.method,
     this.image,
+    this.kurs_id,
+    this.id,
     @required this.backgroundColor,
     @required this.iconColor,
   });
+  var kurs_id;
+
+  var id;
   var image;
   Function method;
   var chewieController;
@@ -44,6 +56,8 @@ class _CupertinoControlsState extends State<CupertinoControls> {
 
   VideoPlayerController controller;
   ChewieController chewieController;
+  MainController _mainController = Get.find();
+  final GetStorage box = GetStorage();
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +112,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
                         valueListenable:  widget.chewieController.videoPlayerController,
                         builder: (context, var value, child) {
                           if(value.position.inSeconds>= widget.chewieController.videoPlayerController.value.duration.inSeconds-15){
-                            return  FlatButton(
+                           if(widget.image!=null) return  FlatButton(
                                 padding: EdgeInsets.all(0),
                                 child: Container(
                                   child: Column(
@@ -122,6 +136,9 @@ class _CupertinoControlsState extends State<CupertinoControls> {
                                 ),
                                 onPressed: widget.method
                             );
+                           else
+                             return Container();
+
                           }else{
                             return Container();
                           }
@@ -328,7 +345,39 @@ class _CupertinoControlsState extends State<CupertinoControls> {
       ) {
     return GestureDetector(
       onTap: () {
+
         Get.back();
+        SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
+        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+            statusBarColor: Colors.white,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.dark,
+            systemNavigationBarColor: Colors.white
+        ));
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.portraitUp,
+        ]);
+        StreamController<int> controller = StreamController<int>();
+        Stream stream = controller.stream;
+        stream.listen((value) async{
+          dios.Response getUservideo_time_all =await Backend().getUservideo_time_all(id:box.read('id'));
+          _mainController.getUservideo_time_all.value=getUservideo_time_all.data['lessons'];
+          var res=await Backend().setPos(
+              widget.kurs_id,
+              widget.id,
+              value,
+              chewieController.videoPlayerController.value.duration.inSeconds);
+          print(res.data);
+          if(box.read('id')!=null){
+            _mainController.initProfile(box.read("id"));
+          }
+        });
+        controller.add(1);
+        setState(() {
+        });
+
+        setState(() {
+        });
       },
       child: AnimatedOpacity(
         opacity: _hideStuff ? 0.0 : 1.0,
@@ -591,6 +640,17 @@ class _CupertinoControlsState extends State<CupertinoControls> {
         _hideStuff = false;
         _hideTimer?.cancel();
         controller.pause();
+        StreamController<int> controllers = StreamController<int>();
+        Stream stream = controllers.stream;
+        stream.listen((value) async{
+          var res=await Backend().setPos(
+              widget.kurs_id,
+              widget.id,
+              value,
+              chewieController.videoPlayerController.value.duration.inSeconds);
+          print(res.data);
+        });
+        controllers.add(2);
       } else {
         _cancelAndRestartTimer();
 

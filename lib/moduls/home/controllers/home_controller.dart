@@ -43,6 +43,8 @@ class HomeController extends GetxController {
 
   var videoPos=new Duration().obs;
 
+  var statCourse={};
+
 
   @override
   void onInit() {

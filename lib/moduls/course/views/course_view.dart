@@ -30,6 +30,9 @@ class StateCourse extends State<CourseScreen>{
   CourseController _courseController =Get.put(CourseController());
   HomeController _homeController=Get.find();
   MainController _mainController = Get.find();
+
+  var  lessonLast;
+  var indexLast;
   @override
   void initState() {
     super.initState();
@@ -40,6 +43,8 @@ class StateCourse extends State<CourseScreen>{
     print(response.headers);
     if(response.statusCode==200)
     {
+      var statCourse =await Backend().getStatCourse(_courseController.id);
+      _homeController.statCourse=statCourse.data[0];
       print(response.data);
       _homeController.course=response.data;
       response=await Backend().getVideos(_courseController.id);
@@ -57,7 +62,50 @@ class StateCourse extends State<CourseScreen>{
     //     statusBarBrightness: Brightness.dark,
     //   systemNavigationBarColor: Colors.white
     // ));
+   if(_homeController.videos['lessons']!=null){
+     for(int i=0;i<_homeController.videos['lessons'].length;i++){
+       var indexInLookLesson=_mainController.getUservideo_time_all.indexWhere((element) => element['lesson_id']==_homeController.videos['lessons'].reversed.toList()[i]['id']);
+       if(i==0){
+         lessonLast=_homeController.videos['lessons'].reversed.toList()[i];
+         indexLast=i;
 
+       }else{
+         if(_mainController.auth.value){
+           if(indexInLookLesson>0){
+             print("indexInLookLesson ${indexInLookLesson}");
+             var indexInLookLessonPrevius=_mainController.getUservideo_time_all.indexWhere((element) => element['lesson_id']==_homeController.videos['lessons'].reversed.toList()[i-1]['id']);
+             print("indexInLookLessonPrevius ${indexInLookLessonPrevius}");
+             if(_mainController.getUservideo_time_all[indexInLookLesson]['done']==0) {
+             }
+             else{
+               if(indexInLookLessonPrevius<0){
+               }
+               else{
+                 lessonLast=_homeController.videos['lessons'].reversed.toList()[i];
+                 indexLast=i;
+               }
+             }
+           }else{
+           }
+         }else{
+         }
+       }
+     }
+   }
+
+  String getTitle(){
+     if(_mainController.auth.value){
+       if(_mainController.getUservideo_time.indexWhere((element) => element['lesson_id']==lessonLast['id'])>0){
+         return "Продолжить";
+
+       }else{
+         return "Начать учиться";
+
+       }
+     }else{
+       return "Начать учиться";
+     }
+   }
     return MaterialApp(
       home: Scaffold(
           resizeToAvoidBottomPadding: true,
@@ -171,33 +219,31 @@ class StateCourse extends State<CourseScreen>{
                                       ),
                                       child: Center(
                                         child: Text(
-                                            '${_mainController.auth.value?"Продолжить":"Начать учиться"}',style: TextStyle(fontSize: 14,letterSpacing: 0.5,fontFamily: "Raleway",fontWeight: FontWeight.w400,color: Colors.white)
+                                            '${getTitle()
+                                            }',style: TextStyle(fontSize: 14,letterSpacing: 0.5,fontFamily: "Raleway",fontWeight: FontWeight.w400,color: Colors.white)
                                         ),
                                       ),
                                     ),
                                     onTap: ()async{
                                       if(_mainController.auth.value){
-                                        if(_mainController.getUservideo_time.indexWhere((element) => element['course_id']==_courseController.id)>=0){
-                                          var les=_homeController.videos['lessons'].where((element)=> (_mainController.getUservideo_time.where((ele)=>ele['lesson_id']==element['id']).length>0)).toList()[0];
-                                          print(_homeController.videos['lessons'].where((element)=> (_mainController.getUservideo_time.where((ele)=>ele['lesson_id']==element['id']).length>0)).length);
-                                          var index=_homeController.videos['lessons'].reversed.toList().indexWhere((el)=> les==el);
-                                         print(_homeController.videos['lessons'].length-1-index);
-                                          await Get.dialog(VideoScreen(les,index:index));
-                                          SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
-                                          SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-                                              statusBarColor: Colors.white,
-                                              statusBarIconBrightness: Brightness.dark,
-                                              statusBarBrightness: Brightness.dark,
-                                              systemNavigationBarColor: Colors.white
-                                          ));
-                                          SystemChrome.setPreferredOrientations([
+                                       if(_mainController.getUservideo_time.indexWhere((element) => element['lesson_id']==lessonLast['id'])>0){
+                                         await Get.dialog(VideoScreen(lessonLast,index:indexLast,duration: int.tryParse(_mainController.getUservideo_time[_mainController.getUservideo_time.indexWhere((element) => element['lesson_id']==lessonLast['id'])]['time']),));
+                                         SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
+                                         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+                                             statusBarColor: Colors.white,
+                                             statusBarIconBrightness: Brightness.dark,
+                                             statusBarBrightness: Brightness.dark,
+                                             systemNavigationBarColor: Colors.white
+                                         ));
+                                         SystemChrome.setPreferredOrientations([
+                                           DeviceOrientation.portraitUp,
+                                         ]);
+                                         setState(() {
+                                         });
+                                       }else{
+                                         await Get.dialog(VideoScreen(lessonLast,index:indexLast));
 
-                                            DeviceOrientation.portraitUp,
-
-                                          ]);
-                                          setState(() {
-                                          });
-                                        }
+                                       }
                                       }else{
                                         // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
                                         //     statusBarColor: Colors.white,
@@ -270,81 +316,107 @@ class StateCourse extends State<CourseScreen>{
                       scrollDirection: Axis.horizontal,
                       itemCount: _homeController.videos['lessons'].length,
                       itemBuilder: (c,i){
-                        if(i>0&&_mainController.auth.value==false) {
-                          return GestureDetector(
-                            key: ObjectKey(
-                                "${_homeController.videos['lessons'].reversed.toList()[i]['video_image']}"
-                            ),
-                            child: Stack(
+                        var indexInLookLesson=_mainController.getUservideo_time_all.indexWhere((element) => element['lesson_id']==_homeController.videos['lessons'].reversed.toList()[i]['id']);
+                        if(i==0){
+                          // lessonLast=_homeController.videos['lessons'].reversed.toList()[i];
+                          // indexLast=i;
+// TODO: Specify your own
+                        if(i!=indexLast)
+                          return
+                            Stack(
                                 children:[
-                                  Item(_homeController.videos['lessons'].reversed.toList()[i],false,_homeController,_mainController,i),
+                                  Item(_homeController.videos['lessons'].reversed.toList()[i],true,_homeController,_mainController,i,false,look:true),
                                   Positioned(
                                       bottom: 80,
                                       right: 24,
-                                      child: Image.asset("assets/images/padlock 1.png",width: 13,height: 16,)
+                                      child: SvgPicture.asset("assets/icons/Vector (8).svg",width: 13,height: 16,)
                                   ),
-
                                 ]
-                            ),
-                            onTap: (){
-                              _mainController.widgets.removeAt(4);
-                              _mainController.widgets.add(RegisterPage());
-                              Get.dialog(Author());
-                            },
-                          );
-                        } else{
-                          var index_done=_mainController.getUservideo_time_all.indexWhere((element) => element['lesson_id']==_homeController.videos['lessons'][i]['id']);
-                          if(index_done<0){
-                           if(i!=0){
-                             var last=_mainController.getUservideo_time_all.indexWhere((element) => element['lesson_id']==_homeController.videos['lessons'][i-1]['id']);
-                             if(int.tryParse(_mainController.getUservideo_time_all[last]['done'])==0)
-                             {
-                               return GestureDetector(
-                                 key: ObjectKey(
-                                     "${_homeController.videos['lessons'].reversed.toList()[i]['video_image']}"
-                                 ),
-                                 child: Stack(
-                                     children:[
-                                       Item(_homeController.videos['lessons'].reversed.toList()[i],false,_homeController,_mainController,i),
-                                       Positioned(
-                                           bottom: 80,
-                                           right: 24,
-                                           child: Image.asset("assets/images/padlock 1.png",width: 13,height: 16,)
-                                       ),
-
-                                     ]
-                                 ),
-                                 onTap: (){
-                                   _mainController.widgets.removeAt(4);
-                                   _mainController.widgets.add(RegisterPage());
-                                   Get.dialog(Author());
-                                 },
-                               );
-                             }else{
-                               return GestureDetector(
-                                   key: ObjectKey(
-                                       "${_homeController.videos['lessons'].reversed.toList()[i]['video_image']}"
-                                   ),
-                                   child: Item(_homeController.videos['lessons'].reversed.toList()[i],true,_homeController,_mainController,i),
-                                   onTap:(){
-                                   }
-                               );
-                             }
-                           }
-                          }else{
-                            return GestureDetector(
-                                key: ObjectKey(
-                                    "${_homeController.videos['lessons'].reversed.toList()[i]['video_image']}"
-                                ),
-                                child: Item(_homeController.videos['lessons'].reversed.toList()[i],true,_homeController,_mainController,i),
-                                onTap:(){
-
-                                }
                             );
-                          }
+                        else
+                          return  Item(_homeController.videos['lessons'].reversed.toList()[i],true,_homeController,_mainController,i,false);
 
                         }
-                      },
+                       if(_mainController.auth.value){
+                         if(indexInLookLesson>0){
+                           print("indexInLookLesson ${indexInLookLesson}");
+                           var indexInLookLessonPrevius=_mainController.getUservideo_time_all.indexWhere((element) => element['lesson_id']==_homeController.videos['lessons'].reversed.toList()[i-1]['id']);
+                           print("indexInLookLessonPrevius ${indexInLookLessonPrevius}");
+                           if(_mainController.getUservideo_time_all[indexInLookLesson]['done']==0) {
+                             return Stack(
+                                 children:[
+                                   Item(_homeController.videos['lessons'].reversed.toList()[i],false,_homeController,_mainController,i,true ,lessonLast:lessonLast,indexLast:indexLast),
+                                   Positioned(
+                                       bottom: 80,
+                                       right: 24,
+                                       child: Image.asset("assets/images/padlock 1.png",width: 13,height: 16,)
+                                   ),
+
+                                 ]
+                             );
+                           }
+                           else{
+                             if(indexInLookLessonPrevius<0){
+                               return Stack(
+                                   children:[
+                                     Item(_homeController.videos['lessons'].reversed.toList()[i],false,_homeController,_mainController,i, true,lessonLast:lessonLast,indexLast:indexLast),
+                                     Positioned(
+                                         bottom: 80,
+                                         right: 24,
+                                         child: Image.asset("assets/images/padlock 1.png",width: 13,height: 16,)
+                                     ),
+
+                                   ]
+                               );
+                             }
+                             else{
+                               // lessonLast=_homeController.videos['lessons'].reversed.toList()[i];
+                               // indexLast=i;
+ // TODO: Specify your own
+                               if(i!=indexLast)
+                                 return
+                                   Stack(
+                                       children:[
+                                         Item(_homeController.videos['lessons'].reversed.toList()[i],true,_homeController,_mainController,i,false,look: true,),
+                                         Positioned(
+                                             bottom: 80,
+                                             right: 24,
+                                             child: SvgPicture.asset("assets/icons/Vector (8).svg",width: 13,height: 16,)
+                                         ),
+                                       ]
+                                   );
+                               else
+                                 return  Item(_homeController.videos['lessons'].reversed.toList()[i],true,_homeController,_mainController,i,false);
+                             }
+                           }
+                         }else{
+                           return Stack(
+                               children:[
+                                 Item(_homeController.videos['lessons'].reversed.toList()[i],false,_homeController,_mainController,i, true,lessonLast:lessonLast,indexLast:indexLast),
+                                 Positioned(
+                                     bottom: 80,
+                                     right: 24,
+                                     child: Image.asset("assets/images/padlock 1.png",width: 13,height: 16,)
+                                 ),
+
+                               ]
+                           );
+                         }
+                       }else{
+                         return Stack(
+                             children:[
+                               Item(_homeController.videos['lessons'].reversed.toList()[i],false,_homeController,_mainController,i,false),
+                               Positioned(
+                                   bottom: 80,
+                                   right: 24,
+                                   child: Image.asset("assets/images/padlock 1.png",width: 13,height: 16,)
+                               ),
+
+                             ]
+                         );
+                       }
+
+                        },
                     ),
                   ),
                   getMeterial(_homeController,_mainController),
@@ -434,7 +506,7 @@ class StateCourse extends State<CourseScreen>{
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                  "9"
+                  "${_homeController.statCourse['lessons_count']}"
                   ,style: TextStyle(fontSize: 23,fontWeight: FontWeight.w600,letterSpacing: 0.5,color: Colors.black,fontFamily: "Raleway")),
               SizedBox(height: 2,),
               Text(
@@ -448,7 +520,7 @@ class StateCourse extends State<CourseScreen>{
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                  "248"
+                  "${_homeController.statCourse['minutes_count']}"
                   ,style: TextStyle(fontSize: 23,fontWeight: FontWeight.w600,letterSpacing: 0.5,color: Colors.black,fontFamily: "Raleway")),
               SizedBox(height: 2,),
               Text(
@@ -462,7 +534,7 @@ class StateCourse extends State<CourseScreen>{
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                  "1"
+                  "${_homeController.statCourse['tests_count']}"
                   ,style: TextStyle(fontSize: 23,fontWeight: FontWeight.w600,letterSpacing: 0.5,color: Colors.black,fontFamily: "Raleway")),
               SizedBox(height: 2,),
               Text(
@@ -542,10 +614,12 @@ class Item extends StatefulWidget{
   var lock;
   var index;
   var mainController;
-
   var lesson;
-
-  Item(this.lesson, this.lock,this.homeController,this.mainController,this.index);
+  bool donSee;
+  var lessonLast;
+  var  indexLast;
+  bool look;
+  Item(this.lesson, this.lock,this.homeController,this.mainController,this.index,this.donSee,{ this.lessonLast,this.indexLast, this.look});
 
   @override
   State<StatefulWidget> createState() {
@@ -631,16 +705,19 @@ class StateItem extends State<Item>{
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Container(
-                    width:190,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        AutoSizeText("${widget.lesson['video_name']}",minFontSize: 11 , maxLines: 2,style: TextStyle(fontSize: 12,fontFamily: "Raleway",letterSpacing: 0.5,fontWeight: FontWeight.w600,color: Colors.black),),
-                        SizedBox(height: 2,),
-                        AutoSizeText("${widget.lesson['video_description']}",minFontSize: 8,maxLines:2,style: TextStyle(fontSize: 10,letterSpacing: 0.5,fontWeight: FontWeight.w300
-                            ,color: Colors.black,fontFamily: "Raleway",fontStyle: FontStyle.normal),),
-                      ],
+                  Opacity(
+                    opacity:!widget.lock?0.6: widget.look!=null?0.6:1,
+                    child :Container(
+                      width:190,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AutoSizeText("${widget.lesson['video_name']}",minFontSize: 11 , maxLines: 2,style: TextStyle(fontSize: 12,fontFamily: "Raleway",letterSpacing: 0.5,fontWeight: FontWeight.w600,color: Colors.black),),
+                          SizedBox(height: 2,),
+                          AutoSizeText("${widget.lesson['video_description']}",minFontSize: 8,maxLines:2,style: TextStyle(fontSize: 10,letterSpacing: 0.5,fontWeight: FontWeight.w300
+                              ,color: Colors.black,fontFamily: "Raleway",fontStyle: FontStyle.normal),),
+                        ],
+                      ),
                     ),
                   ),
                   widget.mainController.auth.value? widget.lock?SvgPicture.asset("assets/icons/Layer 16.svg",color: Colors.black,width: 14,height: 14,):Opacity(opacity: 1,child: SvgPicture.asset("assets/icons/Layer 16.svg",color: Colors.black,width: 14,height: 14,),):Opacity(opacity: 1,child: SvgPicture.asset("assets/icons/Layer 16.svg",color: Colors.black,width: 14,height: 14,),)
@@ -650,25 +727,22 @@ class StateItem extends State<Item>{
           ],
         ),
       onTap: ()async{
-        if( widget.lock){
-         await Get.dialog(VideoScreen(widget.lesson,index:widget.index));
-         SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
-         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-             statusBarColor: Colors.white,
-             statusBarIconBrightness: Brightness.dark,
-             statusBarBrightness: Brightness.dark,
-             systemNavigationBarColor: Colors.white
-         ));
-         SystemChrome.setPreferredOrientations([
-           DeviceOrientation.portraitUp,
-         ]);
-         setState(() {
-         });
-        }
-        else{
-          widget.mainController.widgets.removeAt(4);
-          widget.mainController.widgets.add(RegisterPage());
-          Get.dialog(Author());
+        if(widget.donSee){
+          print(widget.lessonLast);
+          // await Get.dialog(VideoScreen(widget.lessonLast,index:widget.indexLast));
+          Get.snackbar("", "",snackPosition:SnackPosition.BOTTOM,colorText: Colors.redAccent,messageText: Center(
+            child: Text("Нужно посмотреть предыдущий урок",style: TextStyle(fontSize: 12,fontFamily: "Raleway",letterSpacing: 0.5,fontWeight: FontWeight.w600,color: Colors.redAccent),),
+          ));
+        }else{
+          if(widget.lock){
+            await Get.dialog(VideoScreen(widget.lesson,index:widget.index));
+
+          }
+          else{
+            widget.mainController.widgets.removeAt(4);
+            widget.mainController.widgets.add(RegisterPage());
+            Get.dialog(Author());
+          }
         }
       },
     );

@@ -51,6 +51,10 @@ class MainController extends GetxController {
 
   var emailEditEditingController=new TextEditingController();
 
+  var password="".obs;
+
+  var email="".obs;
+
   @override
   void onInit() async {
     super.onInit();
@@ -72,6 +76,7 @@ class MainController extends GetxController {
   }
 
   initProfile(id)async {
+    print("startGetDataUser");
     dios.Response responces =await Backend().getUser(id:id);
     profile.value=responces.data['clients'][0];
     nameEditingController = new TextEditingController(text: profile['name']);
@@ -82,11 +87,11 @@ class MainController extends GetxController {
     print(getUservideo_time.data['lessons']);
    // dios.Response getStats =await Backend().getStat(id:id);
     //this.getStats.value=getStats.data['user_stats'][0];
-    print(this.getUservideo_time);
     this.getUservideo_cab.value=getUservideo_cab.data['lessons_cabinet'];
     this.getUservideo_time.value=getUservideo_time.data['lessons']!=null?getUservideo_time.data['lessons']:[];
-
     this.getUservideo_time_all.value=getUservideo_time_all.data['lessons'];
+    print("finishGetDataUser");
+    Get.appUpdate();
   }
   @override
   void onReady() {

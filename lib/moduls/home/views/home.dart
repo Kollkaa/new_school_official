@@ -21,6 +21,7 @@ import 'package:new_school_official/routes/app_pages.dart';
 import 'package:new_school_official/service/backend.dart';
 import 'package:new_school_official/storage/colors/main_color.dart';
 import 'package:new_school_official/storage/styles/text_style.dart';
+import "package:collection/collection.dart";
 
 class HomePage extends StatefulWidget {
   @override
@@ -137,30 +138,57 @@ class Statehome extends State<HomePage>{
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _mainController.auth.value? Container(
+                            _mainController.auth.value?_mainController.getUservideo_time.length!=0? Container(
                               padding: EdgeInsets.only(left: 15),
                               child:
                               Text("Продолжить",style: black_text_title,),
-
-                            ):Container(),
-                            _mainController.auth.value?Container(
+                            ):Container():Container(),
+                            _mainController.auth.value?_mainController.getUservideo_time.length!=0?Container(
                               margin: EdgeInsets.only(top: 7),
                               width: Get.width,
                               height: 223,
                               child: ListView.builder(
                                 padding: EdgeInsets.only(left: 15),
-                                scrollDirection: Axis.horizontal,
+                                scrollDirection: Axis.horizontal,        addAutomaticKeepAlives: true,
+                                cacheExtent: Get.width*2,
                                 itemCount: _mainController.getUservideo_time.length,
                                 itemBuilder: (c,i){
-                                  return ItemCont(
-                                      _mainController.getUservideo_time[i]['lesson_id']
-                                      ,_mainController.getUservideo_time[i]['course_id']
-                                      ,_mainController.getUservideo_time[i]['time']
-                                      ,_mainController,_homeController
+                                  print("lesson_id "+_mainController.getUservideo_time.reversed.toList()[i].toString());
+                                  if(
+                                  _mainController.getUservideo_time.reversed.toList().where((element) => _mainController.getUservideo_time.reversed.toList()[i]['course_id']==element['course_id']).length>1
+                                  ){
+                                    if(_mainController.getUservideo_time.reversed.toList().indexWhere((element) => _mainController.getUservideo_time.reversed.toList()[i]['course_id']==element['course_id'])>=0){
+                                      if(
+                                      _mainController.getUservideo_time.reversed.toList()[i]['lesson_id']
+                                          ==
+                                      _mainController.getUservideo_time.reversed.toList()[
+                                      _mainController.getUservideo_time.reversed.toList().indexWhere((element) => _mainController.getUservideo_time.reversed.toList()[i]['course_id']==element['course_id'])
+                                      ]['lesson_id']
+                                      ){
+                                        return  ItemCont(
+                                            _mainController.getUservideo_time.reversed.toList()[i]['lesson_id']
+                                            ,_mainController.getUservideo_time.reversed.toList()[i]['course_id']
+                                            ,_mainController.getUservideo_time.reversed.toList()[i]['time']
+                                            ,_homeController,_mainController,
+                                        );
+                                      }else{
+                                        return Container();
+                                      }
+                                    }else{
+                                      return Container();
+                                    }
+                                  }
+                                  return  ItemCont(
+                                      _mainController.getUservideo_time.reversed.toList()[i]['lesson_id']
+                                      ,_mainController.getUservideo_time.reversed.toList()[i]['course_id']
+                                      ,_mainController.getUservideo_time.reversed.toList()[i]['time']
+                                      ,_homeController,_mainController,
                                   );
-                                },
+                                }
+
+
                               ),
-                            ):Container(
+                            ):Container():Container(
                               margin: EdgeInsets.only(top: 7,left: 15,right: 15),
                               width: Get.width-30,
                               height: 223,
@@ -748,29 +776,40 @@ class ItemCont extends StatefulWidget{
 }
 class StateItemCont extends State<ItemCont>{
 
-
   bool _loading = true;
-
   var image;
-
+  var _image;
+  var video;
+  var course;
   @override
   void initState() {
     getVideo();
   }
-  var video;
-  var course;
+  var lesAll=0;
+  var lesProg=0;
   void getVideo() async{
-    var responce= await Backend().getCourse(widget.idCourse);
-    var response= await Backend().getGetVideo(widget.idVideo);
-    print(response);
-    print(responce);
-    course=responce.data.length!=0?responce.data['kurses'][0]:null;
-    video =response.data.length!=0?response.data['lessons'][0]:null;
-   image= course!=null?course['banner_small']:null;
-    course!=null?initImage():null;
+    StreamController<int> controller = StreamController<int>();
+    Stream stream = controller.stream;
+    stream.listen((value) async{
+      var responce= await Backend().getCourse(widget.idCourse);
+      course=responce.data.length!=0?responce.data['kurses'][0]:null;
+      image= course!=null?course['banner_small']:null;
+      course!=null?initImage():null;
+      print(responce);
+      var stat =await Backend().getStatCourse(widget.idCourse);
+      lesAll=int.tryParse(stat.data[0]['lessons_count']);
+      lesProg=widget.mainController.getUservideo_time_all.where((el)=>el['course_id']==widget.idCourse).length;
+      print(lesAll);
+      print(lesProg);
+      setState(() {
+
+      });
+    });
+    controller.add(1);
+
+
   }
 
-  var _image;
   initImage(){
     _image = new NetworkImage(
       '${image}',
@@ -790,7 +829,10 @@ class StateItemCont extends State<ItemCont>{
 
   @override
   Widget build(BuildContext context) {
-    return course!=null? _loading ?Container(
+    print((lesAll/lesProg));
+    print(Get.width*(lesProg/lesAll));
+
+    return image!=null? _loading ?Container(
       margin: EdgeInsets.only(right: 12),
       height: 142,
       width: 142,
@@ -844,10 +886,10 @@ class StateItemCont extends State<ItemCont>{
 
             Positioned(
               bottom: 1,
-              left: 6,
               child: Container(
+                margin: EdgeInsets.only(left: 7,right: 100),
                 height: 4,
-                width: Get.width*0.3,
+                width: (Get.width*(lesProg/lesAll))>Get.width?Get.width-50:(Get.width*(lesProg/lesAll)-35),
                 color: Colors.white,
               ),
             )
@@ -862,6 +904,4 @@ class StateItemCont extends State<ItemCont>{
       },
     ):Container();
   }
-
-
 }
