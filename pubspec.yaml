@@ -26,7 +26,6 @@ dependencies:
   shimmer: 1.1.2
   cached_network_image: 2.5.1
   share: 0.6.5+4
-  better_player: any
   fl_chart: any
   charts_flutter: 0.10.0
   http : any

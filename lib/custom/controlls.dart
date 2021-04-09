@@ -100,7 +100,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
               _buildTopBar(
                   backgroundColor, iconColor, barHeight, buttonPadding),
               _buildHitArea(),
-              widget.chewieController != null &&
+              widget.chewieController != null && widget.chewieController.videoPlayerController != null&&
                   widget.chewieController
                       .videoPlayerController.value.initialized
                   ?  Container(

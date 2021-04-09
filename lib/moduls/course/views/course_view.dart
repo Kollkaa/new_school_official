@@ -57,6 +57,7 @@ class StateCourse extends State<CourseScreen>{
 
   @override
   Widget build(BuildContext context) {
+    print(_courseController.id);
     // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     //     statusBarIconBrightness: Brightness.dark,
     //     statusBarBrightness: Brightness.dark,
