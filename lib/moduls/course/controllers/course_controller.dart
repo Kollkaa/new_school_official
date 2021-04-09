@@ -1,13 +1,24 @@
 import 'package:get/get.dart';
 import 'package:new_school_official/moduls/home/controllers/home_controller.dart';
+import 'package:new_school_official/moduls/main/controllers/main_controller.dart';
+import 'package:new_school_official/service/backend.dart';
 
 class CourseController extends GetxController {
-
+  MainController _mainController = Get.find();
   var id =Get.arguments;
+  var statTest;
   @override
   void onInit() async {
     print(id);
+    getStatByTest();
     super.onInit();
+  }
+  getStatByTest()async{
+    var bak = Backend();
+    var responce=await bak.getTestStat(course_id: id,id: _mainController.profile['id']);
+    print(responce.data);
+    statTest=responce.data['test_result'][0];
+    Get.appUpdate();
   }
 
   @override

@@ -61,9 +61,24 @@ class _ChewieDemoState extends State<VideoScreen> {
     ]);
     setState(( ) { } );
     print(widget.lesson['videos'][0]['video_url']);
-    videoPlayerController =new VideoPlayerController.network(
-        widget.lesson['videos'][0]['video_url']
-    );
+    if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="480")>=0){
+      print('"quality": "480"');
+      videoPlayerController =new VideoPlayerController.network(
+          widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="480")]['video_url']
+      );
+    } else if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="720")>=0){
+      print('"quality": "720"');
+
+      videoPlayerController =new VideoPlayerController.network(
+          widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="720")]['video_url']
+      );
+    } else if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="1080")>=0){
+      print('"quality": "1080"');
+      videoPlayerController =new VideoPlayerController.network(
+          widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="1080")]['video_url']
+      );
+    }
+
     await videoPlayerController.initialize();
     _chewieController = ChewieController(
       startAt: Duration(seconds: widget.duration!=null?int.tryParse(widget.duration):0),

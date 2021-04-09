@@ -274,6 +274,15 @@ class Backend {
     }));
     return response;
   }
-
+  getTestStat({id,course_id}){
+    var response;
+    response=dio.post("/api/api.php",data:dios.FormData.fromMap({
+      'type': 'test_stats',
+      'apiKey': '2xdCQ9nH',
+      'client_id': id,
+      "course_id":course_id
+    }));
+    return response;
+  }
 
 }
