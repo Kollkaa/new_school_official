@@ -76,55 +76,38 @@ class _ChewieDemoState extends State<TrailerScreen> {
         color: Colors.black,
       ),
     );
-    setState(() {});
+    myOverayEntry = getMyOverlayEntry(context: context);
+    Overlay.of(context).insert(myOverayEntry);
+    setState(( ) { } );
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData.light().copyWith(
-        platform: TargetPlatform.iOS,
-      ),
-      home: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-
-        onHorizontalDragStart: (DragStartDetails details) {
-          print(123);
-          showOverlay(context, _chewieController) ;
-        },
-        onHorizontalDragUpdate: (DragUpdateDetails details) {
-          print(123);
-
-          showOverlay(context, _chewieController) ;
-        },
-        onHorizontalDragEnd: (DragEndDetails details) {
-          print(123);
-
-          showOverlay(context, _chewieController);
-        },
-        onTapDown: (TapDownDetails details) {
-          print(123);
-           showOverlay(context, _chewieController) ;
-        },
-        child: Material(
-          child: MediaQuery.removePadding(
-              context: context,
-              removeTop: true,
-              child: Stack(
+    return Material(
+      child: MediaQuery.removePadding(
+          context: context,
+          removeTop: true,
+          child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTapDown: (d){
+                print("Ontap");
+                myOverayEntry = getMyOverlayEntry(context: context);
+                Overlay.of(context).insert(myOverayEntry);
+              },
+              onTapCancel: (){
+                showOverlay(context,_chewieController);
+              },
+              child:Stack(
                 children: [
                   Container(
                     color: Colors.black,
                     height: Get.height,
                     width: Get.width,
                     child: Center(
-                      // child:  BetterPlayer(
-                      //   controller: _betterPlayerController,
-                      // ),
                       child: _chewieController != null &&
                           _chewieController
                               .videoPlayerController.value.initialized
                           ? Chewie(
-
                         controller: _chewieController,
                       )
                           : Column(
@@ -137,31 +120,38 @@ class _ChewieDemoState extends State<TrailerScreen> {
                   ),
                 ],
               )
-          ),
-        ),
+          )
       ),
     );
   }
 
+  OverlayEntry myOverayEntry;
+  OverlayEntry getMyOverlayEntry({
+    @required BuildContext context,
+  }) {
+    return new OverlayEntry(
+        builder: (context) => _chewieController.videoPlayerController!=null?Positioned(
+          child: CupertinoControls(
+            chewieController: _chewieController,
+            backgroundColor: Color(0xff232323),
+            image:null,
+            iconColor: Colors.white,
+            id:  null,
+            kurs_id:  null,
+            method:(){
+              myOverayEntry.remove();
+            _chewieController.videoPlayerController.removeListener(() {});
+            _chewieController.removeListener(() {});
+            _chewieController.videoPlayerController.dispose();
+            _chewieController.dispose();
+            Get.back();},
+          ),
+        ):Container()
+    );
+  }
+
   showOverlay(BuildContext context,Controller) async {
-    OverlayState overlayState = Overlay.of(context);
-    OverlayEntry overlayEntry = OverlayEntry(
-        builder: (context) => Positioned(child: CupertinoControls(chewieController: Controller,backgroundColor: Color(0xff232323),iconColor: Colors.white,),));
 
-// OverlayEntry overlayEntry = OverlayEntry(
-//         builder: (context) => Positioned(
-//               top: MediaQuery.of(context).size.height / 2.0,
-//               width: MediaQuery.of(context).size.width / 2.0,
-//               child: CircleAvatar(
-//                 radius: 50.0,
-//                 backgroundColor: Colors.red,
-//                 child: Text("1"),
-//               ),
-//             ));
-    overlayState.insert(overlayEntry);
 
-    await Future.delayed(Duration(seconds: 4));
-
-    overlayEntry.remove();
   }
 }

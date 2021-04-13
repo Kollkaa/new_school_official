@@ -228,7 +228,7 @@ class StateCourse extends State<CourseScreen>{
                                     onTap: ()async{
                                       if(_mainController.auth.value){
                                        if(_mainController.getUservideo_time.indexWhere((element) => element['lesson_id']==lessonLast['id'])>0){
-                                         await Get.dialog(VideoScreen(lessonLast,index:indexLast,duration: int.tryParse(_mainController.getUservideo_time[_mainController.getUservideo_time.indexWhere((element) => element['lesson_id']==lessonLast['id'])]['time']),));
+                                         await Get.to(VideoScreen(lessonLast,index:indexLast,duration: int.tryParse(_mainController.getUservideo_time[_mainController.getUservideo_time.indexWhere((element) => element['lesson_id']==lessonLast['id'])]['time']),));
                                          SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
                                          SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
                                              statusBarColor: Colors.white,
@@ -242,7 +242,7 @@ class StateCourse extends State<CourseScreen>{
                                          setState(() {
                                          });
                                        }else{
-                                         await Get.dialog(VideoScreen(lessonLast,index:indexLast));
+                                         await Get.to(VideoScreen(lessonLast,index:indexLast));
 
                                        }
                                       }else{
@@ -276,7 +276,7 @@ class StateCourse extends State<CourseScreen>{
                                         ),
                                         onTap: ()async{
 
-                                         await Get.dialog(TrailerScreen());
+                                         await Get.to(TrailerScreen());
                                          SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
                                          SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
                                              statusBarColor: Colors.white,
@@ -284,8 +284,10 @@ class StateCourse extends State<CourseScreen>{
                                              statusBarBrightness: Brightness.dark,
                                              systemNavigationBarColor: Colors.white
                                          ));
+                                         SystemChrome.setPreferredOrientations([
+                                           DeviceOrientation.portraitUp,
+                                         ]);
                                          setState(() {
-
                                          });
                                         },
                                       ),
@@ -319,6 +321,9 @@ class StateCourse extends State<CourseScreen>{
                         Row(
                           children: [..._homeController.videos['lessons'].reversed.toList().map((el){
                             i+=1;
+                            if(i>=_homeController.videos['lessons'].length){
+                              i=1;
+                            }
                             var indexInLookLesson=_mainController.getUservideo_time_all.indexWhere((element) => element['lesson_id']==_homeController.videos['lessons'].reversed.toList()[i]['id']);
                             if(i==0){
                               // lessonLast=_homeController.videos['lessons'].reversed.toList()[i];
@@ -824,7 +829,8 @@ class StateItem extends State<Item>{
           ));
         }else{
           if(widget.lock){
-            await Get.dialog(VideoScreen(widget.lesson,index:widget.index));
+            await Get.to(VideoScreen(widget.lesson,index:widget.index));
+
 
           }
           else{

@@ -40,6 +40,8 @@ class _ChewieDemoState extends State<VideoScreen> {
   @override
   void dispose() {
     myOverayEntry.remove();
+    _chewieController.videoPlayerController.removeListener(() {});
+    _chewieController.removeListener(() {});
     _chewieController.videoPlayerController.dispose();
     _chewieController.dispose();
     super.dispose();
@@ -61,24 +63,79 @@ class _ChewieDemoState extends State<VideoScreen> {
     ]);
     setState(( ) { } );
     print(widget.lesson['videos'][0]['video_url']);
-    if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="480")>=0){
-      print('"quality": "480"');
-      videoPlayerController =new VideoPlayerController.network(
-          widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="480")]['video_url']
-      );
-    } else if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="720")>=0){
-      print('"quality": "720"');
+    if(Get.height>1920){
+      if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="720")>=0){
+        print('"quality": "720"');
 
-      videoPlayerController =new VideoPlayerController.network(
-          widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="720")]['video_url']
-      );
-    } else if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="1080")>=0){
-      print('"quality": "1080"');
-      videoPlayerController =new VideoPlayerController.network(
-          widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="1080")]['video_url']
-      );
+        videoPlayerController =new VideoPlayerController.network(
+            widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="720")]['video_url']
+        );
+      } else if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="480")>=0){
+        print('"quality": "480"');
+        videoPlayerController =new VideoPlayerController.network(
+            widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="480")]['video_url']
+        );
+      }else if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="1080")>=0){
+        print('"quality": "1080"');
+        videoPlayerController =new VideoPlayerController.network(
+            widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="1080")]['video_url']
+        );
+      }
+    }else if (Get.height>=2560){
+      if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="1080")>=0){
+        print('"quality": "1080"');
+        videoPlayerController =new VideoPlayerController.network(
+            widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="1080")]['video_url']
+        );
+      } else if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="720")>=0){
+        print('"quality": "720"');
+
+        videoPlayerController =new VideoPlayerController.network(
+            widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="720")]['video_url']
+        );
+      } else if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="480")>=0){
+        print('"quality": "480"');
+        videoPlayerController =new VideoPlayerController.network(
+            widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="480")]['video_url']
+        );
+      }
+    }else if (Get.height>=4096){
+      if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="1080")>=0){
+        print('"quality": "1080"');
+        videoPlayerController =new VideoPlayerController.network(
+            widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="1080")]['video_url']
+        );
+      } else if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="720")>=0){
+        print('"quality": "720"');
+
+        videoPlayerController =new VideoPlayerController.network(
+            widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="720")]['video_url']
+        );
+      } else if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="480")>=0){
+        print('"quality": "480"');
+        videoPlayerController =new VideoPlayerController.network(
+            widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="480")]['video_url']
+        );
+      }
+    }else{
+      if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="480")>=0){
+        print('"quality": "480"');
+        videoPlayerController =new VideoPlayerController.network(
+            widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="480")]['video_url']
+        );
+      } else if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="720")>=0){
+        print('"quality": "720"');
+
+        videoPlayerController =new VideoPlayerController.network(
+            widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="720")]['video_url']
+        );
+      } else if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="1080")>=0){
+        print('"quality": "1080"');
+        videoPlayerController =new VideoPlayerController.network(
+            widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="1080")]['video_url']
+        );
+      }
     }
-
     await videoPlayerController.initialize();
     _chewieController = ChewieController(
       startAt: Duration(seconds: widget.duration!=null?int.tryParse(widget.duration):0),
@@ -115,7 +172,7 @@ class _ChewieDemoState extends State<VideoScreen> {
         Get.back();
         if((widget.index+1)<=_homeController.videos['lessons'].length-1){
           print("12");
-          Get.dialog(VideoScreen(_homeController.videos['lessons'].reversed.toList()[(widget.index+1)],index:widget.index+1));
+          Get.to(VideoScreen(_homeController.videos['lessons'].reversed.toList()[(widget.index+1)],index:widget.index+1));
         }else{
           print("123");
         }
@@ -149,7 +206,7 @@ class _ChewieDemoState extends State<VideoScreen> {
               Get.back();
               if((widget.index+1)<=_homeController.videos['lessons'].length-1){
                 print("12");
-                Get.dialog(VideoScreen(_homeController.videos['lessons'].reversed.toList()[(widget.index+1)],index:widget.index+1));
+                Get.to(VideoScreen(_homeController.videos['lessons'].reversed.toList()[(widget.index+1)],index:widget.index+1));
               }else{
                 print("123");
               }
@@ -206,98 +263,92 @@ class _ChewieDemoState extends State<VideoScreen> {
               onTapCancel: (){
                 showOverlay(context,_chewieController);
               },
-              child: Material(
-                child: MediaQuery.removePadding(
-                    context: context,
-                    removeTop: true,
-                    child: Stack(
-                      children: [
-                        Container(
-                          color: Colors.black,
-                          height: Get.height,
-                          width: Get.width,
-                          child: Center(
-                            // child:  BetterPlayer(
-                            //   controller: _betterPlayerController,
-                            // ),
-                            child: _chewieController != null &&
-                                _chewieController
-                                    .videoPlayerController.value.initialized
-                                ?  Chewie(
+              child: Stack(
+                children: [
+                  Container(
+                    color: Colors.black,
+                    height: Get.height,
+                    width: Get.width,
+                    child: Center(
+                      // child:  BetterPlayer(
+                      //   controller: _betterPlayerController,
+                      // ),
+                      child: _chewieController != null &&
+                          _chewieController
+                              .videoPlayerController.value.initialized
+                          ?  Chewie(
 
-                              controller: _chewieController,
-                            )
-                                : Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children:  [
-                                CircularProgressIndicator(),
-                              ],
-                            ),
-                          ),
-                        ),
+                        controller: _chewieController,
+                      )
+                          : Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children:  [
+                          CircularProgressIndicator(),
+                        ],
+                      ),
+                    ),
+                  ),
 
-                        _chewieController != null &&
-                            _chewieController
-                                .videoPlayerController.value.initialized
-                            ?  Positioned(
-                          bottom: 50,
-                          right: 30,
-                          child: ValueListenableBuilder(
-                            valueListenable: _chewieController.videoPlayerController,
-                            builder: (context, var value, child) {
-                              if(oldPos+10<=value.position.inSeconds){
-                                oldPos=value.position.inSeconds;
-                                StreamController<int> controller = StreamController<int>();
-                                Stream stream = controller.stream;
-                                stream.listen((value) async{
-                                  var res=await Backend().setPos(
-                                      _homeController.videos['lessons'].reversed.toList()[(widget.index)]['kurs_id'],
-                                      _homeController.videos['lessons'].reversed.toList()[(widget.index)]['id'],
-                                      value,
-                                      _chewieController.videoPlayerController.value.duration.inSeconds);
-                                });
-                                controller.add(oldPos);
-                              }else{
-                              }
-                              if(value.position.inSeconds==(_chewieController.videoPlayerController.value.duration.inSeconds))
-                              {
-                                // Get.back(closeOverlays: true);
-                                // if((widget.index+1)<=_homeController.videos['lessons'].length-1){
-                                //   Get.dialog(VideoScreen(_homeController.videos['lessons'].reversed.toList()[(widget.index+1)],index:widget.index+1));
-                                // }else{
-                                //   return Container();
-                                // }
-                              }
-                              if(value.position.inSeconds>=(_chewieController.videoPlayerController.value.duration.inSeconds-15)){
-                                oldPos=value.position.inSeconds;
-                                StreamController<int> controller = StreamController<int>();
-                                Stream stream = controller.stream;
-                                stream.listen((value) async{
-                                  dios.Response getUservideo_time_all =await Backend().getUservideo_time_all(id:box.read('id'));
-                                  _mainController.getUservideo_time_all.value=getUservideo_time_all.data['lessons'];
-                                  var res=await Backend().setPos(
-                                      _homeController.videos['lessons'].reversed.toList()[(widget.index)]['kurs_id'],
-                                      _homeController.videos['lessons'].reversed.toList()[(widget.index)]['id'],
-                                      value,
-                                      _chewieController.videoPlayerController.value.duration.inSeconds);
-                                  print(res.data);
-                                });
-                                if((widget.index+1)<_homeController.videos['lessons'].length-1){
-                                  return Container();
-                                }else{
-                                  return Container();
-                                }
-                              }else{
-                                return Container(
-                                );
-                              }
-                            },
-                          ),
-                        ):Container()
-                      ],
-                    )
-                ),
-              ),
+                  _chewieController != null &&
+                      _chewieController
+                          .videoPlayerController.value.initialized
+                      ?  Positioned(
+                    bottom: 50,
+                    right: 30,
+                    child: ValueListenableBuilder(
+                      valueListenable: _chewieController.videoPlayerController,
+                      builder: (context, var value, child) {
+                        if(oldPos+10<=value.position.inSeconds){
+                          oldPos=value.position.inSeconds;
+                          StreamController<int> controller = StreamController<int>();
+                          Stream stream = controller.stream;
+                          stream.listen((value) async{
+                            var res=await Backend().setPos(
+                                _homeController.videos['lessons'].reversed.toList()[(widget.index)]['kurs_id'],
+                                _homeController.videos['lessons'].reversed.toList()[(widget.index)]['id'],
+                                value,
+                                _chewieController.videoPlayerController.value.duration.inSeconds);
+                          });
+                          controller.add(oldPos);
+                        }else{
+                        }
+                        if(value.position.inSeconds==(_chewieController.videoPlayerController.value.duration.inSeconds))
+                        {
+                          // Get.back(closeOverlays: true);
+                          // if((widget.index+1)<=_homeController.videos['lessons'].length-1){
+                          //   Get.dialog(VideoScreen(_homeController.videos['lessons'].reversed.toList()[(widget.index+1)],index:widget.index+1));
+                          // }else{
+                          //   return Container();
+                          // }
+                        }
+                        if(value.position.inSeconds>=(_chewieController.videoPlayerController.value.duration.inSeconds-15)){
+                          oldPos=value.position.inSeconds;
+                          StreamController<int> controller = StreamController<int>();
+                          Stream stream = controller.stream;
+                          stream.listen((value) async{
+                            dios.Response getUservideo_time_all =await Backend().getUservideo_time_all(id:box.read('id'));
+                            _mainController.getUservideo_time_all.value=getUservideo_time_all.data['lessons'];
+                            var res=await Backend().setPos(
+                                _homeController.videos['lessons'].reversed.toList()[(widget.index)]['kurs_id'],
+                                _homeController.videos['lessons'].reversed.toList()[(widget.index)]['id'],
+                                value,
+                                _chewieController.videoPlayerController.value.duration.inSeconds);
+                            print(res.data);
+                          });
+                          if((widget.index+1)<_homeController.videos['lessons'].length-1){
+                            return Container();
+                          }else{
+                            return Container();
+                          }
+                        }else{
+                          return Container(
+                          );
+                        }
+                      },
+                    ),
+                  ):Container()
+                ],
+              )
             ),
           ));
     }catch(e){

@@ -112,7 +112,13 @@ class _CupertinoControlsState extends State<CupertinoControls> {
                         valueListenable:  widget.chewieController.videoPlayerController,
                         builder: (context, var value, child) {
                           if(value.position.inSeconds>= widget.chewieController.videoPlayerController.value.duration.inSeconds-15){
-                           if(widget.image!=null) return  FlatButton(
+                            if(value.position.inSeconds>= widget.chewieController.videoPlayerController.value.duration.inSeconds) {
+                              if(widget.image==null){
+                                widget.method();
+                                return Container();
+                              }
+                            }
+                              if(widget.image!=null) return  FlatButton(
                                 padding: EdgeInsets.all(0),
                                 child: Container(
                                   child: Column(
