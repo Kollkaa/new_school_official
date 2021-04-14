@@ -8,7 +8,7 @@ abstract class Routes {
   static const CODE_CONFIRM = '/code_confirm';
   static const VIDEO = '/video';
   static const COURSE = '/course';
-  static const NEW_OBJECT = '/new_object';
+  static const TEST = '/test';
 
   static const LONGLIST = '/longlist';
 

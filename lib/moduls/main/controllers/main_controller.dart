@@ -1,5 +1,8 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -54,17 +57,27 @@ class MainController extends GetxController {
   var password="".obs;
 
   var email="".obs;
-
+  StreamController<dynamic> controller = StreamController<dynamic>();
+  Stream stream ;
+  var listCanselToken=[];
+  var downloads;
   @override
   void onInit() async {
     super.onInit();
+    downloads=box.read("downloads");
+    stream= controller.stream;
+    stream.listen((value) async{
+      CancelToken cancelToken = CancelToken();
+      listCanselToken.add(cancelToken);
+      print(value);
+      await downloadFile(value['url'], value['course_id'],value['course'], value['video_id'],value['video'],cancelToken);
+    });
     auth.value=await box.read("auth");
     if(box.read("id")!=null) {
       initProfile(box.read("id"));
     }
     print(auth.value);
     auth.value=auth.value!=null?auth.value:false;
-
     widgets.value=[
       HomePage(),
       SearchScreen(),
@@ -102,10 +115,69 @@ class MainController extends GetxController {
   @override
   void onClose() {
     auth.close();
+    controller.close();
     super.onClose();
   }
   void onIndexChanged(input) {
       currentIndex.value = input;
+      downloads=box.read("downloads");
+  }
+  Future downloadFile(String url,course_id,cours,video_id,video,cancelToken) async {
+    print(video);
+    Dio dio = Dio();
+    print(cours['banner_small']);
+    try {
+      var dir = await getApplicationDocumentsDirectory();
+     var responce= await dio.download(url, "${dir.path}/$course_id/$video_id.mp4",
+          onReceiveProgress: (rec, total) async{
+        print("Rec: $rec , Total: $total");
 
+        if(rec==total){
+          print("finish donload file ${dir.path}/$course_id/$video_id.mp4");
+          var downloads= box.read("downloads");
+          var course= box.read("$course_id");
+          if(downloads==null){
+            print(course);
+            box.write("downloads", jsonEncode({"id":"$course_id","image":"${cours['banner_small']}","title":"${cours['topic']}", "desc":"${cours['description']}"}));
+            if(course==null){
+              box.write("$course_id", jsonEncode({"id":"$course_id","image":"${video['video_image']}","title":"${video['video_name']}", "desc":"${video['video_description']}","video":"/$course_id/$video_id.mp4"}));
+            }else{
+              if(course.toString().indexOf("${jsonEncode({"id":"$course_id","image":"${video['video_image']}","title":"${video['video_name']}", "desc":"${video['video_description']}","video":"/$course_id/$video_id.mp4"})}")>=0){
+              }else{
+                box.write("$course_id",'$course||${jsonEncode({"id":"$course_id","image":"${video['video_image']}","title":"${video['video_name']}", "desc":"${video['video_description']}","video":"/$course_id/$video_id.mp4"})}');
+                print(box.read("$course_id"));
+              }
+            }
+          }else{
+            if(downloads.toString().indexOf("${jsonEncode({"id":"$course_id","image":"${cours['banner_small']}","title":"${cours['topic']}", "desc":"${cours['description']}"})}")>=0){
+            }else{
+              await box.write("downloads", '$downloads||${jsonEncode({"id":"$course_id","image":"${cours['banner_small']}","title":"${cours['topic']}", "desc":"${cours['description']}"})}');
+            }
+            print(box.read("downloads"));
+            if(course==null){
+              box.write("$course_id", jsonEncode({"id":"$course_id","image":"${video['video_image']}","title":"${video['video_name']}", "desc":"${video['video_description']}","video":"/$course_id/$video_id.mp4"}));
+            }else{
+              if(course.toString().indexOf("${jsonEncode({"id":"$course_id","image":"${video['video_image']}","title":"${video['video_name']}", "desc":"${video['video_description']}","video":"/$course_id/$video_id.mp4"})}")>=0){
+              }else{
+                box.write("$course_id",'$course||${jsonEncode({"id":"$course_id","image":"${video['video_image']}","title":"${video['video_name']}", "desc":"${video['video_description']}","video":"/$course_id/$video_id.mp4"})}');
+                print(box.read("$course_id"));
+              }
+            }
+          }
+
+        }
+      },
+      cancelToken: cancelToken
+      );
+      print(responce.data);
+
+    } catch (e) {
+      print(e);
+    }
+    print("Download completed");
+  }
+
+   getVideo(course){
+   return box.read("$course");
   }
 }

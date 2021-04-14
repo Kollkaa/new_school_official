@@ -8,6 +8,8 @@ import 'package:new_school_official/moduls/home/bindings/home_binding.dart';
 import 'package:new_school_official/moduls/home/views/home.dart';
 import 'package:new_school_official/moduls/main/bindings/main_binding.dart';
 import 'package:new_school_official/moduls/main/views/main_view.dart';
+import 'package:new_school_official/moduls/test/bindings/test_binding.dart';
+import 'package:new_school_official/moduls/test/views/test_view.dart';
 import 'package:new_school_official/moduls/video/bindings/video_binding.dart';
 import 'package:new_school_official/moduls/video/views/video_view.dart';
 part 'app_routes.dart';
@@ -45,6 +47,12 @@ class AppPages {
          name: Routes.COURSE,
          page: () => CourseScreen(),
          binding: CourseBinding(),
+         transitionDuration: Duration(microseconds: 500),
+       ),
+       GetPage(
+         name: Routes.TEST,
+         page: () => TestScreen(),
+         binding: TestBinding(),
          transitionDuration: Duration(microseconds: 500),
        ),
 

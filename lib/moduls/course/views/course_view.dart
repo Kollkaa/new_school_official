@@ -73,9 +73,7 @@ class StateCourse extends State<CourseScreen>{
        }else{
          if(_mainController.auth.value){
            if(indexInLookLesson>0){
-             print("indexInLookLesson ${indexInLookLesson}");
              var indexInLookLessonPrevius=_mainController.getUservideo_time_all.indexWhere((element) => element['lesson_id']==_homeController.videos['lessons'].reversed.toList()[i-1]['id']);
-             print("indexInLookLessonPrevius ${indexInLookLessonPrevius}");
              if(_mainController.getUservideo_time_all[indexInLookLesson]['done']==0) {
              }
              else{
@@ -157,12 +155,7 @@ class StateCourse extends State<CourseScreen>{
                                   )
                               ),
                               onTap: (){
-                                // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-                                //     statusBarColor: Colors.white,
-                                //     statusBarIconBrightness: Brightness.dark,
-                                //     statusBarBrightness: Brightness.dark,
-                                //     systemNavigationBarColor: Colors.white
-                                // ));
+
                                 _homeController.videos={}.obs;
                                 Get.back();
 
@@ -183,6 +176,7 @@ class StateCourse extends State<CourseScreen>{
                                 child: SvgPicture.asset("assets/icons/share-3 1.svg"),
                               ),
                               onTap: (){
+                                _mainController.listCanselToken.forEach((element) {try{element.cancel();}catch(e){}});
                                 Share.share('https://mapus.com.ua/tasks/', subject: 'Share');
                               },
                             )
@@ -292,13 +286,31 @@ class StateCourse extends State<CourseScreen>{
                                         },
                                       ),
                                       _mainController.auth.value?SizedBox(width: 25,):Container(),
-                                      _mainController.auth.value?Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          SvgPicture.asset("assets/icons/Layer 16.svg",height: 15,width: 15,),
-                                          SizedBox(width: 7,),
-                                          Text("Загрузить",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300,fontFamily: "Raleway",letterSpacing: 0.5,color: Colors.white),)
-                                        ],
+                                      _mainController.auth.value?GestureDetector(
+                                        child: Row(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            SvgPicture.asset("assets/icons/Layer 16.svg",height: 15,width: 15,),
+                                            SizedBox(width: 7,),
+                                            Text("Загрузить",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300,fontFamily: "Raleway",letterSpacing: 0.5,color: Colors.white),)
+                                          ],
+                                        ),
+                                        onTapDown: (_){
+                                          _homeController.videos['lessons'].reversed.toList().forEach((el){
+                                            print(
+                                                "${_homeController.course['kurses'][0]}"
+                                            );
+                                            _mainController.controller.add(
+                                                {"url":"${el['videos'][0]['video_url']}",
+                                                  "course_id":"${el['kurs_id']}",
+                                                  "video_id":"${el['id']}",
+                                                    "course":"${_homeController.course['kurses'][0]}",
+                                                    "video":"${el}"
+                                                }
+                                                );
+
+                                          });
+                                        },
                                       ):Container()
                                     ],
                                   ),)
@@ -347,9 +359,7 @@ class StateCourse extends State<CourseScreen>{
                             }
                             if(_mainController.auth.value){
                               if(indexInLookLesson>0){
-                                print("indexInLookLesson ${indexInLookLesson}");
                                 var indexInLookLessonPrevius=_mainController.getUservideo_time_all.indexWhere((element) => element['lesson_id']==_homeController.videos['lessons'].reversed.toList()[i-1]['id']);
-                                print("indexInLookLessonPrevius ${indexInLookLessonPrevius}");
                                 if(_mainController.getUservideo_time_all[indexInLookLesson]['done']==0) {
                                   return Stack(
                                       children:[
@@ -485,9 +495,9 @@ class StateCourse extends State<CourseScreen>{
                                     )
                                   ],
                                 ),
-                                onTap: ()async{
-
-
+                                onTapDown: (_){
+                                  print("wae");
+                                  Get.toNamed(Routes.TEST);
                                 },
                               ),
                               Positioned(
@@ -756,43 +766,62 @@ class StateItem extends State<Item>{
         borderRadius: BorderRadius.all(Radius.circular(10)),
         color: Colors.black.withOpacity(0.04),
       ),):
-    GestureDetector(
-        child:Column(
+    Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Container(
-              height: 142,
-              width: 216,
-              child:  Stack(
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(right: 12),
-                    height: 142,
-                    width: 216,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        color: Colors.black.withOpacity(0.04),
-                        image: DecorationImage(image: _image,fit: BoxFit.cover)
-                    ),),
-                  Positioned(
-                    bottom: 0,
-                    child: Container(
-                      height: 50,
-                      width: 196,
+            GestureDetector(
+              child: Container(
+                height: 142,
+                width: 216,
+                child:  Stack(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(right: 12),
+                      height: 142,
+                      width: 216,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
-                          gradient: LinearGradient(
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                              colors: [Colors.black.withOpacity(1), Colors.black.withOpacity(0)]
-                          )
+                          color: Colors.black.withOpacity(0.04),
+                          image: DecorationImage(image: _image,fit: BoxFit.cover)
+                      ),),
+                    Positioned(
+                      bottom: 0,
+                      child: Container(
+                        height: 50,
+                        width: 196,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            gradient: LinearGradient(
+                                begin: Alignment.bottomCenter,
+                                end: Alignment.topCenter,
+                                colors: [Colors.black.withOpacity(1), Colors.black.withOpacity(0)]
+                            )
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
+                  ],
+                ),
+              ),onTap: ()async{
+              if(widget.donSee){
+                print(widget.lessonLast);
+                // await Get.dialog(VideoScreen(widget.lessonLast,index:widget.indexLast));
+                Get.snackbar("", "",snackPosition:SnackPosition.BOTTOM,colorText: Colors.redAccent,messageText: Center(
+                  child: Text("Нужно посмотреть предыдущий урок",style: TextStyle(fontSize: 12,fontFamily: "Raleway",letterSpacing: 0.5,fontWeight: FontWeight.w600,color: Colors.redAccent),),
+                ));
+              }else{
+                if(widget.lock){
+                  await Get.to(VideoScreen(widget.lesson,index:widget.index));
+
+
+                }
+                else{
+                  widget.mainController.widgets.removeAt(4);
+                  widget.mainController.widgets.add(RegisterPage());
+                  Get.dialog(Author());
+                }
+              }
+            },),
             Container(
               margin: EdgeInsets.only(top:9),
               child:  Row(
@@ -814,32 +843,25 @@ class StateItem extends State<Item>{
                       ),
                     ),
                   ),
-                  widget.mainController.auth.value? widget.lock?SvgPicture.asset("assets/icons/Layer 16.svg",color: Colors.black,width: 14,height: 14,):Opacity(opacity: 1,child: SvgPicture.asset("assets/icons/Layer 16.svg",color: Colors.black,width: 14,height: 14,),):Opacity(opacity: 1,child: SvgPicture.asset("assets/icons/Layer 16.svg",color: Colors.black,width: 14,height: 14,),)
+                  widget.mainController.auth.value? widget.lock?GestureDetector(
+                    child: SvgPicture.asset("assets/icons/Layer 16.svg",color: Colors.black,width: 14,height: 14,),
+                    onTapDown: (_){
+
+                      widget.mainController.controller.add(
+                          {"url":"${widget.lesson['videos'][0]['video_url']}",
+                            "course_id":"${widget.lesson['kurs_id']}",
+                            "course":widget.homeController.course['kurses'][0],
+                            "video_id":"${widget.lesson['id']}",
+                            "video":widget.lesson});
+
+                    },
+                  ):Opacity(opacity: 1,child: SvgPicture.asset("assets/icons/Layer 16.svg",color: Colors.black,width: 14,height: 14,),):Opacity(opacity: 1,child: SvgPicture.asset("assets/icons/Layer 16.svg",color: Colors.black,width: 14,height: 14,),)
                 ],
               ),
             )
           ],
-        ),
-      onTap: ()async{
-        if(widget.donSee){
-          print(widget.lessonLast);
-          // await Get.dialog(VideoScreen(widget.lessonLast,index:widget.indexLast));
-          Get.snackbar("", "",snackPosition:SnackPosition.BOTTOM,colorText: Colors.redAccent,messageText: Center(
-            child: Text("Нужно посмотреть предыдущий урок",style: TextStyle(fontSize: 12,fontFamily: "Raleway",letterSpacing: 0.5,fontWeight: FontWeight.w600,color: Colors.redAccent),),
-          ));
-        }else{
-          if(widget.lock){
-            await Get.to(VideoScreen(widget.lesson,index:widget.index));
 
 
-          }
-          else{
-            widget.mainController.widgets.removeAt(4);
-            widget.mainController.widgets.add(RegisterPage());
-            Get.dialog(Author());
-          }
-        }
-      },
     );
   }
 

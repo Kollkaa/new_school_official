@@ -284,5 +284,36 @@ class Backend {
     }));
     return response;
   }
+  getTestByidCourse({course_id}){
+    var response;
+    response=dio.post("/api/api.php",data:dios.FormData.fromMap({
+      'type': 'test_course',
+      'apiKey': '2xdCQ9nH',
+      "course_id":course_id
+    }));
+    return response;
+  }
+  sendQuery({id,course_id,question_id,answer_id}){
+    var response;
+    response=dio.post("/api/api.php",data:dios.FormData.fromMap({
+      'type': 'test_answer',
+      'apiKey': '2xdCQ9nH',
+      'client_id': id,
+      "course_id":course_id,
+      'question_id': question_id,
+      "answer_id":answer_id
+    }));
+    return response;
+  }
+  startTest({id,course_id}){
+    var response;
+    response=dio.post("/api/api.php",data:dios.FormData.fromMap({
+      'type': 'test_start',
+      'apiKey': '2xdCQ9nH',
+      'client_id': id,
+      "course_id":course_id
+    }));
+    return response;
+  }
 
 }

@@ -153,7 +153,6 @@ class Statehome extends State<HomePage>{
                                 cacheExtent: Get.width*2,
                                 itemCount: _mainController.getUservideo_time.length,
                                 itemBuilder: (c,i){
-                                  print("lesson_id "+_mainController.getUservideo_time.reversed.toList()[i].toString());
                                   if(
                                   _mainController.getUservideo_time.reversed.toList().where((element) => _mainController.getUservideo_time.reversed.toList()[i]['course_id']==element['course_id']).length>1
                                   ){

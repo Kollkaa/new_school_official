@@ -107,7 +107,6 @@ class _ChewieDemoState extends State<VideoScreen> {
         );
       } else if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="720")>=0){
         print('"quality": "720"');
-
         videoPlayerController =new VideoPlayerController.network(
             widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="720")]['video_url']
         );
