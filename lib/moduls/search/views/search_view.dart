@@ -31,23 +31,92 @@ class SearchScreen extends StatelessWidget {
                 padding: EdgeInsets.only(
                   left: 12,right: 4,top: 27,
                 ),
-                child: Text("${searchController.title}",style: TextStyle(fontSize: 25,color: Color(0xff000000),fontWeight: FontWeight.w600,height: 1,fontFamily: "Raleway"),)
+                child: Text("Поиск",style: TextStyle(fontSize: 25,color: Color(0xff000000),fontWeight: FontWeight.w700,height: 1,fontFamily: "Raleway"),)
             ),
             Container(
-              padding: EdgeInsets.only(
-                left: 8,right: 8,top: 27,
+              height: 31,
+              margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(width: 1)
               ),
-              child:  GridView.count(
-                crossAxisCount: 2,
-                shrinkWrap: true,
-                scrollDirection: Axis.vertical,
-                controller: new ScrollController(keepScrollOffset: false),
-                childAspectRatio: 166/120,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  ...searchController.courses.map((el)=>Item("${el['topic']}","${el['banner_big']}","${el['id']}",_homeController,_mainController)),
+                  Image.asset("assets/images/search.png",width: 27,height: 25,),
+                  Container(
+                    height: 31,
+                    width: Get.width-80,
+                    child:  TextField(
+                      textAlignVertical: TextAlignVertical.center,
+                        style: TextStyle(height: 1.4),
+                        decoration: InputDecoration(
+                            isDense: true,
+                            contentPadding: EdgeInsets.all(1.0),//here your padding
+                            border: InputBorder.none,
+                            disabledBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            errorBorder: InputBorder.none,
+                          hintText: "Поиск по курсу"
+                        )
+                    ),
+                  )
+                ],
+              )
+            ),
+            Expanded(
+              child: ListView(
+                children: [
+                  Container(
+                      padding: EdgeInsets.only(
+                        left: 12,right: 4,top: 27,
+                      ),
+                      child: Text("Категории",style: TextStyle(fontSize: 17,color: Color(0xff000000),fontWeight: FontWeight.w700,height: 1,fontFamily: "Raleway"),)
+                  ),
+                  SizedBox(height: 10,),
+                  ..._homeController.categorise.map(
+                      (el){
+                        return GestureDetector(
+                          child: Container(
+                            margin: EdgeInsets.only(left: 12,right: 20),
+                            padding: EdgeInsets.only(top: 12,bottom: 13),
+                            decoration: BoxDecoration(
+                                border: Border(bottom: BorderSide(width: 1,color:Color(0xffECECEC)))
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(el['name'],style: TextStyle(fontSize: 16,color: Color(0xff000000),fontWeight: FontWeight.w300,height: 1,fontFamily: "Raleway"),),
+                                Icon(Icons.arrow_forward_ios_outlined,color: Color(0xff6A6A6A),)
+
+                              ],
+                            ),
+                          ),
+                          onTapDown: (_)async{
+                            await _homeController.getCoursesByCat(el['id'],el['name']);
+
+                          },
+                        );
+                      }
+                  ).toList()
                 ],
               ),
             )
+            // Container(
+            //   padding: EdgeInsets.only(
+            //     left: 8,right: 8,top: 27,
+            //   ),
+            //   child:  GridView.count(
+            //     crossAxisCount: 2,
+            //     shrinkWrap: true,
+            //     scrollDirection: Axis.vertical,
+            //     controller: new ScrollController(keepScrollOffset: false),
+            //     childAspectRatio: 166/120,
+            //     children: [
+            //       ...searchController.courses.map((el)=>Item("${el['topic']}","${el['banner_big']}","${el['id']}",_homeController,_mainController)),
+            //     ],
+            //   ),
+            // )
           ],
         ),
       ),

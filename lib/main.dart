@@ -33,7 +33,7 @@ void main()async {
       child:  GetMaterialApp(
         debugShowCheckedModeBanner: false,
         locale: const Locale('en', 'US'),
-
+        color: Colors.white,
         theme: ThemeData(
           primaryColor: white_color,
           backgroundColor: white_color

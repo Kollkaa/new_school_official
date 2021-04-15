@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:new_school_official/moduls/main/controllers/main_controller.dart';
+import 'package:new_school_official/moduls/search/views/course_by_group.dart';
 import 'dart:ui' as ui;
 
 import 'package:new_school_official/routes/app_pages.dart';
@@ -124,7 +125,7 @@ class HomeController extends GetxController {
       print(response.data['kurses'].length);
       coursesByCat.value=response.data['kurses'];
      category.value=text;
-     _mainController.currentIndex.value=1;
+     Get.to(CourseByGroup());
     }
   }
 }

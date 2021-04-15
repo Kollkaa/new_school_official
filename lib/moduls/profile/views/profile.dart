@@ -76,7 +76,7 @@ class StateProfile extends State<ProfilePage>{
                                      _mainController.widgets.add(AuthPage());
                                      _mainController.currentIndex.value=4;
                                    }else{
-                                     await Get.dialog(
+                                     await Get.to(
                                          SettingPage()
                                      );
                                      var responces =await Backend().getUser(id:box.read("id"));
@@ -127,24 +127,11 @@ class StateProfile extends State<ProfilePage>{
                          height: 20,
                          child:  Padding(
                            padding: EdgeInsets.all(1.0),
-                           child:  FlatButton(
-                             padding: EdgeInsets.all(1),
-                             child:  Container(
-                               child: Text(
-                                 "${_mainController.profile['email']}",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w400,color: Color(0xff6a6a6a),fontFamily: 'Raleway'),
-                               ),
+                           child: Container(
+                             child: Text(
+                               "${_mainController.profile['email']}",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w400,color: Color(0xff6a6a6a),fontFamily: 'Raleway'),
                              ),
-                             onPressed: ()async{
-                               await showDialog(context: context,builder:(c){
-                                 return SettingPage();
-                               } );
-                               var responces =await Backend().getUser(id:box.read("id"));
-                               print(responces);
-                               _mainController.profile.value=responces.data['clients'][0];
-                               setState(() {
-                               });
-                             },
-                           )
+                           ),
                          ),
                        ),
 

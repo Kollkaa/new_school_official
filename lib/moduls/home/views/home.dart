@@ -563,17 +563,26 @@ class Statehome extends State<HomePage>{
 
    @override
    void initState() {
+     StreamController<int> controller = StreamController<int>();
+     Stream stream = controller.stream;
+     stream.listen((value) async{
+       initImage();
+     });
+     ;
+     controller.add(1);
+   }
+   initImage(){
      _image = new NetworkImage(
        '${widget.image}',
      );
      _image.resolve(ImageConfiguration()).addListener(
        ImageStreamListener(
              (info, call) {
-               if (mounted) {
-                 setState(() {
-                   _loading = false;
-                 });
-               }
+           if (mounted) {
+             setState(() {
+               _loading = false;
+             });
+           }
          },
        ),
      );
@@ -673,9 +682,7 @@ class StateItemCat extends State<ItemCat>{
 
   var _image;
   bool _loading = true;
-
-  @override
-  void initState() {
+  initImage(){
     _image = new NetworkImage(
       '${widget.image}',
     );
@@ -690,6 +697,17 @@ class StateItemCat extends State<ItemCat>{
         },
       ),
     );
+  }
+
+  @override
+  void initState() {
+    StreamController<int> controller = StreamController<int>();
+    Stream stream = controller.stream;
+    stream.listen((value) async{
+      initImage();
+    });
+    ;
+    controller.add(1);
   }
 
   @override
@@ -793,7 +811,13 @@ class StateItemCont extends State<ItemCont>{
       var responce= await Backend().getCourse(widget.idCourse);
       course=responce.data.length!=0?responce.data['kurses'][0]:null;
       image= course!=null?course['banner_small']:null;
-      course!=null?initImage():null;
+      StreamController<int> controller = StreamController<int>();
+      Stream stream = controller.stream;
+      stream.listen((value) async{
+        initImage();
+      });
+      ;
+      course!=null?controller.add(1):null;
       print(responce);
       var stat =await Backend().getStatCourse(widget.idCourse);
       lesAll=int.tryParse(stat.data[0]['lessons_count']);
@@ -831,7 +855,7 @@ class StateItemCont extends State<ItemCont>{
     print((lesAll/lesProg));
     print(Get.width*(lesProg/lesAll));
 
-    return image!=null? _loading ?Container(
+    return image!=null&&!((Get.width*(lesProg/lesAll))>Get.width?Get.width-50:(Get.width*(lesProg/lesAll)-35)).isNaN? _loading ?Container(
       margin: EdgeInsets.only(right: 12),
       height: 142,
       width: 142,
@@ -882,7 +906,6 @@ class StateItemCont extends State<ItemCont>{
                 ),
               ),
             ),
-
             Positioned(
               bottom: 1,
               child: Container(

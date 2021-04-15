@@ -103,7 +103,7 @@ class DownloadPage extends StatelessWidget{
                             ],
                           ),
                           onTapDown: (_){
-                            Get.dialog(ListVideo(box.read("${jsonDecode(el)['id']}"),jsonDecode(el)['title']));
+                            Get.to(ListVideo(box.read("${jsonDecode(el)['id']}"),jsonDecode(el)['title']));
                           },
                         );
                       }).toList(),

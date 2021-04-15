@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:new_school_official/custom/loader.dart';
 import 'package:new_school_official/dialog/atuhor.dart';
 import 'package:new_school_official/dialog/treyler.dart';
 import 'package:new_school_official/moduls/auth/views/register.dart';
@@ -150,7 +151,7 @@ class StateStaticScreen extends State<StaticScreen>{
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return _mainController.auth.value && _mainController.getStats['courses_in_progress']==null?Loader():Scaffold(
       backgroundColor: white_color,
       body: SafeArea(
         child: ListView(

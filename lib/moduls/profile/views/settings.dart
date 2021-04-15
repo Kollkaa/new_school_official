@@ -71,7 +71,7 @@ class SettingPage extends StatelessWidget{
                          ),
                        ),
                        onTap: (){
-                         Get.dialog(EditProfile());
+                         Get.to(EditProfile());
                        },
                      ),
                       GestureDetector(
@@ -96,7 +96,7 @@ class SettingPage extends StatelessWidget{
                           ),
                         ),
                         onTap: (){
-                          Get.dialog(
+                          Get.to(
                               EditPasswordProfile()
                           );
                         },
@@ -123,7 +123,7 @@ class SettingPage extends StatelessWidget{
                           ),
                         ),
                         onTap: (){
-                          Get.dialog(
+                          Get.to(
                               EditEmailProfile()
                           );
                         },

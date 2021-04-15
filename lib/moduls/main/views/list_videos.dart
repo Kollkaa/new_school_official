@@ -4,8 +4,10 @@ import 'dart:io';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:new_school_official/custom/controlls.dart';
 import 'package:new_school_official/moduls/main/controllers/main_controller.dart';
 import 'package:video_player/video_player.dart';
 
@@ -100,8 +102,20 @@ class ListVideoState extends State<ListVideo>{
                   ],
                 ),
               ),
-              onTapDown: (_){
-                Get.dialog(Video(jsonDecode(el)['video']));
+              onTapDown: (_)async{
+                await Get.to(Video(jsonDecode(el)['video']));
+                SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
+                SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+                    statusBarColor: Colors.white,
+                    statusBarIconBrightness: Brightness.dark,
+                    statusBarBrightness: Brightness.dark,
+                    systemNavigationBarColor: Colors.white
+                ));
+                SystemChrome.setPreferredOrientations([
+                  DeviceOrientation.portraitUp,
+                ]);
+                setState(() {
+                });
               },
             );
           }).toList()
@@ -126,6 +140,16 @@ class VideoState extends State<Video> {
   ChewieController _chewieController;
 
   initPlayer()async{
+    SystemChrome.setEnabledSystemUIOverlays([]);
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        statusBarColor: Colors.black,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.light,
+        systemNavigationBarColor: Colors.black
+    ));
+    setState(() {
+
+    });
     var dir = await getApplicationDocumentsDirectory();
     VideoPlayerController videoplayer=new VideoPlayerController.file(
         new File("${dir.path}${widget.path}"));
@@ -134,7 +158,10 @@ class VideoState extends State<Video> {
     _chewieController = ChewieController(
       videoPlayerController: videoplayer,
       aspectRatio: 16/9,
-      showControls: true,
+      autoInitialize: true,
+      autoPlay: true,
+      showControlsOnInitialize: false,
+      showControls: false,
       allowFullScreen: false,
       fullScreenByDefault: false,
       materialProgressColors: ChewieProgressColors(
@@ -151,10 +178,34 @@ class VideoState extends State<Video> {
       setState(( ) { } );
 
     });
+    myOverayEntry = getMyOverlayEntry(context: context);
+    Overlay.of(context).insert(myOverayEntry);
     setState(( ) { } );
-
   }
-
+  OverlayEntry myOverayEntry;
+  OverlayEntry getMyOverlayEntry({
+    @required BuildContext context,
+  }) {
+    return new OverlayEntry(
+      builder: (context) => _chewieController.videoPlayerController!=null?Positioned(
+        child: CupertinoControls(
+          chewieController: _chewieController,
+          backgroundColor: Color(0xff232323),
+          image:null,
+          iconColor: Colors.white,
+          id:  null,
+          kurs_id:  null,
+          method:(){
+            myOverayEntry.remove();
+            _chewieController.videoPlayerController.removeListener(() {});
+            _chewieController.removeListener(() {});
+            _chewieController.videoPlayerController.dispose();
+            _chewieController.dispose();
+            Get.back();},
+        ),
+      ):Container()
+  );
+  }
   @override
   void initState() {
     initPlayer();
@@ -162,6 +213,9 @@ class VideoState extends State<Video> {
 
   @override
   void dispose() {
+    myOverayEntry.remove();
+    _chewieController.videoPlayerController.removeListener(() {});
+    _chewieController.removeListener(() {});
     _chewieController.videoPlayerController.dispose();
     _chewieController.dispose();
 
