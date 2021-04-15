@@ -58,11 +58,6 @@ class StateCourse extends State<CourseScreen>{
   @override
   Widget build(BuildContext context) {
     print(_courseController.id);
-    // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    //     statusBarIconBrightness: Brightness.dark,
-    //     statusBarBrightness: Brightness.dark,
-    //   systemNavigationBarColor: Colors.white
-    // ));
    if(_homeController.videos['lessons']!=null){
      for(int i=0;i<_homeController.videos['lessons'].length;i++){
        var indexInLookLesson=_mainController.getUservideo_time_all.indexWhere((element) => element['lesson_id']==_homeController.videos['lessons'].reversed.toList()[i]['id']);
@@ -436,7 +431,7 @@ class StateCourse extends State<CourseScreen>{
                             }
                           }).toList(),]
                         ),
-                        Stack(
+                        _courseController.statTest!=null?Stack(
                             children:[
                               GestureDetector(
                                 child:Column(
@@ -519,7 +514,7 @@ class StateCourse extends State<CourseScreen>{
                               Container(),
 
                             ]
-                        )
+                        ):Container()
                       ]
                     ),
                   ),

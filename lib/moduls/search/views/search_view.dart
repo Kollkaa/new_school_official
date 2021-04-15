@@ -35,23 +35,24 @@ class SearchScreen extends StatelessWidget {
             ),
             Container(
               height: 31,
-              margin: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
+              margin: EdgeInsets.symmetric(horizontal: 13,vertical: 20),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(width: 1)
+                border: Border.all(width: 1,color:Color(0xffECECEC))
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Image.asset("assets/images/search.png",width: 27,height: 25,),
                   Container(
-                    height: 31,
+                    height: 38,
                     width: Get.width-80,
                     child:  TextField(
                       textAlignVertical: TextAlignVertical.center,
-                        style: TextStyle(height: 1.4),
+                        style: TextStyle(height: 1.6,fontSize:14,fontWeight: FontWeight.w300,color: Color(0xff434343),fontFamily: "Raleway"),
                         decoration: InputDecoration(
                             isDense: true,
+                            hintStyle: TextStyle(height: 1.6,fontSize:14,fontWeight: FontWeight.w300,color: Color(0xff434343),fontFamily: "Raleway"),
                             contentPadding: EdgeInsets.all(1.0),//here your padding
                             border: InputBorder.none,
                             disabledBorder: InputBorder.none,
@@ -86,8 +87,8 @@ class SearchScreen extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(el['name'],style: TextStyle(fontSize: 16,color: Color(0xff000000),fontWeight: FontWeight.w300,height: 1,fontFamily: "Raleway"),),
-                                Icon(Icons.arrow_forward_ios_outlined,color: Color(0xff6A6A6A),)
+                                Text(el['name'],style: TextStyle(height: 1.4,fontSize:14,fontWeight: FontWeight.w300,color: Color(0xff434343),fontFamily: "Raleway"),),
+                                Icon(Icons.arrow_forward_ios_outlined,color: Color(0xffC4C4C4),size: 15,)
 
                               ],
                             ),

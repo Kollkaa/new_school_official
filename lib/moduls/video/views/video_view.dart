@@ -44,6 +44,7 @@ class _ChewieDemoState extends State<VideoScreen> {
     _chewieController.removeListener(() {});
     _chewieController.videoPlayerController.dispose();
     _chewieController.dispose();
+
     super.dispose();
   }
   VideoPlayerController videoPlayerController= new VideoPlayerController.network("dataSource");
