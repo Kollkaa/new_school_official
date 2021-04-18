@@ -29,13 +29,15 @@ class SearchScreen extends StatelessWidget {
           children: [
             Container(
                 padding: EdgeInsets.only(
-                  left: 12,right: 4,top: 27,
+                  left: 22,right: 22,top: 27,
                 ),
                 child: Text("Поиск",style: TextStyle(fontSize: 25,color: Color(0xff000000),fontWeight: FontWeight.w700,height: 1,fontFamily: "Raleway"),)
             ),
             Container(
               height: 31,
-              margin: EdgeInsets.symmetric(horizontal: 13,vertical: 20),
+              margin: EdgeInsets.only(
+                left: 22,right: 22,top: 15,
+              ),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(width: 1,color:Color(0xffECECEC))
@@ -43,7 +45,7 @@ class SearchScreen extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Image.asset("assets/images/search.png",width: 27,height: 25,),
+                  Image.asset("assets/images/search.png",width: 22,height: 15,),
                   Container(
                     height: 38,
                     width: Get.width-80,
@@ -52,25 +54,43 @@ class SearchScreen extends StatelessWidget {
                         style: TextStyle(height: 1.6,fontSize:14,fontWeight: FontWeight.w300,color: Color(0xff434343),fontFamily: "Raleway"),
                         decoration: InputDecoration(
                             isDense: true,
-                            hintStyle: TextStyle(height: 1.6,fontSize:14,fontWeight: FontWeight.w300,color: Color(0xff434343),fontFamily: "Raleway"),
+                            hintStyle: TextStyle(height: 1.6,fontSize:14,fontWeight: FontWeight.w300,color: Color(0xff434343).withOpacity(0.5),fontFamily: "Raleway"),
                             contentPadding: EdgeInsets.all(1.0),//here your padding
                             border: InputBorder.none,
                             disabledBorder: InputBorder.none,
                             enabledBorder: InputBorder.none,
                             errorBorder: InputBorder.none,
                           hintText: "Поиск по курсу"
-                        )
+                        ),
+                    onChanged: _mainController.onChange,
                     ),
                   )
                 ],
               )
+            ),
+            Obx(
+                ()=>Container(
+                  padding: EdgeInsets.only(
+                    left: 8,right: 8,top: 27,
+                  ),
+                  child:  GridView.count(
+                    crossAxisCount: 2,
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    controller: new ScrollController(keepScrollOffset: false),
+                    childAspectRatio: 166/120,
+                    children: [
+                      ..._mainController.searchCourse.map((el)=>Item("${el['topic']}","${el['banner_big']}","${el['id']}",_homeController,_mainController)),
+                    ],
+                  ),
+                )
             ),
             Expanded(
               child: ListView(
                 children: [
                   Container(
                       padding: EdgeInsets.only(
-                        left: 12,right: 4,top: 27,
+                        left: 22,right: 22,top: 27,
                       ),
                       child: Text("Категории",style: TextStyle(fontSize: 17,color: Color(0xff000000),fontWeight: FontWeight.w700,height: 1,fontFamily: "Raleway"),)
                   ),
@@ -79,7 +99,9 @@ class SearchScreen extends StatelessWidget {
                       (el){
                         return GestureDetector(
                           child: Container(
-                            margin: EdgeInsets.only(left: 12,right: 20),
+                            margin: EdgeInsets.only(
+                              left: 22,right: 22,
+                            ),
                             padding: EdgeInsets.only(top: 12,bottom: 13),
                             decoration: BoxDecoration(
                                 border: Border(bottom: BorderSide(width: 1,color:Color(0xffECECEC)))

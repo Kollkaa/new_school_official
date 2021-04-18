@@ -57,11 +57,14 @@ class DownloadPage extends StatelessWidget{
                       ),
                       Text(
                         "Загружайте курсы, чтобы Вы всегда могли обучаться, даже если вы в офлайн.",textAlign: TextAlign.center,style: TextStyle(fontSize:14,height:1.5,fontWeight: FontWeight.w300,fontFamily: "Raleway"),
+                      ),
+                      Text(
+                        "(Доступно при подписке)",textAlign: TextAlign.center,style: TextStyle(fontSize:14,height:1.5,fontWeight: FontWeight.w300,fontFamily: "Raleway"),
                       )
                     ],
                   ),
                 )
-                    :Column(
+                    :mainController.auth.value?Column(
                     children:[
                       SizedBox(
                         height: 36,
@@ -70,7 +73,7 @@ class DownloadPage extends StatelessWidget{
                           .downloads
                           .split("||")
                           .map((el){
-                            print(el);
+                        print(el);
                         return GestureDetector(
                           child: Row(mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -82,8 +85,8 @@ class DownloadPage extends StatelessWidget{
                                     borderRadius: BorderRadius.circular(5),
                                     color: Colors.black,
                                     image: DecorationImage(
-                                    image: NetworkImage("${jsonDecode(el)['image']}")
-                                  )
+                                        image: NetworkImage("${jsonDecode(el)['image']}")
+                                    )
                                 ),
                               ),
                               SizedBox(width: 18,),
@@ -108,7 +111,7 @@ class DownloadPage extends StatelessWidget{
                         );
                       }).toList(),
                     ]
-                ),
+                ):Container(),
 
               ],
             )

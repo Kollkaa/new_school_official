@@ -60,7 +60,14 @@ class MainController extends GetxController {
   StreamController<dynamic> controller = StreamController<dynamic>();
   Stream stream ;
   var listCanselToken=[];
+  var listValue=[];
+
   var downloads;
+
+  var allCourse=[];
+
+  var searchCourse=[].obs;
+
   @override
   void onInit() async {
     super.onInit();
@@ -89,7 +96,9 @@ class MainController extends GetxController {
   }
 
   initProfile(id)async {
-    print("startGetDataUser");
+    allCourse =(await Backend().getAllCourses())['kurses'];
+
+        print("startGetDataUser");
     dios.Response responces =await Backend().getUser(id:id);
     profile.value=responces.data['clients'][0];
     nameEditingController = new TextEditingController(text: profile['name']);
@@ -128,10 +137,11 @@ class MainController extends GetxController {
     print(cours['banner_small']);
     try {
       var dir = await getApplicationDocumentsDirectory();
+      listValue.add({"rec":1,"total":1});
      var responce= await dio.download(url, "${dir.path}/$course_id/$video_id.mp4",
           onReceiveProgress: (rec, total) async{
-        print("Rec: $rec , Total: $total");
-
+        listValue[listCanselToken.length-1]={"rec":rec,"total":total};
+        Get.appUpdate();
         if(rec==total){
           print("finish donload file ${dir.path}/$course_id/$video_id.mp4");
           var downloads= box.read("downloads");
@@ -180,4 +190,10 @@ class MainController extends GetxController {
    getVideo(course){
    return box.read("$course");
   }
+  void onChange(value){
+    searchCourse.value=[];
+    searchCourse.addAll(allCourse.where((element) => element['topic'].indexOf("element")>=0||element['description'].indexOf("element")>=0));
+
+  }
+
 }

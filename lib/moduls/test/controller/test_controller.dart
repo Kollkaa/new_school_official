@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -16,7 +17,7 @@ class TestController extends GetxController{
   var stat;
   var correct=0.obs;
 
-  double progress=0;
+  RxInt progress=60.obs;
 
   var questionController=new PageController(initialPage: 0);
 
@@ -27,14 +28,36 @@ class TestController extends GetxController{
   void onInit() {
     getTest();
   }
+
   getTest()async{
     test=await Backend().getTestByidCourse(course_id: homeController.course['kurses'][0]['id']);
+    test.data['questions'];
     stat=await Backend().getTestStat(id: mainController.profile['id'],course_id: homeController.course['kurses'][0]['id']);
     print(test.data);
     print(stat.data);
 
     Get.appUpdate();
   }
+  var list=[];
+  randomizer(inte){
+    list=[];
+    while(list.length!=inte) {
+        var question;
+        do{
+          var question = getRandomElement(test.data['questions']);
+          if(!list.contains(question)){
+            list.add(question);
+          }
+        }while (list.contains(question));
+    }
+  }
+
+  T getRandomElement<T>(List<T> list) {
+    final random = new Random();
+    var i = random.nextInt(list.length);
+    return list[i];
+  }
+
   @override
   void onReady() {}
 
@@ -45,7 +68,9 @@ class TestController extends GetxController{
    timer= new Timer.periodic(
       Duration(seconds: 1),
           (Timer timer) async{
-            if (progress >= 1) {
+        print(progress.value);
+            if (progress.value <= 0) {
+
               timer.cancel();
               print(test.data['questions'][currentIndexQuestion.value]['question_id']);
               if(indexAnswer.value!=""){
@@ -62,16 +87,18 @@ class TestController extends GetxController{
                 indexAnswer.value="";
                 currentIndexQuestion.value=currentIndexQuestion.value+1;
                 questionController.jumpToPage(currentIndexQuestion.value);
-                progress=1;
+                progress.value=0;
                 Get.appUpdate();
-                progress=0;
+                progress.value=60;
                 Get.appUpdate();
                 startTimer();
               }else{
                 controller.jumpToPage(2);
               }
             } else {
-              progress += 0.03;
+              print(progress.value);
+
+              progress.value =progress.value- 1;
 
             }
             Get.appUpdate();

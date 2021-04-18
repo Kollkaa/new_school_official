@@ -62,25 +62,28 @@ class _CupertinoControlsState extends State<CupertinoControls> {
   @override
   Widget build(BuildContext context) {
     chewieController = widget.chewieController;
-    if (_latestValue.hasError) {
-      return chewieController.errorBuilder != null
-          ? chewieController.errorBuilder(
-        context,
-        chewieController.videoPlayerController.value.errorDescription,
-      )
-          : Center(
-        child: Icon(
-          OpenIconicIcons.ban,
-          color: Colors.white,
-          size: 42,
-        ),
-      );
+    if(_latestValue!=null){
+      if (_latestValue.hasError) {
+        return chewieController.errorBuilder != null
+            ? chewieController.errorBuilder(
+          context,
+          chewieController.videoPlayerController.value.errorDescription,
+        )
+            : Center(
+          child: Icon(
+            OpenIconicIcons.ban,
+            color: Colors.white,
+            size: 42,
+          ),
+        );
+      }
     }
 
     final backgroundColor = widget.backgroundColor;
     final iconColor = widget.iconColor;
     chewieController = widget.chewieController;
-    controller = chewieController.videoPlayerController;
+    if(chewieController!=null)
+      controller = chewieController.videoPlayerController;
     final orientation = MediaQuery.of(context).orientation;
     final barHeight = orientation == Orientation.portrait ? 30.0 : 47.0;
     final buttonPadding = orientation == Orientation.portrait ? 16.0 : 24.0;
@@ -179,7 +182,9 @@ class _CupertinoControlsState extends State<CupertinoControls> {
   void didChangeDependencies() {
     final _oldController = chewieController;
     chewieController = widget.chewieController;
-    controller = chewieController.videoPlayerController;
+    if(chewieController!=null){
+      controller = chewieController.videoPlayerController;
+    }
 
     if (_oldController != chewieController) {
       _dispose();
@@ -427,9 +432,9 @@ class _CupertinoControlsState extends State<CupertinoControls> {
           right: 6.0,
         ),
         child: Icon(
-          controller.value.isPlaying
+          controller!=null?controller.value.isPlaying
               ? OpenIconicIcons.mediaPause
-              : OpenIconicIcons.mediaPlay,
+              : OpenIconicIcons.mediaPlay:OpenIconicIcons.mediaPlay,
           color: iconColor,
           size: 16.0,
         ),
@@ -532,29 +537,31 @@ class _CupertinoControlsState extends State<CupertinoControls> {
       ),
       child: Row(
         children: <Widget>[
-      chewieController.allowMuting
+          chewieController!=null?chewieController.allowMuting
       ?              _buildBackButton(
           controller, backgroundColor, iconColor,
           barHeight, buttonPadding)
-              : Container(),
+              : Container():Container(),
           Expanded(child: Container()),
-          chewieController.allowMuting
+          chewieController!=null?chewieController.allowMuting
               ? _buildMuteButton(controller, backgroundColor, iconColor,
               barHeight, buttonPadding)
-              : Container(),
+              : Container():Container(),
         ],
       ),
     );
   }
 
   void _cancelAndRestartTimer() {
-    _hideTimer?.cancel();
+    if(chewieController!=null){
+      _hideTimer?.cancel();
 
-    setState(() {
-      _hideStuff = false;
+      setState(() {
+        _hideStuff = false;
 
-      _startHideTimer();
-    });
+        _startHideTimer();
+      });
+    }
   }
 
   Future<Null> _initialize() async {
@@ -601,7 +608,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
           onDragEnd: () {
             _startHideTimer();
           },
-          colors: chewieController.cupertinoProgressColors ??
+          colors: chewieController!=null?chewieController.cupertinoProgressColors ??
               ChewieProgressColors(
                 playedColor: Color.fromARGB(
                   120,
@@ -627,7 +634,32 @@ class _CupertinoControlsState extends State<CupertinoControls> {
                   255,
                   255,
                 ),
-              ),
+              ):ChewieProgressColors(
+            playedColor: Color.fromARGB(
+              120,
+              255,
+              255,
+              255,
+            ),
+            handleColor: Color.fromARGB(
+              255,
+              255,
+              255,
+              255,
+            ),
+            bufferedColor: Color.fromARGB(
+              60,
+              255,
+              255,
+              255,
+            ),
+            backgroundColor: Color.fromARGB(
+              20,
+              255,
+              255,
+              255,
+            ),
+          ),
         ),
       ),
     );

@@ -35,7 +35,10 @@ class _ChewieDemoState extends State<TrailerScreen> {
 
   @override
   void dispose() {
-    _videoPlayerController1.dispose();
+    myOverayEntry.remove();
+    _chewieController.videoPlayerController.removeListener(() {});
+    _chewieController.removeListener(() {});
+    _chewieController.videoPlayerController.dispose();
     _chewieController.dispose();
     super.dispose();
   }
@@ -48,9 +51,13 @@ class _ChewieDemoState extends State<TrailerScreen> {
         statusBarBrightness: Brightness.light,
         systemNavigationBarColor: Colors.black
     ));
-    setState(() {
-
-    });
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+    setState(( ) { } );
     print(_homeController.course['kurses'][0]['trailer']);
 
     _videoPlayerController1 = VideoPlayerController.network(

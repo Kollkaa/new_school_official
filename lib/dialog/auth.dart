@@ -358,9 +358,6 @@ class StateA extends State<Aut>{
                 print(responce.data);
                 await box.write("auth", true);
                 _mainController.profile={}.obs;
-                print(responce.data);
-                print(responce.data[0]);
-                print(responce.data[0]['id']);
                 await box.write("id", responce.data[0]['id']);
                 dios.Response responces =await Backend().getUser(id:responce.data[0]['id']);
 

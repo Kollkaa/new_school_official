@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:auto_size_text/auto_size_text.dart';
@@ -139,15 +140,65 @@ class StateProfile extends State<ProfilePage>{
                     ),
                   ),
                   getStatistikAuth(),
-                  getType("Мой список",_homeController.news.length,
-                      getitemOtherCard,_homeController.news
-                  ),
+                  // getType("Мой список",_homeController.news.length,
+                  //     getitemOtherCard,_homeController.news
+                  // ),
                   getType("Продолжить просмотр",_homeController.popular.length,
                       getitemOtherCard,_homeController.popular
                   ),
-                  getType("Рекомендуемые тесты",_homeController.news.length,
-                      getitemOtherCard,_homeController.news
+                  Container(
+                    padding: EdgeInsets.only(left: 20),
+                    child:
+                    Text("Не пройденные тесты",style: TextStyle(fontSize: 17,fontWeight: FontWeight.w600),),
+
                   ),
+                  _mainController.getUservideo_time.length!=0
+                      ?Container(
+                    margin: EdgeInsets.only(top: 7,bottom: 40),
+                    width: Get.width,
+                    height: 142,
+                    child: ListView.builder(
+                        padding: EdgeInsets.only(left: 20),
+                        scrollDirection: Axis.horizontal,        addAutomaticKeepAlives: true,
+                        cacheExtent: Get.width*2,
+                        itemCount: _mainController.getUservideo_time.length,
+                        itemBuilder: (c,i){
+                          if(
+                          _mainController.getUservideo_time.reversed.toList().where((element) => _mainController.getUservideo_time.reversed.toList()[i]['course_id']==element['course_id']).length>1
+                          ){
+                            if(_mainController.getUservideo_time.reversed.toList().indexWhere((element) => _mainController.getUservideo_time.reversed.toList()[i]['course_id']==element['course_id'])>=0){
+                              if(
+                              _mainController.getUservideo_time.reversed.toList()[i]['lesson_id']
+                                  ==
+                                  _mainController.getUservideo_time.reversed.toList()[
+                                  _mainController.getUservideo_time.reversed.toList().indexWhere((element) => _mainController.getUservideo_time.reversed.toList()[i]['course_id']==element['course_id'])
+                                  ]['lesson_id']
+                              ){
+                                return  ItemCont(
+                                  _mainController.getUservideo_time.reversed.toList()[i]['lesson_id']
+                                  ,_mainController.getUservideo_time.reversed.toList()[i]['course_id']
+                                  ,_mainController.getUservideo_time.reversed.toList()[i]['time']
+                                  ,_homeController,_mainController,
+                                );
+                              }else{
+                                return Container();
+                              }
+                            }else{
+                              return Container();
+                            }
+                          }
+                          return  ItemCont(
+                            _mainController.getUservideo_time.reversed.toList()[i]['lesson_id']
+                            ,_mainController.getUservideo_time.reversed.toList()[i]['course_id']
+                            ,_mainController.getUservideo_time.reversed.toList()[i]['time']
+                            ,_homeController,_mainController,
+                          );
+                        }
+
+
+                    ),
+                  )
+                      :Container(),
                   getType("Завершенные курсы",_homeController.popular.length,
                       getitemOtherCard,_homeController.popular
                   ),
@@ -313,4 +364,152 @@ class StateProfile extends State<ProfilePage>{
     });
   }
 
+}
+class ItemCont extends StatefulWidget{
+  String idVideo;
+  String idCourse;
+  var duration;
+  var homeController;
+  var mainController;
+
+  ItemCont(this.idVideo, this.idCourse,this.duration,this.homeController,this.mainController);
+
+  @override
+  State<StatefulWidget> createState() {
+    return StateItemCont();
+  }
+
+}
+class StateItemCont extends State<ItemCont>{
+
+  bool _loading = true;
+  var image;
+  var _image;
+  var video;
+  var course;
+  @override
+  void initState() {
+    getVideo();
+  }
+  var lesAll=0;
+  var lesProg=0;
+  void getVideo() async{
+    StreamController<int> controller = StreamController<int>();
+    Stream stream = controller.stream;
+    stream.listen((value) async{
+      var responce= await Backend().getCourse(widget.idCourse);
+      course=responce.data.length!=0?responce.data['kurses'][0]:null;
+      image= course!=null?course['banner_small']:null;
+      StreamController<int> controller = StreamController<int>();
+      Stream stream = controller.stream;
+      stream.listen((value) async{
+        initImage();
+      });
+      ;
+      course!=null?controller.add(1):null;
+      var stat =await Backend().getStatCourse(widget.idCourse);
+      lesAll=int.tryParse(stat.data[0]['lessons_count']);
+      lesProg=widget.mainController.getUservideo_time_all.where((el)=>el['course_id']==widget.idCourse).length;
+      setState(() {
+
+      });
+    });
+    controller.add(1);
+
+
+  }
+
+  initImage(){
+    _image = new NetworkImage(
+      '${image}',
+    );
+    _image.resolve(ImageConfiguration()).addListener(
+      ImageStreamListener(
+            (info, call) {
+          if (mounted) {
+            setState(() {
+              _loading = false;
+            });
+          }
+        },
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print((lesAll/lesProg));
+    print(Get.width*(lesProg/lesAll));
+
+    return image!=null&&!((Get.width*(lesProg/lesAll))>Get.width?Get.width-50:(Get.width*(lesProg/lesAll)-35)).isNaN? _loading ?Container(
+      margin: EdgeInsets.only(right: 20),
+      height: 142,
+      width: 216,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        color: Colors.black.withOpacity(0.04),
+      ),):
+    GestureDetector(
+      child: Container(
+        margin: EdgeInsets.only(right: 12),
+        height: 142,
+        width: 216,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            color: Colors.black.withOpacity(0.04),
+            image: DecorationImage(image: _image,fit: BoxFit.cover)
+        ),
+
+        child: Stack(
+          children: [
+            Positioned(
+              bottom: 0,
+              child: Container(
+
+                height: 50,
+                width: 216,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [Colors.black.withOpacity(1), Colors.black.withOpacity(0)]
+                    )
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: EdgeInsets.only(left: 25,right: 10,bottom: 12),
+                child: AutoSizeText(
+                  course['topic'],
+                  style: white_title3_card_text_title,
+                  minFontSize: 10,
+                  maxLines: 1,
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 1,
+              child: Container(
+                margin: EdgeInsets.only(left: 7,right: 100),
+                height: 2,
+                width: (Get.width*(lesProg/lesAll))>Get.width?Get.width-50:(Get.width*(lesProg/lesAll)-35),
+                color: Colors.white,
+              ),
+            )
+          ],
+        ),
+      ),
+      onTap: ()async{
+        Get.toNamed(Routes.COURSE,arguments:widget.idCourse);
+
+        setState(() {
+        });
+      },
+    ):Container();
+  }
 }

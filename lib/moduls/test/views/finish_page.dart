@@ -22,11 +22,11 @@ class FinishPage extends StatelessWidget{
                         Text(
                             "${testController.correct.value} ",
                             style:TextStyle(fontSize: 16,fontWeight: FontWeight.w500,height: 1.2,color:
-                                int.tryParse(testController.stat.data['test_result'][0]['answers_to_pass'])<=testController.correct.value? Color(0xff219653):Color(0xffEB5757),letterSpacing: 0.5,fontFamily: "Relway")
+                                int.tryParse(testController.stat.data['test_result'][0]['answers_to_pass'])<=testController.correct.value? Color(0xff219653):Color(0xffEB5757),letterSpacing: 0.5,fontFamily: "Raleway")
                         ),
                         Text(
-                            "из ${testController.test.data['questions'].length}",
-                            style:TextStyle(fontSize: 16,fontWeight: FontWeight.w400,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Relway")
+                            "из ${testController.list.length}",
+                            style:TextStyle(fontSize: 16,fontWeight: FontWeight.w400,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Raleway")
                         ),
                       ],
                     )
@@ -37,7 +37,7 @@ class FinishPage extends StatelessWidget{
                 child: Text(
                     int.tryParse(testController.stat.data['test_result'][0]['answers_to_pass'])<=testController.correct.value?"Тест пройден":"Тест не пройден",
                     textAlign: TextAlign.center,
-                    style:TextStyle(fontSize: 24,fontWeight: FontWeight.w800,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Relway")
+                    style:TextStyle(fontSize: 24,fontWeight: FontWeight.w800,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Raleway")
                 ),
               ),
               SizedBox(height: 7,),
@@ -45,9 +45,11 @@ class FinishPage extends StatelessWidget{
                 margin: EdgeInsets.only(left: 30,right: 30 ),
                 child: Center(
                   child: Text(
-                      "Поздравляем Вас, вы успешно прошли курс «Научиться петь с нуля»! В любой момент вы можете проходить тест для поддержания знания.",
+                      int.tryParse(testController.stat.data['test_result'][0]['answers_to_pass'])<=testController.correct.value
+                          ?"Поздравляем Вас, вы успешно прошли курс «Научиться петь с нуля»! В любой момент вы можете проходить тест для поддержания знания."
+                          :"Изучите не правильные ответы, которые находятся ниже и поробуйте еще раз! У вас должно получится, успехов Вам!",
                       textAlign: TextAlign.center,
-                      style:TextStyle(fontSize: 14,fontWeight: FontWeight.w300,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Relway")
+                      style:TextStyle(fontSize: 14,fontWeight: FontWeight.w300,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Raleway")
                   ),
                 ),
               ),
@@ -59,7 +61,8 @@ class FinishPage extends StatelessWidget{
             height: 112,
             width: Get.width,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 int.tryParse(testController.stat.data['test_result'][0]['answers_to_pass'])<=testController.correct.value?  GestureDetector(
                   child: Container(
@@ -70,8 +73,8 @@ class FinishPage extends StatelessWidget{
                           border: Border.all(width: 0.5,color:Colors.black)
                       ),
                       child:Center(
-                        child:  Text("Завершить",
-                            style:TextStyle(fontSize: 14,fontWeight: FontWeight.w400,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Relway"
+                        child:  Text("Завершить",textAlign: TextAlign.center,
+                            style:TextStyle(fontSize: 14,fontWeight: FontWeight.w400,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Raleway"
                             )
                         ),
                       )
@@ -91,7 +94,7 @@ class FinishPage extends StatelessWidget{
                           ),
                           child:Center(
                             child:  Text("Завершить",
-                                style:TextStyle(fontSize: 14,fontWeight: FontWeight.w400,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Relway"
+                                style:TextStyle(fontSize: 14,fontWeight: FontWeight.w400,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Raleway"
                                 )
                             ),
                           )

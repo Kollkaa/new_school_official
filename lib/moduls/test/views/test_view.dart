@@ -55,7 +55,7 @@ class StateTestScreen extends State<TestScreen>{
                                           mainAxisAlignment: MainAxisAlignment.end,
                                           children: [
                                             GestureDetector(
-                                              child: Icon(Icons.clear),
+                                              child: Icon(Icons.clear,size: 15,),
                                               onTapDown: (_){
                                                 Get.back();
                                               },
@@ -68,7 +68,7 @@ class StateTestScreen extends State<TestScreen>{
 
                                         Container(
                                           child: Text("Точно хотите выйти?",
-                                            style:TextStyle(fontSize: 14,fontWeight: FontWeight.w600,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Relway"
+                                            style:TextStyle(fontSize: 14,fontWeight: FontWeight.w600,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Releway"
                                             )
                                           )
                                         ),
@@ -80,11 +80,11 @@ class StateTestScreen extends State<TestScreen>{
                                                   padding: EdgeInsets.only(top: 11,bottom: 12),
                                                   width: 123,
                                                   decoration: BoxDecoration(
-                                                      border: Border(top: BorderSide(width: 0.5,color:Colors.black))
+                                                      border: Border(top: BorderSide(width: 0.5,color:Colors.black.withOpacity(0.07)))
                                                   ),
                                                   child: Center(
                                                     child: Text("Нет",
-                                                        style:TextStyle(fontSize: 12,fontWeight: FontWeight.w400,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Relway"
+                                                        style:TextStyle(fontSize: 12,fontWeight: FontWeight.w400,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Releway"
                                                         )
                                                     ),
                                                   )
@@ -98,11 +98,11 @@ class StateTestScreen extends State<TestScreen>{
                                                   width: 123,
                                                   padding: EdgeInsets.only(top: 11,bottom: 12),
                                                   decoration: BoxDecoration(
-                                                      border: Border(left:BorderSide(width: 0.5,color:Colors.black),top: BorderSide(width: 0.5,color:Colors.black))
+                                                      border: Border(left:BorderSide(width: 0.5,color:Colors.black.withOpacity(0.07)),top: BorderSide(width: 0.5,color:Colors.black.withOpacity(0.07)))
                                                   ),
                                                   child:Center(
                                                     child:  Text("Да",
-                                                        style:TextStyle(fontSize: 12,fontWeight: FontWeight.w400,height: 1.2,color: Color(0xffeb5757),letterSpacing: 0.5,fontFamily: "Relway"
+                                                        style:TextStyle(fontSize: 12,fontWeight: FontWeight.w400,height: 1.2,color: Color(0xffeb5757),letterSpacing: 0.5,fontFamily: "Releway"
                                                         )
                                                     ),
                                                   )

@@ -25,48 +25,72 @@ class QuestionPage extends StatelessWidget{
                   margin: EdgeInsets.only(top:28 ),
                   child: Center(
                     child: Text(
-                        "${testController.currentIndexQuestion.value+1} из ${testController.test.data['questions'].length}",
-                        style:TextStyle(fontSize: 14,fontWeight: FontWeight.w300,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Relway")
+                        "${testController.currentIndexQuestion.value+1} из ${testController.list.length}",
+                        style:TextStyle(fontSize: 14,fontWeight: FontWeight.w300,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Raleway")
                     ),
                   ),
                 ),
               ],
             ),
-            Row(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(top:28 ),
-                  child: Center(
-                    child: Text(
-                        "30с",
-                        style:TextStyle(fontSize: 14,fontWeight: FontWeight.w300,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Relway")
+            Obx(
+                ()=>Row(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(top:28 ),
+                      child: Center(
+                        child: Text(
+                            "${testController.progress.value}c",
+                            style:TextStyle(fontSize: 14,fontWeight: FontWeight.w300,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Raleway")
+                        ),
+                      ),
                     ),
-                  ),
-                ),
 
-                SizedBox(width: 10,),
-                Container(
-                  height: 10,width: 109,
-                  margin: EdgeInsets.only(top:28 ),
-                  child:_LinearProgressIndicatorApp(testController.progress,testController.startTimer),
-                ),
-                SizedBox(width: 20,),
-              ],
+                    SizedBox(width: 10,),
+                    Container(
+                      height: 10,width: 109,
+                      margin: EdgeInsets.only(top:28 ),
+                      child: Stack(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(2),
+                              color: Color(0xffE8F2E9),
+
+                            ),
+                            height: 10,width: 109,
+                          ),
+                          AnimatedContainer(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(2),
+                              color: Color(0xff408F4D),
+
+                            ),
+                            duration: Duration(microseconds: 300),
+                            height: 10,width: testController.progress.value>=0?109-(109/60)*testController.progress.value:109,
+                          )
+                        ],
+                      )
+                    ),
+                    SizedBox(width: 20,),
+                  ],
+                )
+
             )
           ],
         ),
+        SizedBox(height: 54,),
         Expanded(
           child: PageView(
             physics:new NeverScrollableScrollPhysics(),
             controller: testController.questionController,
             children: [
-              ...testController.test.data['questions'].map((el)=>Container(
+              ...testController.list.map((el)=>Container(
                 margin: EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(el['question'].toString(),
-                        style:TextStyle(fontSize: 19,fontWeight: FontWeight.w700,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Relway")
+                        style:TextStyle(fontSize: 19,fontWeight: FontWeight.w700,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Raleway")
                     ),
                     ...el['answers'].map((answer)=>GestureDetector(
                       child: Obx(
@@ -80,7 +104,7 @@ class QuestionPage extends StatelessWidget{
                               borderRadius: BorderRadius.circular(8)
                           ),
                           child: Text("${answer['answer']}",
-                              style:TextStyle(fontSize: 14,fontWeight: FontWeight.w300,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Relway")
+                              style:TextStyle(fontSize: 13,fontWeight: FontWeight.w300,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Raleway")
                           ),
                         ),
                       ),
@@ -96,53 +120,57 @@ class QuestionPage extends StatelessWidget{
             ],
           )
         ),
-        GestureDetector(
-          child: Container(
-            margin: EdgeInsets.all(20),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.black,width: 1)
-            ),
-            height: 41,
-            width: Get.width,
-            child: Center(
-              child: Text(
-                  "Ответить →",
-                  style:TextStyle(fontSize: 14,fontWeight: FontWeight.w400,height: 1.2,color: Color(0xff434343),letterSpacing: 0.5,fontFamily: "Relway")
+        Container(
+            padding: EdgeInsets.all(20),
+            child: FlatButton(
+            padding: EdgeInsets.all(1),
+            child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.black,width: 1)
+              ),
+              height: 41,
+              width: Get.width,
+              child: Center(
+                child: Text(
+                    "Ответить →",
+                    style:TextStyle(fontSize: 14,fontWeight: FontWeight.w400,height: 1.2,color: Color(0xff434343),letterSpacing: 0.5,fontFamily: "Raleway")
+                ),
               ),
             ),
-          ),
-          onTapDown: (_)async{
-            if(testController.indexAnswer.value!=""){
-              testController.timer.cancel();
-              print(testController.test.data['questions'][testController.currentIndexQuestion.value]['question_id']);
-              var response= await Backend().sendQuery(question_id:testController.test.data['questions'][testController.currentIndexQuestion.value]['question_id'],answer_id:jsonDecode(testController.indexAnswer.value)['answer_id'],id: testController.mainController.profile['id'],course_id: testController.homeController.course['kurses'][0]['id']);
-              print(response);
-              if(jsonDecode(testController.indexAnswer.value)['correct']=="1"){
-                print('true');
-                testController.correct.value+=1;
-                print(testController.correct.value);
+            onPressed: ()async{
+              if(testController.indexAnswer.value!=""){
+                testController.timer.cancel();
+                print(testController.list[testController.currentIndexQuestion.value]['question_id']);
+                var response= await Backend().sendQuery(question_id:testController.test.data['questions'][testController.currentIndexQuestion.value]['question_id'],answer_id:jsonDecode(testController.indexAnswer.value)['answer_id'],id: testController.mainController.profile['id'],course_id: testController.homeController.course['kurses'][0]['id']);
+                print(response);
+                if(jsonDecode(testController.indexAnswer.value)['correct']=="1"){
+                  print('true');
+                  testController.correct.value+=1;
+                  print(testController.correct.value);
 
-              }
-              if(testController.currentIndexQuestion.value+1<testController.test.data['questions'].length) {
-                testController.indexAnswer.value = "";
-                testController.currentIndexQuestion.value =
-                    testController.currentIndexQuestion.value + 1;
-                testController.questionController.jumpToPage(
-                    testController.currentIndexQuestion.value);
-                testController.progress = 1;
-                Get.appUpdate();
-                testController.progress = 0;
-                Get.appUpdate();
-                testController.startTimer();
+                }
+                if(testController.currentIndexQuestion.value+1<testController.list.length) {
+                  testController.indexAnswer.value = "";
+                  testController.currentIndexQuestion.value =
+                      testController.currentIndexQuestion.value + 1;
+                  testController.questionController.jumpToPage(
+                      testController.currentIndexQuestion.value);
+                  testController.progress.value = 0;
+                  Get.appUpdate();
+                  testController.progress.value = 60;
+                  Get.appUpdate();
+                  testController.startTimer();
+                }else{
+                  testController.controller.jumpToPage(2);
+                }
               }else{
-                testController.controller.jumpToPage(2);
+                Get.snackbar("", "Выберите один с ответов");
               }
-            }else{
-              Get.snackbar("", "Выберите один с ответов");
-            }
-          },
+            },
+          )
         )
+
       ],
     );
   }

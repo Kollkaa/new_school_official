@@ -316,4 +316,13 @@ class Backend {
     return response;
   }
 
+  getAllCourses(){
+    var response;
+    response=dio.post("/api/api.php",data:dios.FormData.fromMap({
+      'type': 'courses_all',
+      'apiKey': '2xdCQ9nH'
+    }));
+    return response;
+  }
+
 }

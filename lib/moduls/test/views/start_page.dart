@@ -18,7 +18,7 @@ class StartPage extends StatelessWidget{
                 child: Center(
                   child: Text(
                       "Тест",
-                      style:TextStyle(fontSize: 25,fontWeight: FontWeight.w700,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Relway")
+                      style:TextStyle(fontSize: 25,fontWeight: FontWeight.w700,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Raleway")
                   ),
                 ),
               ),
@@ -42,12 +42,12 @@ class StartPage extends StatelessWidget{
                       SizedBox(height: 13,),
                       Text(
                           "${testController.homeController.course['kurses'][0]['topic']}",textAlign: TextAlign.center,
-                          style:TextStyle(fontSize: 16,fontWeight: FontWeight.w600,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Relway")
+                          style:TextStyle(fontSize: 16,fontWeight: FontWeight.w600,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Raleway")
                       ),
                       SizedBox(height: 3,),
                       Text(
                           "Чтобы сдать тест, нужно ответить на ${testController.stat.data['test_result'][0]['answers_to_pass']} из ${testController.test.data['questions'].length} вопросов",textAlign: TextAlign.center,
-                          style:TextStyle(fontSize: 14,fontWeight: FontWeight.w300,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Relway")
+                          style:TextStyle(fontSize: 14,fontWeight: FontWeight.w300,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Raleway")
                       ),
                     ],
                   )
@@ -55,27 +55,44 @@ class StartPage extends StatelessWidget{
             ],
           ),
         ),
-        GestureDetector(
-          child: Container(
+        Container(
             margin: EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.black,width: 1)
-            ),
-            height: 41,
-            width: Get.width,
-            child: Center(
-              child: Text(
-                  "Начать тестирование →",
-                  style:TextStyle(fontSize: 14,fontWeight: FontWeight.w400,height: 1.2,color: Color(0xff434343),letterSpacing: 0.5,fontFamily: "Relway")
+            child:        FlatButton(
+            padding: EdgeInsets.all(1),
+            child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.black,width: 1)
+              ),
+              height: 41,
+              width: Get.width,
+              child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                          "Начать тестирование",
+                          style:TextStyle(fontSize: 14,fontWeight: FontWeight.w400,height: 1.2,color: Color(0xff434343),letterSpacing: 0.5,fontFamily: "Raleway")
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Icon(Icons.arrow_forward,size: 10,)
+                    ],
+                  )
               ),
             ),
-          ),
-          onTapDown: (_)async{
-            var response =await Backend().startTest(id: testController.mainController.profile['id'],course_id: testController.homeController.course['kurses'][0]['id']);
-           print(response.data);
-            testController.controller.jumpToPage(1);
-          },
+            onPressed: ()async{
+              testController.randomizer(5);
+              print(testController.list.length);
+               var response =await Backend().startTest(id: testController.mainController.profile['id'],course_id: testController.homeController.course['kurses'][0]['id']);
+              print(response.data);
+               testController.controller.jumpToPage(1);
+               testController.startTimer();
+
+            },
+          )
+
         )
       ],
     ):Center(child: CircularProgressIndicator(),);

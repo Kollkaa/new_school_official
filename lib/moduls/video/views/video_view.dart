@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:chewie/chewie.dart';
@@ -10,6 +11,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:new_school_official/custom/controlls.dart';
 import 'package:new_school_official/moduls/home/controllers/home_controller.dart';
 import 'package:new_school_official/moduls/main/controllers/main_controller.dart';
+import 'package:new_school_official/routes/app_pages.dart';
 import 'package:new_school_official/service/backend.dart';
 import 'package:video_player/video_player.dart';
 import 'package:dio/dio.dart' as dios;
@@ -39,6 +41,7 @@ class _ChewieDemoState extends State<VideoScreen> {
   }
   @override
   void dispose() {
+
     myOverayEntry.remove();
     _chewieController.videoPlayerController.removeListener(() {});
     _chewieController.removeListener(() {});
@@ -138,7 +141,7 @@ class _ChewieDemoState extends State<VideoScreen> {
     }
     await videoPlayerController.initialize();
     _chewieController = ChewieController(
-      startAt: Duration(seconds: widget.duration!=null?int.tryParse(widget.duration):0),
+      startAt: Duration(seconds: widget.duration!=null?widget.duration:0),
       videoPlayerController: videoPlayerController,
       aspectRatio: 16/9,
       autoInitialize: true,
@@ -158,27 +161,38 @@ class _ChewieDemoState extends State<VideoScreen> {
         color: Colors.black,
       ),
     );
-    _chewieController..videoPlayerController.addListener(() {
-      print(_chewieController.videoPlayerController.value.position.inSeconds);
-      if(_chewieController.videoPlayerController.value.position.inSeconds==_chewieController.videoPlayerController.value.duration.inSeconds){
-        myOverayEntry.remove();
-        _chewieController.videoPlayerController.removeListener(() {});
-        _chewieController.removeListener(() {});
-        _chewieController.videoPlayerController.dispose();
-        _chewieController.dispose();
-        setState(() {
+    _chewieController.videoPlayerController.addListener(() {
+      if(_mainController.auth.value)
+        if(_chewieController.videoPlayerController.value.position.inSeconds==_chewieController.videoPlayerController.value.duration.inSeconds){
+          myOverayEntry.remove();
+          _chewieController.videoPlayerController.removeListener(() {});
+          _chewieController.removeListener(() {});
+          _chewieController.videoPlayerController.dispose();
+          _chewieController.dispose();
+          setState(() {
 
-        });
-        Get.back();
-        if((widget.index+1)<=_homeController.videos['lessons'].length-1){
-          print("12");
-          Get.to(VideoScreen(_homeController.videos['lessons'].reversed.toList()[(widget.index+1)],index:widget.index+1));
-        }else{
-          print("123");
+          });
+          Get.back();
+          if((widget.index+1)<=_homeController.videos['lessons'].length-1){
+            Get.to(VideoScreen(_homeController.videos['lessons'].reversed.toList()[(widget.index+1)],index:widget.index+1));
+          }else{
+            SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
+            SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+                statusBarColor: Colors.white,
+                statusBarIconBrightness: Brightness.dark,
+                statusBarBrightness: Brightness.dark,
+                systemNavigationBarColor: Colors.white
+            ));
+            SystemChrome.setPreferredOrientations([
+              DeviceOrientation.portraitUp,
+            ]);
+            setState(() {
+            });
+            Get.toNamed(Routes.TEST);
+
+          }
+
         }
-
-      }
-
     });
     myOverayEntry = getMyOverlayEntry(context: context);
     Overlay.of(context).insert(myOverayEntry);
@@ -193,22 +207,37 @@ class _ChewieDemoState extends State<VideoScreen> {
           child: CupertinoControls(
             chewieController: _chewieController,
             backgroundColor: Color(0xff232323),
-            image:((_homeController.videos['lessons'].length-1)>=(widget.index+1))?_homeController.videos['lessons'].reversed.toList()[widget.index+1]['video_image']:null,
+            image:_mainController.auth.value?((_homeController.videos['lessons'].length-1)>=(widget.index+1))?_homeController.videos['lessons'].reversed.toList()[widget.index+1]['video_image']:null:null,
             iconColor: Colors.white,
             id:  _homeController.videos['lessons'].reversed.toList()[(widget.index)]['id'],
             kurs_id:  _homeController.videos['lessons'].reversed.toList()[(widget.index)]['kurs_id'],
             method:(){
               myOverayEntry.remove();
-              _chewieController.videoPlayerController.removeListener(() {});
+              _chewieController..videoPlayerController.removeListener(() {});
               _chewieController.removeListener(() {});
               _chewieController.videoPlayerController.dispose();
               _chewieController.dispose();
               Get.back();
-              if((widget.index+1)<=_homeController.videos['lessons'].length-1){
-                print("12");
-                Get.to(VideoScreen(_homeController.videos['lessons'].reversed.toList()[(widget.index+1)],index:widget.index+1));
-              }else{
-                print("123");
+              if(_mainController.auth.value){
+                if((widget.index+1)<=_homeController.videos['lessons'].length-1){
+                  print("12");
+                  Get.to(VideoScreen(_homeController.videos['lessons'].reversed.toList()[(widget.index+1)],index:widget.index+1));
+                }else{
+                  SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
+                  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+                      statusBarColor: Colors.white,
+                      statusBarIconBrightness: Brightness.dark,
+                      statusBarBrightness: Brightness.dark,
+                      systemNavigationBarColor: Colors.white
+                  ));
+                  SystemChrome.setPreferredOrientations([
+                    DeviceOrientation.portraitUp,
+                  ]);
+                  setState(() {
+                  });
+                  Get.toNamed(Routes.TEST);
+                  print("123");
+                }
               }
             },),));
   }
@@ -250,105 +279,30 @@ class _ChewieDemoState extends State<VideoScreen> {
             return Future<bool>(( )=>true);
           },
           child:MaterialApp(
-            theme: ThemeData.light().copyWith(
-              platform: TargetPlatform.iOS,
-            ),
-            home:GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTapDown: (d){
-                print("Ontap");
-                myOverayEntry = getMyOverlayEntry(context: context);
-                Overlay.of(context).insert(myOverayEntry);
-              },
-              onTapCancel: (){
-                showOverlay(context,_chewieController);
-              },
-              child: Stack(
-                children: [
-                  Container(
-                    color: Colors.black,
-                    height: Get.height,
-                    width: Get.width,
-                    child: Center(
-                      // child:  BetterPlayer(
-                      //   controller: _betterPlayerController,
-                      // ),
-                      child: _chewieController != null &&
-                          _chewieController
-                              .videoPlayerController.value.initialized
-                          ?  Chewie(
 
-                        controller: _chewieController,
-                      )
-                          : Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children:  [
-                          CircularProgressIndicator(),
-                        ],
-                      ),
-                    ),
+            home: Container(
+              color: Colors.black,
+              child: Center(
+                // child:  BetterPlayer(
+                //   controller: _betterPlayerController,
+                // ),
+                child: _chewieController != null &&
+                    _chewieController
+                        .videoPlayerController.value.initialized
+                    ?  AspectRatio(
+                  aspectRatio: 16/8,
+                  child: Chewie(
+
+                    controller: _chewieController,
                   ),
-
-                  _chewieController != null &&
-                      _chewieController
-                          .videoPlayerController.value.initialized
-                      ?  Positioned(
-                    bottom: 50,
-                    right: 30,
-                    child: ValueListenableBuilder(
-                      valueListenable: _chewieController.videoPlayerController,
-                      builder: (context, var value, child) {
-                        if(oldPos+10<=value.position.inSeconds){
-                          oldPos=value.position.inSeconds;
-                          StreamController<int> controller = StreamController<int>();
-                          Stream stream = controller.stream;
-                          stream.listen((value) async{
-                            var res=await Backend().setPos(
-                                _homeController.videos['lessons'].reversed.toList()[(widget.index)]['kurs_id'],
-                                _homeController.videos['lessons'].reversed.toList()[(widget.index)]['id'],
-                                value,
-                                _chewieController.videoPlayerController.value.duration.inSeconds);
-                          });
-                          controller.add(oldPos);
-                        }else{
-                        }
-                        if(value.position.inSeconds==(_chewieController.videoPlayerController.value.duration.inSeconds))
-                        {
-                          // Get.back(closeOverlays: true);
-                          // if((widget.index+1)<=_homeController.videos['lessons'].length-1){
-                          //   Get.dialog(VideoScreen(_homeController.videos['lessons'].reversed.toList()[(widget.index+1)],index:widget.index+1));
-                          // }else{
-                          //   return Container();
-                          // }
-                        }
-                        if(value.position.inSeconds>=(_chewieController.videoPlayerController.value.duration.inSeconds-15)){
-                          oldPos=value.position.inSeconds;
-                          StreamController<int> controller = StreamController<int>();
-                          Stream stream = controller.stream;
-                          stream.listen((value) async{
-                            dios.Response getUservideo_time_all =await Backend().getUservideo_time_all(id:box.read('id'));
-                            _mainController.getUservideo_time_all.value=getUservideo_time_all.data['lessons'];
-                            var res=await Backend().setPos(
-                                _homeController.videos['lessons'].reversed.toList()[(widget.index)]['kurs_id'],
-                                _homeController.videos['lessons'].reversed.toList()[(widget.index)]['id'],
-                                value,
-                                _chewieController.videoPlayerController.value.duration.inSeconds);
-                            print(res.data);
-                          });
-                          if((widget.index+1)<_homeController.videos['lessons'].length-1){
-                            return Container();
-                          }else{
-                            return Container();
-                          }
-                        }else{
-                          return Container(
-                          );
-                        }
-                      },
-                    ),
-                  ):Container()
-                ],
-              )
+                )
+                    : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children:  [
+                    CircularProgressIndicator(),
+                  ],
+                ),
+              ),
             ),
           ));
     }catch(e){

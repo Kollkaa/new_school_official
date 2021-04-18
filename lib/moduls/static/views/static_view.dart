@@ -103,7 +103,7 @@ class StateStaticScreen extends State<StaticScreen>{
    final tabletSalesData= _homeController.categorise.map((element) {
 
      if(_mainController.getStats['courses_in_progress'].indexWhere((el) => element['id']==el['category'])>=0){
-       return OrdinalSales(element['name'], _mainController.getStats['courses_ended'][_mainController.getStats['courses_ended'].indexWhere((el) => element['id']==el['category'])]['count']);
+       return OrdinalSales(element['name'], (_mainController.getStats['courses_ended'][_mainController.getStats['courses_ended'].indexWhere((el) => element['id']==el['category'])]['count']));
      }else{
        return OrdinalSales(element['name'], 0 );
    }
@@ -113,7 +113,7 @@ class StateStaticScreen extends State<StaticScreen>{
    final desktopSalesData = _homeController.categorise.map((element) {
      if(_mainController.getStats['courses_ended'].indexWhere((el) => element['id']==el['category'])>=0){
        print(element);
-       return OrdinalSales(element['name'], _mainController.getStats['courses_in_progress'][_mainController.getStats['courses_in_progress'].indexWhere((el) => element['id']==el['category'])]['count'] );
+       return OrdinalSales(element['name'], _mainController.getStats['courses_in_progress'][_mainController.getStats['courses_in_progress'].indexWhere((el) => element['id']==el['category'])]['count']+1 );
      }else{
        return OrdinalSales(element['name'], 0 );
      }
@@ -512,7 +512,6 @@ class StateStaticScreen extends State<StaticScreen>{
   }
 
   Widget getGraphAuth(){
-
     return Container(
       padding: EdgeInsets.only(left: 20,right: 20,bottom: 57),
       child:  Column(
@@ -565,7 +564,6 @@ class StateStaticScreen extends State<StaticScreen>{
                           domainAxis: new charts.OrdinalAxisSpec(
                               renderSpec: new charts.SmallTickRendererSpec(
                                   labelRotation: 45,
-
                                 // Tick and Label styling here.
                                   labelStyle: new charts.TextStyleSpec(
                                       fontSize: 8, // size in Pts.
@@ -588,18 +586,13 @@ class StateStaticScreen extends State<StaticScreen>{
                               cornerStrategy: const charts.ConstCornerStrategy(50)),
                           primaryMeasureAxis: charts.NumericAxisSpec(
                               renderSpec: new charts.GridlineRendererSpec(
-
-                                // Tick and Label styling here.
                                   labelStyle: new charts.TextStyleSpec(
                                       fontSize: 8, // size in Pts.
                                       color: charts.Color(
                                         r: 153,
                                         g: 153,
                                         b: 153,
-
                                       )),
-
-                                  // Change the line colors to match text color.
                                   lineStyle: charts.LineStyleSpec(
                                     thickness: 1,
                                     color: charts.Color(
@@ -617,7 +610,29 @@ class StateStaticScreen extends State<StaticScreen>{
                               })
                           ),
                           secondaryMeasureAxis: new charts.NumericAxisSpec(
-                            renderSpec: new charts.NoneRenderSpec(),
+                              renderSpec: new charts.GridlineRendererSpec(
+                                  labelStyle: new charts.TextStyleSpec(
+                                      fontSize: 8, // size in Pts.
+                                      color: charts.Color(
+                                        r: 153,
+                                        g: 153,
+                                        b: 153,
+                                      )),
+                                  lineStyle: charts.LineStyleSpec(
+                                    thickness: 1,
+                                    color: charts.Color(
+                                      r: 228,
+                                      g: 228,
+                                      b: 228,
+                                    ),
+                                  )),
+                              tickProviderSpec: charts.BasicNumericTickProviderSpec(
+                                desiredMinTickCount: 5,
+                              ),
+                              tickFormatterSpec: charts.BasicNumericTickFormatterSpec((num value) {
+                                var index = value.floor();
+                                return '';
+                              })
                           ),
                         )
                     ),
@@ -965,7 +980,6 @@ class StateStaticScreen extends State<StaticScreen>{
             scrollDirection: Axis.horizontal,
             itemCount: list.length,
             itemBuilder: (c,i){
-              print(list[i]['index']);
               return  Container(
                 margin: EdgeInsets.only(right: 13),
                 width: 76,
@@ -1008,42 +1022,47 @@ class StateStaticScreen extends State<StaticScreen>{
                               color: color,
                             ),
                             onTap: (){
-                              showDialog<void>(
-                                context: context,
-                                barrierDismissible: false, // user must tap button!
-                                builder: (BuildContext context) {
-                                  return Dialog(
-                                    child: Container(
-                                      padding: EdgeInsets.all(10),
-                                      height: 91,
-                                      width: 252,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(10)
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.end,
-                                            children: [
-                                             GestureDetector(
-                                               child:  Icon(Icons.clear),
-                                               onTap: Get.back,
-                                             )
-                                            ],
-                                          ),
-                                          Text("${DateTime.parse(_mainController.getStats['lessons_stats'][_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1)>0?_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1):0]['date']).day} "
-                                              "${getMonth()[DateTime.parse(_mainController.getStats['lessons_stats'][_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1)>0?_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1):0]['date']).month-1]['name']} "
-                                              "${DateTime.parse(_mainController.getStats['lessons_stats'][_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1)>0?_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1):0]['date']).year} года",style: TextStyle(fontSize: 12,color: Color(0xff0e0e0e),fontWeight: FontWeight.w400,letterSpacing: 0.5,fontFamily: "Raleway")),
-                                          Text("Уроков пройдено - "
-                                              "${_mainController.getStats['lessons_stats'][_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1)>0?_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1):0]['lessons_studied']}",style: TextStyle(fontSize: 12,color: Color(0xff0e0e0e),fontWeight: FontWeight.w400,letterSpacing: 0.5,fontFamily: "Raleway")),
+                              if(_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1)>=0){
+                                showDialog<void>(
+                                  context: context,
+                                  barrierDismissible: false, // user must tap button!
+                                  builder: (BuildContext context) {
+                                    return Dialog(
+                                      child: Container(
+                                        padding: EdgeInsets.all(10),
+                                        height: 91,
+                                        width: 252,
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(10)
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.end,
+                                              children: [
+                                                GestureDetector(
+                                                  child:  Icon(Icons.clear),
+                                                  onTap: Get.back,
+                                                )
+                                              ],
+                                            ),
+                                            Text("${DateTime.parse(_mainController.getStats['lessons_stats'][_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1)>0?_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1):0]['date']).day} "
+                                                "${getMonth()[DateTime.parse(_mainController.getStats['lessons_stats'][_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1)>0?_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1):0]['date']).month-1]['name']} "
+                                                "${DateTime.parse(_mainController.getStats['lessons_stats'][_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1)>0?_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1):0]['date']).year} года",style: TextStyle(fontSize: 12,color: Color(0xff0e0e0e),fontWeight: FontWeight.w400,letterSpacing: 0.5,fontFamily: "Raleway")),
+                                            Text("Уроков пройдено - "
+                                                "${_mainController.getStats['lessons_stats'][_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1)>0?_mainController.getStats['lessons_stats'].indexWhere((el)=>DateTime.parse(el['date']).day==index&&list[i]['index']-1==DateTime.parse(el['date']).month-1):0]['lessons_studied']}",style: TextStyle(fontSize: 12,color: Color(0xff0e0e0e),fontWeight: FontWeight.w400,letterSpacing: 0.5,fontFamily: "Raleway")),
 
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                },
-                              );
+                                    );
+                                  },
+                                );
+                              }else{
+                                color=Color(0xfff2f2f2);
+                              }
+
                             },
                           );
                         },

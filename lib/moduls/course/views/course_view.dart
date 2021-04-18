@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:new_school_official/dialog/atuhor.dart';
 import 'package:new_school_official/dialog/treyler.dart';
 import 'package:new_school_official/moduls/auth/views/register.dart';
@@ -16,8 +19,10 @@ import 'package:new_school_official/routes/app_pages.dart';
 import 'package:new_school_official/service/backend.dart';
 import 'package:new_school_official/storage/styles/text_style.dart';
 import 'package:new_school_official/widgets/speackear.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:share/share.dart';
 import 'package:video_player/video_player.dart';
+import 'package:dio/dio.dart' as dios;
 
 class CourseScreen extends StatefulWidget {
   @override
@@ -30,6 +35,7 @@ class StateCourse extends State<CourseScreen>{
   CourseController _courseController =Get.put(CourseController());
   HomeController _homeController=Get.find();
   MainController _mainController = Get.find();
+  final GetStorage box = GetStorage();
 
   var  lessonLast;
   var indexLast;
@@ -88,10 +94,16 @@ class StateCourse extends State<CourseScreen>{
    }
   String getTitle(){
      if(_mainController.auth.value){
-       if(_mainController.getUservideo_time.indexWhere((element) => element['lesson_id']==lessonLast['id'])>0){
+       print(_mainController.getUservideo_time);
+       print(lessonLast['kurs_id']);
+       if(_mainController.getUservideo_time.indexWhere((element) => element['course_id']==lessonLast['kurs_id'])>=0){
+         print("auth true");
+         print(_mainController.getUservideo_time.indexWhere((element) => element['course_id']==lessonLast['kurs_id'])>0);
+         print(lessonLast['kurs_id']);
          return "Продолжить";
 
        }else{
+         print("auth true");
          return "Начать учиться";
 
        }
@@ -200,53 +212,77 @@ class StateCourse extends State<CourseScreen>{
                                 ),
                                 SizedBox(height: 17,),
 
-                                Opacity(opacity: 0.7,
-                                  child: GestureDetector(
-                                    child: Container(
-                                      padding: EdgeInsets.all(9),
-                                      decoration: BoxDecoration(
-                                          border: Border.all(width: 1,color: Colors.white)
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                            '${getTitle()
-                                            }',style: TextStyle(fontSize: 14,letterSpacing: 0.5,fontFamily: "Raleway",fontWeight: FontWeight.w400,color: Colors.white)
-                                        ),
+                                FlatButton(
+                                  padding:EdgeInsets.all(2),
+                                  materialTapTargetSize: MaterialTapTargetSize.padded,
+                                  highlightColor: Colors.white.withOpacity(0.12),
+                                  child: Container(
+                                    height: 41,
+                                    width: Get.width,
+                                    padding: EdgeInsets.all(9),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(width: 1,color: Colors.white)
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                          '${getTitle()
+                                          }',style: TextStyle(fontSize: 14,letterSpacing: 0.5,fontFamily: "Raleway",fontWeight: FontWeight.w400,color: Colors.white)
                                       ),
                                     ),
-                                    onTap: ()async{
-                                      if(_mainController.auth.value){
-                                       if(_mainController.getUservideo_time.indexWhere((element) => element['lesson_id']==lessonLast['id'])>0){
-                                         await Get.to(VideoScreen(lessonLast,index:indexLast,duration: int.tryParse(_mainController.getUservideo_time[_mainController.getUservideo_time.indexWhere((element) => element['lesson_id']==lessonLast['id'])]['time']),));
-                                         SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
-                                         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-                                             statusBarColor: Colors.white,
-                                             statusBarIconBrightness: Brightness.dark,
-                                             statusBarBrightness: Brightness.dark,
-                                             systemNavigationBarColor: Colors.white
-                                         ));
-                                         SystemChrome.setPreferredOrientations([
-                                           DeviceOrientation.portraitUp,
-                                         ]);
-                                         setState(() {
-                                         });
-                                       }else{
-                                         await Get.to(VideoScreen(lessonLast,index:indexLast));
-
-                                       }
-                                      }else{
-                                        // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-                                        //     statusBarColor: Colors.white,
-                                        //     statusBarIconBrightness: Brightness.dark,
-                                        //     statusBarBrightness: Brightness.dark,
-                                        //     systemNavigationBarColor: Colors.white
-                                        // ));
-                                        _mainController.widgets.removeAt(4);
-                                        _mainController.widgets.add(RegisterPage());
-                                        Get.dialog(Author());
-                                      }
-                                    },
                                   ),
+                                  onPressed: ()async{
+                                    if(_mainController.auth.value){
+                                      if(_mainController.getUservideo_time.indexWhere((element) => element['lesson_id']==lessonLast['id'])>0){
+                                        await Get.to(VideoScreen(lessonLast,index:indexLast,duration: int.tryParse(_mainController.getUservideo_time[_mainController.getUservideo_time.indexWhere((element) => element['lesson_id']==lessonLast['id'])]['time']),));
+                                        SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
+                                        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+                                            statusBarColor: Colors.white,
+                                            statusBarIconBrightness: Brightness.dark,
+                                            statusBarBrightness: Brightness.dark,
+                                            systemNavigationBarColor: Colors.white
+                                        ));
+                                        SystemChrome.setPreferredOrientations([
+                                          DeviceOrientation.portraitUp,
+                                        ]);
+                                        setState(() {
+                                        });
+                                      }else{
+                                        await Get.to(VideoScreen(lessonLast,index:indexLast));
+                                        StreamController<int> controller = StreamController<int>();
+                                        Stream stream = controller.stream;
+                                        stream.listen((value) async{
+                                          dios.Response getUservideo_time_all =await Backend().getUservideo_time_all(id:box.read('id'));
+                                          _mainController.getUservideo_time_all.value=getUservideo_time_all.data['lessons'];
+                                          if(box.read('id')!=null){
+                                            _mainController.initProfile(box.read("id"));
+                                          }
+                                        });
+                                        controller.add(1);
+                                        SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
+                                        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+                                            statusBarColor: Colors.white,
+                                            statusBarIconBrightness: Brightness.dark,
+                                            statusBarBrightness: Brightness.dark,
+                                            systemNavigationBarColor: Colors.white
+                                        ));
+                                        SystemChrome.setPreferredOrientations([
+                                          DeviceOrientation.portraitUp,
+                                        ]);
+                                        setState(() {
+                                        });
+                                      }
+                                    }else{
+                                      // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+                                      //     statusBarColor: Colors.white,
+                                      //     statusBarIconBrightness: Brightness.dark,
+                                      //     statusBarBrightness: Brightness.dark,
+                                      //     systemNavigationBarColor: Colors.white
+                                      // ));
+                                      _mainController.widgets.removeAt(4);
+                                      _mainController.widgets.add(RegisterPage());
+                                      Get.dialog(Author());
+                                    }
+                                  },
                                 ),
                                 SizedBox(height: 12,),
                                 Opacity(opacity: 0.8,
@@ -450,7 +486,7 @@ class StateCourse extends State<CourseScreen>{
                                             decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.all(Radius.circular(10)),
                                                 color: Colors.black.withOpacity(0.04),
-                                                image: DecorationImage(image: NetworkImage(_homeController.videos['lessons'].reversed.toList()[_homeController.videos['lessons'].reversed.toList().length-1]['video_image']),fit: BoxFit.cover)
+                                                image: DecorationImage(image: NetworkImage(_homeController.course['kurses'][0]['banner_small']),fit: BoxFit.cover)
                                             ),
                                           ),
                                           Positioned(
@@ -492,13 +528,21 @@ class StateCourse extends State<CourseScreen>{
                                 ),
                                 onTapDown: (_){
                                   print("wae");
+                                  if(_mainController
+                                      .getUservideo_time_all
+                                      .indexWhere(
+                                          (element) => element['lesson_id']==_homeController.videos['lessons'].reversed.toList()[i]['id'])<0){
+                                    Get.snackbar(null, null,snackPosition:SnackPosition.BOTTOM,colorText: Colors.redAccent,messageText: Center(
+                                      child: Text("Нужно посмотреть все уроки",style: TextStyle(fontSize: 12,fontFamily: "Raleway",letterSpacing: 0.5,fontWeight: FontWeight.w600,color: Colors.redAccent),),
+                                    ));
+                                  }else
                                   Get.toNamed(Routes.TEST);
                                 },
                               ),
                               Positioned(
                                   bottom: 80,
                                   left: 12,
-                                  child: Text("${_courseController.statTest['answers_correct']} / ${_courseController.statTest['answers_to_pass']}  |   25 минут",
+                                  child: Text("${_courseController.statTest['answers_to_pass']} вопросов",
                                     style: TextStyle(fontSize: 10,fontWeight: FontWeight.w400,color: Colors.white,fontFamily: "Raleway"),
                                   )
                               ),
@@ -731,9 +775,15 @@ class StateItem extends State<Item>{
   var _image;
   bool _loading = true;
 
+var length;
 
+  var value;
+
+  GetStorage box= GetStorage();
   @override
   void initState() {
+    length=widget.mainController.listCanselToken.length;
+
     _image = new NetworkImage(
       '${widget.lesson['video_image']}',
     );
@@ -801,13 +851,22 @@ class StateItem extends State<Item>{
               if(widget.donSee){
                 print(widget.lessonLast);
                 // await Get.dialog(VideoScreen(widget.lessonLast,index:widget.indexLast));
-                Get.snackbar("", "",snackPosition:SnackPosition.BOTTOM,colorText: Colors.redAccent,messageText: Center(
+                Get.snackbar(null, null,snackPosition:SnackPosition.BOTTOM,colorText: Colors.redAccent,messageText: Center(
                   child: Text("Нужно посмотреть предыдущий урок",style: TextStyle(fontSize: 12,fontFamily: "Raleway",letterSpacing: 0.5,fontWeight: FontWeight.w600,color: Colors.redAccent),),
                 ));
               }else{
                 if(widget.lock){
                   await Get.to(VideoScreen(widget.lesson,index:widget.index));
-
+                  StreamController<int> controller = StreamController<int>();
+                  Stream stream = controller.stream;
+                  stream.listen((value) async{
+                    dios.Response getUservideo_time_all =await Backend().getUservideo_time_all(id:box.read('id'));
+                    widget.mainController.getUservideo_time_all.value=getUservideo_time_all.data['lessons'];
+                    if(box.read('id')!=null){
+                      widget.mainController.initProfile(box.read("id"));
+                    }
+                  });
+                  controller.add(1);
 
                 }
                 else{
@@ -838,6 +897,7 @@ class StateItem extends State<Item>{
                       ),
                     ),
                   ),
+
                   widget.mainController.auth.value? widget.lock?GestureDetector(
                     child: SvgPicture.asset("assets/icons/Layer 16.svg",color: Colors.black,width: 14,height: 14,),
                     onTapDown: (_){
@@ -848,15 +908,13 @@ class StateItem extends State<Item>{
                             "course":widget.homeController.course['kurses'][0],
                             "video_id":"${widget.lesson['id']}",
                             "video":widget.lesson});
-
                     },
-                  ):Opacity(opacity: 1,child: SvgPicture.asset("assets/icons/Layer 16.svg",color: Colors.black,width: 14,height: 14,),):Opacity(opacity: 1,child: SvgPicture.asset("assets/icons/Layer 16.svg",color: Colors.black,width: 14,height: 14,),)
+                  ):Container()
+                      :Container()
                 ],
               ),
             )
           ],
-
-
     );
   }
 

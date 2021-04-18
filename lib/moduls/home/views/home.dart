@@ -143,7 +143,8 @@ class Statehome extends State<HomePage>{
                               child:
                               Text("Продолжить",style: black_text_title,),
                             ):Container():Container(),
-                            _mainController.auth.value?_mainController.getUservideo_time.length!=0?Container(
+                            _mainController.auth.value?_mainController.getUservideo_time.length!=0
+                                ?Container(
                               margin: EdgeInsets.only(top: 7),
                               width: Get.width,
                               height: 223,
@@ -187,7 +188,9 @@ class Statehome extends State<HomePage>{
 
 
                               ),
-                            ):Container():Container(
+                            )
+                                :Container()
+                                :Container(
                               margin: EdgeInsets.only(top: 7,left: 15,right: 15),
                               width: Get.width-30,
                               height: 223,
@@ -230,28 +233,32 @@ class Statehome extends State<HomePage>{
                                             style: TextStyle(fontSize: 15,letterSpacing: 0.5,fontWeight: FontWeight.bold,color: Colors.white,fontFamily: "Raleway")
                                         ),
                                       ),
-                                      Opacity(
-                                        child: GestureDetector(
-                                          child: Container(
-                                            margin: EdgeInsets.only(left: 39,right: 39,top: 15),
-                                            padding: EdgeInsets.all(9),
-                                            decoration: BoxDecoration(
-                                                border: Border.all(width: 1,color: Colors.white),
-                                                borderRadius: BorderRadius.circular(5)
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                  'Начать учиться',style: TextStyle(fontSize: 14,letterSpacing: 0.5,fontWeight: FontWeight.w400,color: Colors.white,fontFamily: "Raleway")
+                                      Container(
+                                        margin: EdgeInsets.only(left: 39,right: 39,top: 15),
+                                        child: Opacity(
+                                          child: FlatButton(
+                                            padding: EdgeInsets.all(2),
+                                            highlightColor: Colors.white.withOpacity(0.12),
+                                            child: Container(
+                                              padding: EdgeInsets.all(9),
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(width: 1,color: Colors.white),
+                                                  borderRadius: BorderRadius.circular(5)
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                    'Начать учиться',style: TextStyle(fontSize: 14,letterSpacing: 0.5,fontWeight: FontWeight.w400,color: Colors.white,fontFamily: "Raleway")
+                                                ),
                                               ),
                                             ),
+                                            onPressed: ()async{
+                                              _mainController.widgets.removeAt(4);
+                                              _mainController.widgets.add(RegisterPage());
+                                              Get.dialog(Author());
+                                            },
                                           ),
-                                          onTap: ()async{
-                                            _mainController.widgets.removeAt(4);
-                                            _mainController.widgets.add(RegisterPage());
-                                            Get.dialog(Author());
-                                          },
+                                          opacity: 0.7,
                                         ),
-                                        opacity: 0.7,
                                       ),
                                       SizedBox(height: 7,),
                                       Opacity(
@@ -818,12 +825,9 @@ class StateItemCont extends State<ItemCont>{
       });
       ;
       course!=null?controller.add(1):null;
-      print(responce);
       var stat =await Backend().getStatCourse(widget.idCourse);
       lesAll=int.tryParse(stat.data[0]['lessons_count']);
       lesProg=widget.mainController.getUservideo_time_all.where((el)=>el['course_id']==widget.idCourse).length;
-      print(lesAll);
-      print(lesProg);
       setState(() {
 
       });
@@ -910,7 +914,7 @@ class StateItemCont extends State<ItemCont>{
               bottom: 1,
               child: Container(
                 margin: EdgeInsets.only(left: 7,right: 100),
-                height: 4,
+                height: 2,
                 width: (Get.width*(lesProg/lesAll))>Get.width?Get.width-50:(Get.width*(lesProg/lesAll)-35),
                 color: Colors.white,
               ),

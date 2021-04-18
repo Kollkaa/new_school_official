@@ -70,7 +70,7 @@ class SpeakerDialog extends StatelessWidget{
                           Container(
                             padding: EdgeInsets.only(bottom: 5),
 
-                            child: Text("${_homeController.course['kurses'][0]['spicker_desc']}"
+                            child: Text("${getDesc()}"
                                 ,style: TextStyle(fontSize: 15,fontWeight: FontWeight.w300,letterSpacing: 0.5,height:1.5,color: Colors.black,fontFamily: "Raleway")),
                           ),
                         ],
@@ -83,6 +83,23 @@ class SpeakerDialog extends StatelessWidget{
           )
       ),
     );
+  }
+
+  getDesc() {
+    var text="";
+    _homeController.course['kurses'][0]['spicker_desc'].split("&laquo;").forEach(
+        (el)=>text+=el
+    );
+    var text2="";
+    text.split("&raquo;").forEach(
+            (el)=>text2+=el
+    );
+    var result="";
+    text2.split("&nbsp;").forEach(
+            (el)=>result+=el
+    );
+    return result;
+
   }
 
 }
