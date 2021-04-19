@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,11 +16,8 @@ import 'package:new_school_official/moduls/main/controllers/main_controller.dart
 import 'package:new_school_official/moduls/video/views/video_view.dart';
 import 'package:new_school_official/routes/app_pages.dart';
 import 'package:new_school_official/service/backend.dart';
-import 'package:new_school_official/storage/styles/text_style.dart';
 import 'package:new_school_official/widgets/speackear.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:share/share.dart';
-import 'package:video_player/video_player.dart';
 import 'package:dio/dio.dart' as dios;
 
 class CourseScreen extends StatefulWidget {
@@ -36,14 +32,15 @@ class StateCourse extends State<CourseScreen>{
   HomeController _homeController=Get.find();
   MainController _mainController = Get.find();
   final GetStorage box = GetStorage();
-
   var  lessonLast;
   var indexLast;
+
   @override
   void initState() {
     super.initState();
     initPre();
   }
+
   initPre()async{
     var  response=await Backend().getCourse(_courseController.id);
     print(response.headers);
@@ -61,354 +58,339 @@ class StateCourse extends State<CourseScreen>{
     }
   }
 
+  String getTitle(){
+    if(_mainController.auth.value){
+      print(_mainController.getUservideo_time);
+      print(lessonLast['kurs_id']);
+      if(_mainController.getUservideo_time.indexWhere((element) => element['course_id']==lessonLast['kurs_id'])>=0){
+        print("auth true");
+        print(_mainController.getUservideo_time.indexWhere((element) => element['course_id']==lessonLast['kurs_id'])>0);
+        print(lessonLast['kurs_id']);
+        return "Продолжить";
+
+      }else{
+        print("auth true");
+        return "Начать учиться";
+
+      }
+    }else{
+      return "Начать учиться";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    print(_courseController.id);
-   if(_homeController.videos['lessons']!=null){
-     for(int i=0;i<_homeController.videos['lessons'].length;i++){
-       var indexInLookLesson=_mainController.getUservideo_time_all.indexWhere((element) => element['lesson_id']==_homeController.videos['lessons'].reversed.toList()[i]['id']);
-       if(i==0){
-         lessonLast=_homeController.videos['lessons'].reversed.toList()[i];
-         indexLast=i;
+    if(_homeController.videos['lessons']!=null){
+      for(int i=0;i<_homeController.videos['lessons'].length;i++){
+        var indexInLookLesson=_mainController.getUservideo_time_all.indexWhere((element) => element['lesson_id']==_homeController.videos['lessons'].reversed.toList()[i]['id']);
+        if(i==0){
+          lessonLast=_homeController.videos['lessons'].reversed.toList()[i];
+          indexLast=i;
 
-       }else{
-         if(_mainController.auth.value){
-           if(indexInLookLesson>0){
-             var indexInLookLessonPrevius=_mainController.getUservideo_time_all.indexWhere((element) => element['lesson_id']==_homeController.videos['lessons'].reversed.toList()[i-1]['id']);
-             if(_mainController.getUservideo_time_all[indexInLookLesson]['done']==0) {
-             }
-             else{
-               if(indexInLookLessonPrevius<0){
-               }
-               else{
-                 lessonLast=_homeController.videos['lessons'].reversed.toList()[i];
-                 indexLast=i;
-               }
-             }
-           }else{
-           }
-         }else{
-         }
-       }
-     }
-   }
-  String getTitle(){
-     if(_mainController.auth.value){
-       print(_mainController.getUservideo_time);
-       print(lessonLast['kurs_id']);
-       if(_mainController.getUservideo_time.indexWhere((element) => element['course_id']==lessonLast['kurs_id'])>=0){
-         print("auth true");
-         print(_mainController.getUservideo_time.indexWhere((element) => element['course_id']==lessonLast['kurs_id'])>0);
-         print(lessonLast['kurs_id']);
-         return "Продолжить";
-
-       }else{
-         print("auth true");
-         return "Начать учиться";
-
-       }
-     }else{
-       return "Начать учиться";
-     }
-   }
-   int i=-1;
+        }else{
+          if(_mainController.auth.value){
+            if(indexInLookLesson>0){
+              var indexInLookLessonPrevius=_mainController.getUservideo_time_all.indexWhere((element) => element['lesson_id']==_homeController.videos['lessons'].reversed.toList()[i-1]['id']);
+              if(_mainController.getUservideo_time_all[indexInLookLesson]['done']==0) {
+              }
+              else{
+                if(indexInLookLessonPrevius<0){
+                }
+                else{
+                  lessonLast=_homeController.videos['lessons'].reversed.toList()[i];
+                  indexLast=i;
+                }
+              }
+            }else{
+            }
+          }else{
+          }
+        }
+      }
+    }
+    int i=-1;
     return MaterialApp(
-      home: Scaffold(
+        home: Scaffold(
           resizeToAvoidBottomPadding: true,
-          body:Obx(
-                ()=>Container(
-              color: Colors.white,
-              child: _homeController.videos['lessons']!=null?ListView(
-                padding: EdgeInsets.only(bottom: 20),
-                children: [
-                  Container(
-                    width: Get.width,
-                    height: 590,
-                    child: Stack(
-                      children: [
-                        Image.network("${_homeController.course['kurses'][0]['banner_big']}",width: Get.width,height: 590,fit: BoxFit.cover,),
-                        Positioned(
-                          bottom: 0,
-                          child: Container(
-                            height: Get.width/1.5,
-                            width: Get.width,
-                            decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                    begin: Alignment.bottomCenter,
-                                    end: Alignment.topCenter,
-                                    colors: [Colors.black.withOpacity(1), Colors.black.withOpacity(0)]
-                                )
-                            ),
+          body:Container(
+            color: Colors.white,
+            child: _homeController.videos['lessons']!=null?ListView(
+              padding: EdgeInsets.only(bottom: 20),
+              children: [
+                Container(
+                  width: Get.width,
+                  height: 590,
+                  child: Stack(
+                    children: [
+                      Image.network("${_homeController.course['kurses'][0]['banner_big']}",width: Get.width,height: 590,fit: BoxFit.cover,),
+                      Positioned(
+                        bottom: 0,
+                        child: Container(
+                          height: Get.width/1.5,
+                          width: Get.width,
+                          decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter,
+                                  colors: [Colors.black.withOpacity(1), Colors.black.withOpacity(0)]
+                              )
                           ),
                         ),
-                        Positioned(
-                            top: 54,
-                            left: 10,
-                            child: GestureDetector(
-                              child: Container(
-                                  padding: EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.all(Radius.circular(5)),
-                                  ),
-                                  child:Opacity(
-                                    child:  Row(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.arrow_back_ios,color: Colors.white,size: 18,),
-                                        Text("Назад",style:TextStyle(fontSize: 15,fontWeight: FontWeight.w400,height: 1.2,color: Colors.white,letterSpacing: 0.5) ,)
-                                      ],
-                                    ),
-                                    opacity: 0.8,
-                                  )
-                              ),
-                              onTap: (){
-
-                                _homeController.videos={}.obs;
-                                Get.back();
-
-                              },
-                            )
-                        ),
-                        Positioned(
-                            top: 54,
-                            right: 10,
-                            child: GestureDetector(
-                              child: Container(
-                                padding: EdgeInsets.all(5),
-                                height: 32,
-                                width: 32,
+                      ),
+                      Positioned(
+                          top: 54,
+                          left: 10,
+                          child: GestureDetector(
+                            child: Container(
+                                padding: EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.all(Radius.circular(5)),
                                 ),
-                                child: SvgPicture.asset("assets/icons/share-3 1.svg"),
-                              ),
-                              onTap: (){
-                                _mainController.listCanselToken.forEach((element) {try{element.cancel();}catch(e){}});
-                                Share.share('https://mapus.com.ua/tasks/', subject: 'Share');
-                              },
-                            )
-                        ),
-                        Positioned(
-                          bottom: 36,
-                          right: 32,
-                          left: 32,
-                          child: Container(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Opacity(
-                                  child: Text(
-                                      'Пение',style: TextStyle(fontSize: 15,fontWeight: FontWeight.w300,color: Colors.white,letterSpacing: 0.5)
+                                child:Opacity(
+                                  child:  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.arrow_back_ios,color: Colors.white,size: 18,),
+                                      Text("Назад",style:TextStyle(fontSize: 15,fontWeight: FontWeight.w400,height: 1.2,color: Colors.white,letterSpacing: 0.5) ,)
+                                    ],
                                   ),
                                   opacity: 0.8,
-                                ),
-                                Container(
-                                  width: Get.width,
-                                  child:  AutoSizeText(
-                                      '${_homeController.course['kurses'][0]['topic']}',maxLines:1,minFontSize: 12,textAlign:TextAlign.center
-                                      ,style: TextStyle(fontSize: 21,letterSpacing: 0.5,fontWeight: FontWeight.w900,color: Colors.white,fontFamily: "Raleway")
-                                  ),
-                                ),
-                                SizedBox(height: 17,),
-
-                                FlatButton(
-                                  padding:EdgeInsets.all(2),
-                                  materialTapTargetSize: MaterialTapTargetSize.padded,
-                                  highlightColor: Colors.white.withOpacity(0.12),
-                                  child: Container(
-                                    height: 41,
-                                    width: Get.width,
-                                    padding: EdgeInsets.all(9),
-                                    decoration: BoxDecoration(
-                                        border: Border.all(width: 1,color: Colors.white)
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                          '${getTitle()
-                                          }',style: TextStyle(fontSize: 14,letterSpacing: 0.5,fontFamily: "Raleway",fontWeight: FontWeight.w400,color: Colors.white)
-                                      ),
-                                    ),
-                                  ),
-                                  onPressed: ()async{
-                                    if(_mainController.auth.value){
-                                      if(_mainController.getUservideo_time.indexWhere((element) => element['lesson_id']==lessonLast['id'])>0){
-                                        await Get.to(VideoScreen(lessonLast,index:indexLast,duration: int.tryParse(_mainController.getUservideo_time[_mainController.getUservideo_time.indexWhere((element) => element['lesson_id']==lessonLast['id'])]['time']),));
-                                        SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
-                                        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-                                            statusBarColor: Colors.white,
-                                            statusBarIconBrightness: Brightness.dark,
-                                            statusBarBrightness: Brightness.dark,
-                                            systemNavigationBarColor: Colors.white
-                                        ));
-                                        SystemChrome.setPreferredOrientations([
-                                          DeviceOrientation.portraitUp,
-                                        ]);
-                                        setState(() {
-                                        });
-                                      }else{
-                                        await Get.to(VideoScreen(lessonLast,index:indexLast));
-                                        StreamController<int> controller = StreamController<int>();
-                                        Stream stream = controller.stream;
-                                        stream.listen((value) async{
-                                          dios.Response getUservideo_time_all =await Backend().getUservideo_time_all(id:box.read('id'));
-                                          _mainController.getUservideo_time_all.value=getUservideo_time_all.data['lessons'];
-                                          if(box.read('id')!=null){
-                                            _mainController.initProfile(box.read("id"));
-                                          }
-                                        });
-                                        controller.add(1);
-                                        SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
-                                        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-                                            statusBarColor: Colors.white,
-                                            statusBarIconBrightness: Brightness.dark,
-                                            statusBarBrightness: Brightness.dark,
-                                            systemNavigationBarColor: Colors.white
-                                        ));
-                                        SystemChrome.setPreferredOrientations([
-                                          DeviceOrientation.portraitUp,
-                                        ]);
-                                        setState(() {
-                                        });
-                                      }
-                                    }else{
-                                      // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-                                      //     statusBarColor: Colors.white,
-                                      //     statusBarIconBrightness: Brightness.dark,
-                                      //     statusBarBrightness: Brightness.dark,
-                                      //     systemNavigationBarColor: Colors.white
-                                      // ));
-                                      _mainController.widgets.removeAt(4);
-                                      _mainController.widgets.add(RegisterPage());
-                                      Get.dialog(Author());
-                                    }
-                                  },
-                                ),
-                                SizedBox(height: 12,),
-                                Opacity(opacity: 0.8,
-                                  child:  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      GestureDetector(
-                                        child:  Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-
-                                          children: [
-                                            SvgPicture.asset("assets/icons/play-button-arrowhead-4 1.svg",color: Colors.white,),
-                                            SizedBox(width: 7,),
-                                            Text("Смотреть трейлер",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300,fontFamily: "Raleway",letterSpacing: 0.5,color: Colors.white))
-                                          ],
-                                        ),
-                                        onTap: ()async{
-
-                                         await Get.to(TrailerScreen());
-                                         SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
-                                         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-                                             statusBarColor: Colors.white,
-                                             statusBarIconBrightness: Brightness.dark,
-                                             statusBarBrightness: Brightness.dark,
-                                             systemNavigationBarColor: Colors.white
-                                         ));
-                                         SystemChrome.setPreferredOrientations([
-                                           DeviceOrientation.portraitUp,
-                                         ]);
-                                         setState(() {
-                                         });
-                                        },
-                                      ),
-                                      _mainController.auth.value?SizedBox(width: 25,):Container(),
-                                      _mainController.auth.value?GestureDetector(
-                                        child: Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            SvgPicture.asset("assets/icons/Layer 16.svg",height: 15,width: 15,),
-                                            SizedBox(width: 7,),
-                                            Text("Загрузить",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300,fontFamily: "Raleway",letterSpacing: 0.5,color: Colors.white),)
-                                          ],
-                                        ),
-                                        onTapDown: (_){
-                                          _homeController.videos['lessons'].reversed.toList().forEach((el){
-                                            print(
-                                                "${_homeController.course['kurses'][0]}"
-                                            );
-                                            _mainController.controller.add(
-                                                {"url":"${el['videos'][0]['video_url']}",
-                                                  "course_id":"${el['kurs_id']}",
-                                                  "video_id":"${el['id']}",
-                                                    "course":"${_homeController.course['kurses'][0]}",
-                                                    "video":"${el}"
-                                                }
-                                                );
-
-                                          });
-                                        },
-                                      ):Container()
-                                    ],
-                                  ),)
-                              ],
+                                )
                             ),
+                            onTap: (){
+
+                              _homeController.videos={}.obs;
+                              Get.back();
+
+                            },
+                          )
+                      ),
+                      Positioned(
+                          top: 54,
+                          right: 10,
+                          child: GestureDetector(
+                            child: Container(
+                              padding: EdgeInsets.all(5),
+                              height: 32,
+                              width: 32,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(5)),
+                              ),
+                              child: SvgPicture.asset("assets/icons/share-3 1.svg"),
+                            ),
+                            onTap: (){
+                              _mainController.listCanselToken.forEach((element) {try{element.cancel();}catch(e){}});
+                              Share.share('https://mapus.com.ua/tasks/', subject: 'Share');
+                            },
+                          )
+                      ),
+                      Positioned(
+                        bottom: 36,
+                        right: 32,
+                        left: 32,
+                        child: Container(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Opacity(
+                                child: Text(
+                                    'Пение',style: TextStyle(fontSize: 15,fontWeight: FontWeight.w300,color: Colors.white,letterSpacing: 0.5)
+                                ),
+                                opacity: 0.8,
+                              ),
+                              Container(
+                                width: Get.width,
+                                child:  AutoSizeText(
+                                    '${_homeController.course['kurses'][0]['topic']}',maxLines:1,minFontSize: 12,textAlign:TextAlign.center
+                                    ,style: TextStyle(fontSize: 21,letterSpacing: 0.5,fontWeight: FontWeight.w900,color: Colors.white,fontFamily: "Raleway")
+                                ),
+                              ),
+                              SizedBox(height: 17,),
+
+                              FlatButton(
+                                padding:EdgeInsets.all(2),
+                                materialTapTargetSize: MaterialTapTargetSize.padded,
+                                highlightColor: Colors.white.withOpacity(0.12),
+                                child: Container(
+                                  height: 41,
+                                  width: Get.width,
+                                  padding: EdgeInsets.all(9),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(width: 1,color: Colors.white)
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                        '${getTitle()
+                                        }',style: TextStyle(fontSize: 14,letterSpacing: 0.5,fontFamily: "Raleway",fontWeight: FontWeight.w400,color: Colors.white)
+                                    ),
+                                  ),
+                                ),
+                                onPressed: ()async{
+                                  if(_mainController.auth.value){
+                                    if(_mainController.getUservideo_time.indexWhere((element) => element['lesson_id']==lessonLast['id'])>0){
+                                      await Get.to(VideoScreen(lessonLast,index:indexLast,duration: int.tryParse(_mainController.getUservideo_time[_mainController.getUservideo_time.indexWhere((element) => element['lesson_id']==lessonLast['id'])]['time']),));
+                                      SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
+                                      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+                                          statusBarColor: Colors.white,
+                                          statusBarIconBrightness: Brightness.dark,
+                                          statusBarBrightness: Brightness.dark,
+                                          systemNavigationBarColor: Colors.white
+                                      ));
+                                      SystemChrome.setPreferredOrientations([
+                                        DeviceOrientation.portraitUp,
+                                      ]);
+                                      setState(() {
+                                      });
+                                    }else{
+                                      await Get.to(VideoScreen(lessonLast,index:indexLast));
+                                      StreamController<int> controller = StreamController<int>();
+                                      Stream stream = controller.stream;
+                                      stream.listen((value) async{
+                                        dios.Response getUservideo_time_all =await Backend().getUservideo_time_all(id:box.read('id'));
+                                        _mainController.getUservideo_time_all.value=getUservideo_time_all.data['lessons'];
+                                        if(box.read('id')!=null){
+                                          _mainController.initProfile(box.read("id"));
+                                        }
+                                      });
+                                      controller.add(1);
+                                      SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
+                                      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+                                          statusBarColor: Colors.white,
+                                          statusBarIconBrightness: Brightness.dark,
+                                          statusBarBrightness: Brightness.dark,
+                                          systemNavigationBarColor: Colors.white
+                                      ));
+                                      SystemChrome.setPreferredOrientations([
+                                        DeviceOrientation.portraitUp,
+                                      ]);
+                                      setState(() {
+                                      });
+                                    }
+                                  }else{
+                                    // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+                                    //     statusBarColor: Colors.white,
+                                    //     statusBarIconBrightness: Brightness.dark,
+                                    //     statusBarBrightness: Brightness.dark,
+                                    //     systemNavigationBarColor: Colors.white
+                                    // ));
+                                    _mainController.widgets.removeAt(4);
+                                    _mainController.widgets.add(RegisterPage());
+                                    Get.dialog(Author());
+                                  }
+                                },
+                              ),
+                              SizedBox(height: 12,),
+                              Opacity(opacity: 0.8,
+                                child:  Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    GestureDetector(
+                                      child:  Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+
+                                        children: [
+                                          SvgPicture.asset("assets/icons/play-button-arrowhead-4 1.svg",color: Colors.white,),
+                                          SizedBox(width: 7,),
+                                          Text("Смотреть трейлер",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300,fontFamily: "Raleway",letterSpacing: 0.5,color: Colors.white))
+                                        ],
+                                      ),
+                                      onTap: ()async{
+
+                                        await Get.to(TrailerScreen());
+                                        SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
+                                        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+                                            statusBarColor: Colors.white,
+                                            statusBarIconBrightness: Brightness.dark,
+                                            statusBarBrightness: Brightness.dark,
+                                            systemNavigationBarColor: Colors.white
+                                        ));
+                                        SystemChrome.setPreferredOrientations([
+                                          DeviceOrientation.portraitUp,
+                                        ]);
+                                        setState(() {
+                                        });
+                                      },
+                                    ),
+                                    _mainController.auth.value?SizedBox(width: 25,):Container(),
+                                    _mainController.auth.value?GestureDetector(
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          SvgPicture.asset("assets/icons/Layer 16.svg",height: 15,width: 15,),
+                                          SizedBox(width: 7,),
+                                          Text("Загрузить",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300,fontFamily: "Raleway",letterSpacing: 0.5,color: Colors.white),)
+                                        ],
+                                      ),
+                                      onTapDown: (_){
+                                        _homeController.videos['lessons'].reversed.toList().forEach((el){
+                                          print(
+                                              "${_homeController.course['kurses'][0]}"
+                                          );
+                                          _mainController.controller.add(
+                                              {"url":"${el['videos'][0]['video_url']}",
+                                                "course_id":"${el['kurs_id']}",
+                                                "video_id":"${el['id']}",
+                                                "course":"${_homeController.course['kurses'][0]}",
+                                                "video":"${el}"
+                                              }
+                                          );
+
+                                        });
+                                      },
+                                    ):Container()
+                                  ],
+                                ),)
+                            ],
                           ),
                         ),
+                      ),
 
-                      ],
-                    ),
+                    ],
                   ),
-                  Container(
-                    margin: EdgeInsets.only(top: 22,bottom: 41),
-                    height: 210,
-                    width: Get.width,
-                    child: ListView(
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 22,bottom: 41),
+                  height: 210,
+                  width: Get.width,
+                  child: ListView(
                       padding: EdgeInsets.only(left: 15),
                       scrollDirection: Axis.horizontal,
                       children:[
                         Row(
-                          children: [..._homeController.videos['lessons'].reversed.toList().map((el){
-                            i+=1;
-                            if(i>=_homeController.videos['lessons'].length){
-                              i=1;
-                            }
-                            var indexInLookLesson=_mainController.getUservideo_time_all.indexWhere((element) => element['lesson_id']==_homeController.videos['lessons'].reversed.toList()[i]['id']);
-                            if(i==0){
-                              // lessonLast=_homeController.videos['lessons'].reversed.toList()[i];
-                              // indexLast=i;
+                            children: [..._homeController.videos['lessons'].reversed.toList().map((el){
+                              i+=1;
+                              if(i>=_homeController.videos['lessons'].length){
+                                i=1;
+                              }
+                              var indexInLookLesson=_mainController.getUservideo_time_all.indexWhere((element) => element['lesson_id']==_homeController.videos['lessons'].reversed.toList()[i]['id']);
+                              if(i==0){
+                                // lessonLast=_homeController.videos['lessons'].reversed.toList()[i];
+                                // indexLast=i;
 // TODO: Specify your own
-                              if(i!=indexLast)
-                                return
-                                  Stack(
-                                      children:[
-                                        Item(_homeController.videos['lessons'].reversed.toList()[i],true,_homeController,_mainController,i,false,look:true),
-                                        Positioned(
-                                            bottom: 80,
-                                            right: 24,
-                                            child: SvgPicture.asset("assets/icons/Vector (8).svg",width: 13,height: 16,)
-                                        ),
-                                      ]
-                                  );
-                              else
-                                return  Item(_homeController.videos['lessons'].reversed.toList()[i],true,_homeController,_mainController,i,false);
+                                if(i!=indexLast)
+                                  return
+                                    Stack(
+                                        children:[
+                                          Item(_homeController.videos['lessons'].reversed.toList()[i],true,_homeController,_mainController,i,false,look:true),
+                                          Positioned(
+                                              bottom: 80,
+                                              right: 24,
+                                              child: SvgPicture.asset("assets/icons/Vector (8).svg",width: 13,height: 16,)
+                                          ),
+                                        ]
+                                    );
+                                else
+                                  return  Item(_homeController.videos['lessons'].reversed.toList()[i],true,_homeController,_mainController,i,false);
 
-                            }
-                            if(_mainController.auth.value){
-                              if(indexInLookLesson>0){
-                                var indexInLookLessonPrevius=_mainController.getUservideo_time_all.indexWhere((element) => element['lesson_id']==_homeController.videos['lessons'].reversed.toList()[i-1]['id']);
-                                if(_mainController.getUservideo_time_all[indexInLookLesson]['done']==0) {
-                                  return Stack(
-                                      children:[
-                                        Item(_homeController.videos['lessons'].reversed.toList()[i],false,_homeController,_mainController,i,true ,lessonLast:lessonLast,indexLast:indexLast),
-                                        Positioned(
-                                            bottom: 80,
-                                            right: 24,
-                                            child: Image.asset("assets/images/padlock 1.png",width: 13,height: 16,)
-                                        ),
-
-                                      ]
-                                  );
-                                }
-                                else{
-                                  if(indexInLookLessonPrevius<0){
+                              }
+                              if(_mainController.auth.value){
+                                if(indexInLookLesson>0){
+                                  var indexInLookLessonPrevius=_mainController.getUservideo_time_all.indexWhere((element) => element['lesson_id']==_homeController.videos['lessons'].reversed.toList()[i-1]['id']);
+                                  if(_mainController.getUservideo_time_all[indexInLookLesson]['done']==0) {
                                     return Stack(
                                         children:[
-                                          Item(_homeController.videos['lessons'].reversed.toList()[i],false,_homeController,_mainController,i, true,lessonLast:lessonLast,indexLast:indexLast),
+                                          Item(_homeController.videos['lessons'].reversed.toList()[i],false,_homeController,_mainController,i,true ,lessonLast:lessonLast,indexLast:indexLast),
                                           Positioned(
                                               bottom: 80,
                                               right: 24,
@@ -419,29 +401,57 @@ class StateCourse extends State<CourseScreen>{
                                     );
                                   }
                                   else{
-                                    // lessonLast=_homeController.videos['lessons'].reversed.toList()[i];
-                                    // indexLast=i;
-                                    // TODO: Specify your own
-                                    if(i!=indexLast)
-                                      return
-                                        Stack(
-                                            children:[
-                                              Item(_homeController.videos['lessons'].reversed.toList()[i],true,_homeController,_mainController,i,false,look: true,),
-                                              Positioned(
-                                                  bottom: 80,
-                                                  right: 24,
-                                                  child: SvgPicture.asset("assets/icons/Vector (8).svg",width: 13,height: 16,)
-                                              ),
-                                            ]
-                                        );
-                                    else
-                                      return  Item(_homeController.videos['lessons'].reversed.toList()[i],true,_homeController,_mainController,i,false);
+                                    if(indexInLookLessonPrevius<0){
+                                      return Stack(
+                                          children:[
+                                            Item(_homeController.videos['lessons'].reversed.toList()[i],false,_homeController,_mainController,i, true,lessonLast:lessonLast,indexLast:indexLast),
+                                            Positioned(
+                                                bottom: 80,
+                                                right: 24,
+                                                child: Image.asset("assets/images/padlock 1.png",width: 13,height: 16,)
+                                            ),
+
+                                          ]
+                                      );
+                                    }
+                                    else{
+                                      // lessonLast=_homeController.videos['lessons'].reversed.toList()[i];
+                                      // indexLast=i;
+                                      // TODO: Specify your own
+                                      if(i!=indexLast)
+                                        return
+                                          Stack(
+                                              children:[
+                                                Item(_homeController.videos['lessons'].reversed.toList()[i],true,_homeController,_mainController,i,false,look: true,),
+                                                Positioned(
+                                                    bottom: 80,
+                                                    right: 24,
+                                                    child: SvgPicture.asset("assets/icons/Vector (8).svg",width: 13,height: 16,)
+                                                ),
+                                              ]
+                                          );
+                                      else
+                                        return  Item(_homeController.videos['lessons'].reversed.toList()[i],true,_homeController,_mainController,i,false);
+                                    }
                                   }
+                                }else{
+                                  return Stack(
+                                      children:[
+                                        Item(_homeController.videos['lessons'].reversed.toList()[i],false,_homeController,_mainController,i, true,lessonLast:lessonLast,indexLast:indexLast),
+                                        Positioned(
+                                            bottom: 80,
+                                            right: 24,
+                                            child: Image.asset("assets/images/padlock 1.png",width: 13,height: 16,)
+                                        ),
+
+                                      ]
+                                  );
                                 }
-                              }else{
+                              }
+                              else{
                                 return Stack(
                                     children:[
-                                      Item(_homeController.videos['lessons'].reversed.toList()[i],false,_homeController,_mainController,i, true,lessonLast:lessonLast,indexLast:indexLast),
+                                      Item(_homeController.videos['lessons'].reversed.toList()[i],false,_homeController,_mainController,i,false),
                                       Positioned(
                                           bottom: 80,
                                           right: 24,
@@ -451,21 +461,7 @@ class StateCourse extends State<CourseScreen>{
                                     ]
                                 );
                               }
-                            }
-                            else{
-                              return Stack(
-                                  children:[
-                                    Item(_homeController.videos['lessons'].reversed.toList()[i],false,_homeController,_mainController,i,false),
-                                    Positioned(
-                                        bottom: 80,
-                                        right: 24,
-                                        child: Image.asset("assets/images/padlock 1.png",width: 13,height: 16,)
-                                    ),
-
-                                  ]
-                              );
-                            }
-                          }).toList(),]
+                            }).toList(),]
                         ),
                         _courseController.statTest!=null?Stack(
                             children:[
@@ -521,7 +517,7 @@ class StateCourse extends State<CourseScreen>{
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         children: [
 
-                                          ],
+                                        ],
                                       ),
                                     )
                                   ],
@@ -536,13 +532,13 @@ class StateCourse extends State<CourseScreen>{
                                       child: Text("Нужно посмотреть все уроки",style: TextStyle(fontSize: 12,fontFamily: "Raleway",letterSpacing: 0.5,fontWeight: FontWeight.w600,color: Colors.redAccent),),
                                     ));
                                   }else
-                                  Get.toNamed(Routes.TEST);
+                                    Get.toNamed(Routes.TEST);
                                 },
                               ),
                               Positioned(
                                   bottom: 80,
                                   left: 12,
-                                  child: Text("${_courseController.statTest['answers_to_pass']} вопросов",
+                                  child: Text("${_courseController.length} вопросов",
                                     style: TextStyle(fontSize: 10,fontWeight: FontWeight.w400,color: Colors.white,fontFamily: "Raleway"),
                                   )
                               ),
@@ -560,19 +556,18 @@ class StateCourse extends State<CourseScreen>{
                             ]
                         ):Container()
                       ]
-                    ),
                   ),
-                  getMeterial(_homeController,_mainController),
-                  getMDescription(_homeController),
-                  getStatistik(),
-                  getSpickers(_homeController)
-                ],
-              ):Center(
-                child: CircularProgressIndicator(),
-              ),
+                ),
+                getMeterial(_homeController,_mainController),
+                getMDescription(_homeController),
+                getStatistik(),
+                getSpickers(_homeController)
+              ],
+            ):Center(
+              child: CircularProgressIndicator(),
             ),
-          )
-      )
+          ),
+        )
     );
   }
 
@@ -585,25 +580,25 @@ class StateCourse extends State<CourseScreen>{
           Text("Материалы",style: TextStyle(fontSize: 19,fontWeight: FontWeight.w600,letterSpacing: 0.5,color: Colors.black,fontFamily: "Raleway")),
           SizedBox(height: 13,),
           ..._homeController.course['kurses'][0]['materials'].map((el)=>Container(
-      padding: EdgeInsets.only(bottom: 5),
-      margin: EdgeInsets.only(bottom: 17),
+            padding: EdgeInsets.only(bottom: 5),
+            margin: EdgeInsets.only(bottom: 17),
 
-      decoration: BoxDecoration(
-          border: Border(
-              bottom: BorderSide(
-                  width: 1,color: Color(0xffECECEC)
-              )
-          )
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text("${el['material_name']}"
-              ,style: TextStyle(fontSize: 14,fontWeight: FontWeight.w300,letterSpacing: 0.5,color: Colors.black,fontFamily: "Raleway")),
-          _mainController.auth.value?SvgPicture.asset("assets/icons/down-arrow 1.svg"):Image.asset("assets/images/padlock 1_grey.png",height: 16,width: 16,)
-        ],
-      ),
-    )).toList()
+            decoration: BoxDecoration(
+                border: Border(
+                    bottom: BorderSide(
+                        width: 1,color: Color(0xffECECEC)
+                    )
+                )
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("${el['material_name']}"
+                    ,style: TextStyle(fontSize: 14,fontWeight: FontWeight.w300,letterSpacing: 0.5,color: Colors.black,fontFamily: "Raleway")),
+                _mainController.auth.value?SvgPicture.asset("assets/icons/down-arrow 1.svg"):Image.asset("assets/images/padlock 1_grey.png",height: 16,width: 16,)
+              ],
+            ),
+          )).toList()
 
         ],
       ),
@@ -634,7 +629,7 @@ class StateCourse extends State<CourseScreen>{
   Widget getStatistik(){
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(8)),
+          borderRadius: BorderRadius.all(Radius.circular(8)),
           border: Border.all(
               width: 1,color: Color(0xffECECEC)
           )

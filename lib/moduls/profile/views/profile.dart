@@ -41,6 +41,11 @@ class StateProfile extends State<ProfilePage>{
   }
   @override
   Widget build(BuildContext context) {
+    print("finished ${_mainController.allCourse.where((element){
+      return _mainController.finishedCourses.indexWhere((el) => element['id']==el['course_id'])<=0;
+    }).length}");
+    var finished_course=_mainController.allCourse.where((element) => _mainController.finishedCourses.indexWhere((el) => element['id']==el['course_id'])<=0).toList();
+
     return Scaffold(
       backgroundColor: white_color,
       body:  SafeArea(
@@ -143,9 +148,63 @@ class StateProfile extends State<ProfilePage>{
                   // getType("Мой список",_homeController.news.length,
                   //     getitemOtherCard,_homeController.news
                   // ),
-                  getType("Продолжить просмотр",_homeController.popular.length,
-                      getitemOtherCard,_homeController.popular
+                  Container(
+                    padding: EdgeInsets.only(left: 20),
+                    child:
+                    Text("Продолжить просмотр",style: TextStyle(fontSize: 17,fontWeight: FontWeight.w600),),
+
                   ),
+                  _mainController.getUservideo_time.length!=0
+                      ?Container(
+                    margin: EdgeInsets.only(top: 7,bottom: 40),
+                    width: Get.width,
+                    height: 142,
+                    child: ListView.builder(
+                        padding: EdgeInsets.only(left: 20),
+                        scrollDirection: Axis.horizontal,        addAutomaticKeepAlives: true,
+                        cacheExtent: Get.width*2,
+                        itemCount: _mainController.getUservideo_time.length,
+                        itemBuilder: (c,i){
+                          if(
+                          _mainController.getUservideo_time.reversed.toList().where((element) => _mainController.getUservideo_time.reversed.toList()[i]['course_id']==element['course_id']).length>1
+                          ){
+                            if(_mainController.getUservideo_time.reversed.toList().indexWhere((element) => _mainController.getUservideo_time.reversed.toList()[i]['course_id']==element['course_id'])>=0){
+                              if(
+                              _mainController.getUservideo_time.reversed.toList()[i]['lesson_id']
+                                  ==
+                                  _mainController.getUservideo_time.reversed.toList()[
+                                  _mainController.getUservideo_time.reversed.toList().indexWhere((element) => _mainController.getUservideo_time.reversed.toList()[i]['course_id']==element['course_id'])
+                                  ]['lesson_id']&&                                  finished_course.where((element) => element['id']==_mainController.getUservideo_time.reversed.toList()[i]['course_id']).length==0
+
+                              ){
+                                return  ItemCont(
+                                  _mainController.getUservideo_time.reversed.toList()[i]['lesson_id']
+                                  ,_mainController.getUservideo_time.reversed.toList()[i]['course_id']
+                                  ,_mainController.getUservideo_time.reversed.toList()[i]['time']
+                                  ,_homeController,_mainController,
+                                );
+                              }else{
+                                return Container();
+                              }
+                            }else{
+                              return Container();
+                            }
+                          }
+                          if(finished_course.where((element) => element['id']==_mainController.getUservideo_time.reversed.toList()[i]['course_id']).length==0
+                          )
+                            return  ItemCont(
+                              _mainController.getUservideo_time.reversed.toList()[i]['lesson_id']
+                              ,_mainController.getUservideo_time.reversed.toList()[i]['course_id']
+                              ,_mainController.getUservideo_time.reversed.toList()[i]['time']
+                              ,_homeController,_mainController,
+                            );
+                          return Container();
+                        }
+
+
+                    ),
+                  )
+                      :Container(),
                   Container(
                     padding: EdgeInsets.only(left: 20),
                     child:
@@ -172,7 +231,8 @@ class StateProfile extends State<ProfilePage>{
                                   ==
                                   _mainController.getUservideo_time.reversed.toList()[
                                   _mainController.getUservideo_time.reversed.toList().indexWhere((element) => _mainController.getUservideo_time.reversed.toList()[i]['course_id']==element['course_id'])
-                                  ]['lesson_id']
+                                  ]['lesson_id']&&                                  finished_course.where((element) => element['id']==_mainController.getUservideo_time.reversed.toList()[i]['course_id']).length==0
+
                               ){
                                 return  ItemCont(
                                   _mainController.getUservideo_time.reversed.toList()[i]['lesson_id']
@@ -187,20 +247,26 @@ class StateProfile extends State<ProfilePage>{
                               return Container();
                             }
                           }
+                          if(finished_course.where((element) => element['id']==_mainController.getUservideo_time.reversed.toList()[i]['course_id']).length==0
+                          )
                           return  ItemCont(
                             _mainController.getUservideo_time.reversed.toList()[i]['lesson_id']
                             ,_mainController.getUservideo_time.reversed.toList()[i]['course_id']
                             ,_mainController.getUservideo_time.reversed.toList()[i]['time']
                             ,_homeController,_mainController,
                           );
+                          return Container();
                         }
 
 
                     ),
                   )
                       :Container(),
-                  getType("Завершенные курсы",_homeController.popular.length,
-                      getitemOtherCard,_homeController.popular
+                  getType(
+                      "Завершенные курсы",
+                      _mainController.allCourse.where((element) => _mainController.finishedCourses.indexWhere((el) => element['id']==el['course_id'])<=0).length,
+                      getitemOtherCard,
+                      _mainController.allCourse.where((element) => _mainController.finishedCourses.indexWhere((el) => element['id']==el['course_id'])<=0).toList()
                   ),
                   SizedBox(height: 40,)
                 ],

@@ -180,8 +180,8 @@ class StateItem extends State<Item> {
         ),
       ),
       onTap: () async {
-        var response = await widget.homeController.getCourse(widget.id);
-        widget.homeController.pageController.jumpToPage(1);
+        Get.toNamed(Routes.COURSE,arguments:widget.id);
+
       },
     );
   }

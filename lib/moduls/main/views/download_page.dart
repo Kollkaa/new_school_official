@@ -58,9 +58,9 @@ class DownloadPage extends StatelessWidget{
                       Text(
                         "Загружайте курсы, чтобы Вы всегда могли обучаться, даже если вы в офлайн.",textAlign: TextAlign.center,style: TextStyle(fontSize:14,height:1.5,fontWeight: FontWeight.w300,fontFamily: "Raleway"),
                       ),
-                      Text(
+                      !mainController.auth.value?Text(
                         "(Доступно при подписке)",textAlign: TextAlign.center,style: TextStyle(fontSize:14,height:1.5,fontWeight: FontWeight.w300,fontFamily: "Raleway"),
-                      )
+                      ):Container()
                     ],
                   ),
                 )

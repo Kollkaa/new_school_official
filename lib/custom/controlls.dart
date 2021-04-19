@@ -111,7 +111,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children:[
-                      ValueListenableBuilder(
+                      widget.chewieController != null && widget.chewieController.videoPlayerController != null? ValueListenableBuilder(
                         valueListenable:  widget.chewieController.videoPlayerController,
                         builder: (context, var value, child) {
                           if(value.position.inSeconds>= widget.chewieController.videoPlayerController.value.duration.inSeconds-15){
@@ -152,7 +152,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
                             return Container();
                           }
                         },
-                      ),
+                      ):Container(),
                       SizedBox(width: 15,)
                     ]
                 ),

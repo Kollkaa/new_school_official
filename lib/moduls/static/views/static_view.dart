@@ -101,8 +101,10 @@ class StateStaticScreen extends State<StaticScreen>{
   List<charts.Series<OrdinalSales, String>> _createSampleDataAuth() {
 
    final tabletSalesData= _homeController.categorise.map((element) {
+     print("courses_in_progress ${_mainController.getStats['courses_in_progress']}");
+     print("courses_ended ${_mainController.getStats['courses_ended']}");
 
-     if(_mainController.getStats['courses_in_progress'].indexWhere((el) => element['id']==el['category'])>=0){
+     if(_mainController.getStats['courses_ended'].indexWhere((el) => element['id']==el['category'])>=0){
        return OrdinalSales(element['name'], (_mainController.getStats['courses_ended'][_mainController.getStats['courses_ended'].indexWhere((el) => element['id']==el['category'])]['count']));
      }else{
        return OrdinalSales(element['name'], 0 );
@@ -111,9 +113,9 @@ class StateStaticScreen extends State<StaticScreen>{
    ).toList();
 
    final desktopSalesData = _homeController.categorise.map((element) {
-     if(_mainController.getStats['courses_ended'].indexWhere((el) => element['id']==el['category'])>=0){
+     if(_mainController.getStats['courses_in_progress'].indexWhere((el) => element['id']==el['category'])>=0){
        print(element);
-       return OrdinalSales(element['name'], _mainController.getStats['courses_in_progress'][_mainController.getStats['courses_in_progress'].indexWhere((el) => element['id']==el['category'])]['count']+1 );
+       return OrdinalSales(element['name'], _mainController.getStats['courses_in_progress'][_mainController.getStats['courses_in_progress'].indexWhere((el) => element['id']==el['category'])]['count']);
      }else{
        return OrdinalSales(element['name'], 0 );
      }
@@ -1102,7 +1104,7 @@ class StateStaticScreen extends State<StaticScreen>{
           padding: EdgeInsets.only(left: 4,right: 4,top: 13),
           width: Get.width,
           height: 142,
-          child: _homeController.news.length==0?ListView.builder(
+          child: _mainController.allCourse.where((element) => _mainController.finishedCourses.indexWhere((el) => element['id']==el['course_id'])<=0).toList().length==0?ListView.builder(
               itemCount: 4,
               itemBuilder: (i,c){
                 return Container(
@@ -1118,9 +1120,14 @@ class StateStaticScreen extends State<StaticScreen>{
             ): ListView.builder(
                 padding: EdgeInsets.only(left: 15),
                 scrollDirection: Axis.horizontal,
-                itemCount: _homeController.news.length,
+                itemCount: _mainController.allCourse.where((element) => _mainController.finishedCourses.indexWhere((el) => element['id']==el['course_id'])<=0).toList().length,
                 itemBuilder: (c,i){
-                  return  Item("${_homeController.news[i]['name']}","${_homeController.news[i]['banner_small']}",_homeController.popular[i]['id'],_homeController,_mainController);
+                  return  Item(
+                      "${_mainController.allCourse.where((element) => _mainController.finishedCourses.indexWhere((el) => element['id']==el['course_id'])<=0).toList()[i]['name']}",
+                      "${_mainController.allCourse.where((element) => _mainController.finishedCourses.indexWhere((el) => element['id']==el['course_id'])<=0).toList()[i]['banner_small']}",
+                      _mainController.allCourse.where((element) => _mainController.finishedCourses.indexWhere((el) => element['id']==el['course_id'])<=0).toList()[i]['id'],
+                      _homeController,
+                      _mainController);
                 }
             ),
           ),

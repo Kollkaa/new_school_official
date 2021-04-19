@@ -17,6 +17,7 @@ import 'package:video_player/video_player.dart';
 import 'package:dio/dio.dart' as dios;
 
 class VideoScreen extends StatefulWidget {
+
   var lesson;
   var duration;
   var index;
@@ -26,27 +27,36 @@ class VideoScreen extends StatefulWidget {
   State<StatefulWidget> createState() {
     return _ChewieDemoState();
   }
+
 }
 class _ChewieDemoState extends State<VideoScreen> {
+
   HomeController _homeController=Get.find();
   MainController _mainController = Get.find();
   ChewieController _chewieController;
   final GetStorage box = GetStorage();
   var oldPos=0;
+
   @override
   void initState() {
     super.initState();
     initializePlayer();
     oldPos=widget.duration!=null?widget.duration:0;
+
   }
+
   @override
   void dispose() {
 
     myOverayEntry.remove();
-    _chewieController.videoPlayerController.removeListener(() {});
-    _chewieController.removeListener(() {});
-    _chewieController.videoPlayerController.dispose();
-    _chewieController.dispose();
+    if(_chewieController.videoPlayerController!=null){
+      _chewieController.videoPlayerController.removeListener(() {});
+      _chewieController.videoPlayerController.dispose();
+    }
+    if(_chewieController!=null) {
+      _chewieController.removeListener(() {});
+      _chewieController.dispose();
+    }
 
     super.dispose();
   }
@@ -164,14 +174,7 @@ class _ChewieDemoState extends State<VideoScreen> {
     _chewieController.videoPlayerController.addListener(() {
       if(_mainController.auth.value)
         if(_chewieController.videoPlayerController.value.position.inSeconds==_chewieController.videoPlayerController.value.duration.inSeconds){
-          myOverayEntry.remove();
-          _chewieController.videoPlayerController.removeListener(() {});
-          _chewieController.removeListener(() {});
-          _chewieController.videoPlayerController.dispose();
-          _chewieController.dispose();
-          setState(() {
 
-          });
           Get.back();
           if((widget.index+1)<=_homeController.videos['lessons'].length-1){
             Get.to(VideoScreen(_homeController.videos['lessons'].reversed.toList()[(widget.index+1)],index:widget.index+1));
@@ -212,11 +215,8 @@ class _ChewieDemoState extends State<VideoScreen> {
             id:  _homeController.videos['lessons'].reversed.toList()[(widget.index)]['id'],
             kurs_id:  _homeController.videos['lessons'].reversed.toList()[(widget.index)]['kurs_id'],
             method:(){
-              myOverayEntry.remove();
-              _chewieController..videoPlayerController.removeListener(() {});
-              _chewieController.removeListener(() {});
-              _chewieController.videoPlayerController.dispose();
-              _chewieController.dispose();
+              myOverayEntry!=null?myOverayEntry.remove():null;
+
               Get.back();
               if(_mainController.auth.value){
                 if((widget.index+1)<=_homeController.videos['lessons'].length-1){
@@ -243,6 +243,73 @@ class _ChewieDemoState extends State<VideoScreen> {
   }
   @override
   Widget build(BuildContext context) {
+  try{
+    return WillPopScope(child: Material(
+      child: MediaQuery.removePadding(
+          context: context,
+          removeTop: true,
+          child: Stack(
+            children: [
+              Container(
+                color: Colors.black,
+                height: Get.height,
+                width: Get.width,
+                child: Center(
+                  child: _chewieController != null &&
+                      _chewieController
+                          .videoPlayerController.value.initialized
+                      ?  Chewie(
+
+                    controller: _chewieController,
+                  )
+                      : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          )
+      ),
+    ), onWillPop: (){
+      Get.back();
+      SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+          statusBarColor: Colors.white,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.dark,
+          systemNavigationBarColor: Colors.white
+      ));
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+      ]);
+      StreamController<int> controller = StreamController<int>();
+      Stream stream = controller.stream;
+      stream.listen((value) async{
+        dios.Response getUservideo_time_all =await Backend().getUservideo_time_all(id:box.read('id'));
+        _mainController.getUservideo_time_all.value=getUservideo_time_all.data['lessons'];
+
+        var res=await Backend().setPos(
+            _homeController.videos['lessons'].reversed.toList()[(widget.index)]['kurs_id'],
+            _homeController.videos['lessons'].reversed.toList()[(widget.index)]['id'],
+            value,
+            _chewieController.videoPlayerController.value.duration.inSeconds);
+        print(res.data);
+        if(box.read('id')!=null){
+          _mainController.initProfile(box.read("id"));
+        }
+      });
+      controller.add(oldPos);
+      setState(() {
+      });
+      return Future<bool>(( )=>true);
+    });
+  }catch(e){
+    return Container();
+
+  }
     try{
       return new WillPopScope(
           onWillPop: () {

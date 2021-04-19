@@ -324,5 +324,14 @@ class Backend {
     }));
     return response;
   }
+  getFinishedCourses(client_id){
+    var response;
+    response=dio.post("/api/api.php",data:dios.FormData.fromMap({
+      'type': 'client_course_stats',
+      'apiKey': '2xdCQ9nH',
+      'client_id': client_id
+    }));
+    return response;
+  }
 
 }

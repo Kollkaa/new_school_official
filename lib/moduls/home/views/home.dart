@@ -51,6 +51,10 @@ class Statehome extends State<HomePage>{
   }
   @override
   Widget build(BuildContext context) {
+    var finished_course=_mainController.allCourse.where((element) => _mainController.finishedCourses.indexWhere((el) => element['id']==el['course_id'])<=0).toList();
+
+    print("finished ${finished_course}");
+    print("continue ${_mainController.getUservideo_time.where((cont) => finished_course.indexWhere((element) => element['course_id']==cont['course_id'])<=0)}");
 
     return GetBuilder(
         init: _homeController,
@@ -156,6 +160,7 @@ class Statehome extends State<HomePage>{
                                 itemBuilder: (c,i){
                                   if(
                                   _mainController.getUservideo_time.reversed.toList().where((element) => _mainController.getUservideo_time.reversed.toList()[i]['course_id']==element['course_id']).length>1
+                                      && finished_course.where((element) => element['course_id']==_mainController.getUservideo_time.reversed.toList()[i]['course_id']).length==0
                                   ){
                                     if(_mainController.getUservideo_time.reversed.toList().indexWhere((element) => _mainController.getUservideo_time.reversed.toList()[i]['course_id']==element['course_id'])>=0){
                                       if(
@@ -163,7 +168,7 @@ class Statehome extends State<HomePage>{
                                           ==
                                       _mainController.getUservideo_time.reversed.toList()[
                                       _mainController.getUservideo_time.reversed.toList().indexWhere((element) => _mainController.getUservideo_time.reversed.toList()[i]['course_id']==element['course_id'])
-                                      ]['lesson_id']
+                                      ]['lesson_id']&& finished_course.where((element) => element['id']==_mainController.getUservideo_time.reversed.toList()[i]['course_id']).length==0
                                       ){
                                         return  ItemCont(
                                             _mainController.getUservideo_time.reversed.toList()[i]['lesson_id']
@@ -178,12 +183,18 @@ class Statehome extends State<HomePage>{
                                       return Container();
                                     }
                                   }
+                                  if(
+                                  finished_course.where((element) => element['id']==_mainController.getUservideo_time.reversed.toList()[i]['course_id']).length==0
+                                  ){
+                                    print("Second");
                                   return  ItemCont(
                                       _mainController.getUservideo_time.reversed.toList()[i]['lesson_id']
                                       ,_mainController.getUservideo_time.reversed.toList()[i]['course_id']
                                       ,_mainController.getUservideo_time.reversed.toList()[i]['time']
                                       ,_homeController,_mainController,
-                                  );
+                                  );}else{
+                                    return Container();
+                                  }
                                 }
 
 
@@ -291,7 +302,6 @@ class Statehome extends State<HomePage>{
                                 Text("Популярное",style: black_text_title,),
 
                               ),
-
                               Container(
                                 margin: EdgeInsets.only(top: 7),
                                 width: Get.width,
@@ -315,7 +325,12 @@ class Statehome extends State<HomePage>{
                                     scrollDirection: Axis.horizontal,
                                     itemCount: _homeController.popular.length,
                                     itemBuilder: (c,i){
-                                      return  Item("${_homeController.popular[i]['name']}","${_homeController.popular[i]['banner_small']}",_homeController.popular[i]['id'],_homeController,_mainController);
+                                      return  Item(
+                                          "${_homeController.popular[i]['name']}",
+                                          "${_homeController.popular[i]['banner_small']}",
+                                          _homeController.popular[i]['id'],
+                                          _homeController,
+                                          _mainController);
                                     }
                                 ),
                               )
@@ -357,7 +372,12 @@ class Statehome extends State<HomePage>{
                                     scrollDirection: Axis.horizontal,
                                     itemCount: _homeController.news.length,
                                     itemBuilder: (c,i){
-                                      return  Item("${_homeController.news[i]['name']}","${_homeController.news[i]['banner_small']}",_homeController.news[i]['id'],_homeController,_mainController);
+                                      return  Item(
+                                          "${_homeController.news[i]['name']}",
+                                          "${_homeController.news[i]['banner_small']}",
+                                          _homeController.news[i]['id'],
+                                          _homeController,
+                                          _mainController);
                                     }
                                 ),
                               )
@@ -365,6 +385,7 @@ class Statehome extends State<HomePage>{
                           ),
                         )
                     ),
+
                     Obx(
                             ()=>Container(
                           padding: EdgeInsets.only(top: 30,bottom: 40),
@@ -409,64 +430,7 @@ class Statehome extends State<HomePage>{
                         )
                     ),
 
-                    // Container(
-                    //   padding: EdgeInsets.only(top: 30),
-                    //   child: Column(
-                    //     crossAxisAlignment: CrossAxisAlignment.start,
-                    //     children: [
-                    //       Container(
-                    //         padding: EdgeInsets.only(left: 15),
-                    //         child:
-                    //         Text("Скоро",style: black_text_title,),
-                    //
-                    //       ),
-                    //       Container(
-                    //         margin: EdgeInsets.only(top: 7),
-                    //         width: Get.width,
-                    //         height: 142,
-                    //         child: ListView(
-                    //           scrollDirection: Axis.horizontal,
-                    //           children: [
-                    //             SizedBox(width: 15,),
-                    //             getitemOtherCard("Как написать трек с нуля","gang6550.jpg"),
-                    //             getitemOtherCard("Как написать трек с нуля","1553478378-helen-mirren-504x796-instructor-tile_1x.jpg"),
-                    //             getitemOtherCard("Как написать трек с нуля","karusel.jpg"),
-                    //
-                    //           ],
-                    //         ),
-                    //       )
-                    //     ],
-                    //   ),
-                    // ),
-                    // Container(
-                    //   padding: EdgeInsets.only(top: 30,bottom: 30),
-                    //   child: Column(
-                    //     crossAxisAlignment: CrossAxisAlignment.start,
-                    //     children: [
-                    //       Container(
-                    //         padding: EdgeInsets.only(left: 15),
-                    //         child:Text("Рекомендации",style: black_text_title,),
-                    //
-                    //       ),
-                    //       Container(
-                    //         margin: EdgeInsets.only(top: 7),
-                    //         width: Get.width,
-                    //         height: 142,
-                    //         child: ListView(
-                    //           scrollDirection: Axis.horizontal,
-                    //           children: [
-                    //             SizedBox(width: 15,),
-                    //             getitemOtherCard("Как написать трек с нуля","1553478378-helen-mirren-504x796-instructor-tile_1x.jpg"),
-                    //             getitemOtherCard("Как написать трек с нуля","1553478378-helen-mirren-504x796-instructor-tile_1x.jpg"),
-                    //             getitemOtherCard("Как написать трек с нуля","1image2.png"),
-                    //
-                    //
-                    //           ],
-                    //         ),
-                    //       )
-                    //     ],
-                    //   ),
-                    // ),
+
 
                   ],
                 ),
@@ -778,6 +742,7 @@ class StateItemCat extends State<ItemCat>{
 
       },
     );
+
   }
 
 }

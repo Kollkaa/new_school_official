@@ -137,7 +137,7 @@ class _ChewieDemoState extends State<TrailerScreen> {
     @required BuildContext context,
   }) {
     return new OverlayEntry(
-        builder: (context) => _chewieController.videoPlayerController!=null?Positioned(
+        builder: (context) =>_chewieController!=null? _chewieController.videoPlayerController!=null?Positioned(
           child: CupertinoControls(
             chewieController: _chewieController,
             backgroundColor: Color(0xff232323),
@@ -146,14 +146,11 @@ class _ChewieDemoState extends State<TrailerScreen> {
             id:  null,
             kurs_id:  null,
             method:(){
-              myOverayEntry.remove();
-            _chewieController.videoPlayerController.removeListener(() {});
-            _chewieController.removeListener(() {});
-            _chewieController.videoPlayerController.dispose();
-            _chewieController.dispose();
+              myOverayEntry!=null?myOverayEntry.remove():null;
+
             Get.back();},
           ),
-        ):Container()
+        ):Container():Container()
     );
   }
 

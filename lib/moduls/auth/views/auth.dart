@@ -347,7 +347,6 @@ class StateAuth extends State<AuthPage>{
                 print(responce.data[0]['id']);
                 await box.write("id", responce.data[0]['id']);
                 dios.Response responces =await Backend().getUser(id:responce.data[0]['id']);
-
                 dios.Response getUservideo_cab =await Backend().getUservideo_cab(id:responce.data[0]['id']);
                 dios.Response getUservideo_time =await Backend().getUservideo_time(id:responce.data[0]['id']);
                 dios.Response getUservideo_time_all =await Backend().getUservideo_time_all(id:responce.data[0]['id']);
