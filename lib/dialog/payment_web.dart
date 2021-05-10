@@ -94,8 +94,8 @@ class WebViewExampleState extends State<WebViewExample> {
                          _mainController.getStats.value=getStats.data['user_stats'][0];
                          _mainController.getUservideo_cab.value=getUservideo_cab.data['lessons_cabinet'];
                          _mainController.getUservideo_time.value=getUservideo_time.data['lessons'];
-                         _mainController.getUservideo_time_all.value=getUservideo_time_all.data['lessons'];
-                         print(responces.data['clients'][0]['name']);
+                         _mainController.getUservideo_time_all.value=[];
+                         _mainController.getUservideo_time_all.addAll(getUservideo_time_all.data['lessons']);                         print(responces.data['clients'][0]['name']);
                          _mainController.auth.value=true;
                          _mainController.widgets.removeAt(4);
                          _mainController.widgets.add(ProfilePage());

@@ -39,7 +39,6 @@ class MainController extends GetxController {
 
   var getStats = {}.obs;
 
-
   var lastnameEditingController = new TextEditingController();
 
   var nameEditingController = new TextEditingController();
@@ -69,7 +68,10 @@ class MainController extends GetxController {
 
   var searchCourse = [].obs;
 
-  var finishedCourses=[];
+  var finishedCourses=[].obs;
+
+  var controllerSearch= new TextEditingController();
+  var listContCourse=[].obs;
   @override
   void onInit() async {
     super.onInit();
@@ -88,9 +90,66 @@ class MainController extends GetxController {
     print(allCourse);
     auth.value = await box.read("auth");
     if (box.read("id") != null) {
-      initProfile(box.read("id"));
+        initProfile(box.read("id"));
+        Get.appUpdate();
+    }
+    else{
+      auth.value = auth.value != null ? auth.value : false;
+      widgets.value = [
+        HomePage(),
+        SearchScreen(),
+        StaticScreen(),
+        DownloadPage(),
+        auth.value ? ProfilePage() : AuthPage(),
+      ];
     }
     print(auth.value);
+
+  }
+
+  Future initProfile(id) async {
+    Backend backend = Backend();
+    await Future.wait([
+      backend.getFinishedCourses(id),
+      backend.getUservideo_time_all(
+          id: id),
+      backend.getUservideo_time(id: id),
+      backend.getUservideo_cab(id: id),
+      backend.getUser(id: id)
+    ]);
+
+    if(backend.getFinishedCoursesResponse.toString().contains("ended_courses")){
+      finishedCourses.addAll(backend.getFinishedCoursesResponse['ended_courses']);
+    }else{
+      finishedCourses.value=[];
+    }
+    this.getUservideo_time_all.value = [];
+    this.getUservideo_time_all.addAll(backend.getUservideoTimeAllResponse['lessons']!=null?backend.getUservideoTimeAllResponse['lessons']:[]);
+    print("getUservideo_time_all ${this.getUservideo_time_all}");
+    this.getUservideo_time.value=[];
+    this.getUservideo_time.addAll(backend.getUserVideoTimeResponse['lessons'] != null ? backend.getUserVideoTimeResponse['lessons'] : []);
+    print("getUservideo_time ${this.getUservideo_time}");
+
+    profile.value = backend.getUserResponse['clients'][0];
+    nameEditingController = new TextEditingController(text: profile['name']);
+    lastnameEditingController =
+    new TextEditingController(text: profile['lastname']);
+    print(getUservideo_time.length);
+    print(finishedCourses.length);
+    finishedCourses.forEach((el) {
+      print(el);
+    });
+    getUservideo_time.forEach((element) {
+      if(
+      finishedCourses.where((el) =>el['course_id']==element['course_id']).length!=0
+      ){
+
+      }else{
+        listContCourse.add(element);
+      }
+    });
+    print("listContCourse ${listContCourse}");
+    this.getUservideo_cab.value = backend.getUserVideoCabResponse['lessons_cabinet'];
     auth.value = auth.value != null ? auth.value : false;
     widgets.value = [
       HomePage(),
@@ -99,36 +158,12 @@ class MainController extends GetxController {
       DownloadPage(),
       auth.value ? ProfilePage() : AuthPage(),
     ];
-  }
 
-  initProfile(id) async {
-    print("startGetDataUser");
-    dios.Response responces = await Backend().getUser(id: id);
-    finishedCourses=(await Backend().getFinishedCourses(id)).data['ended_courses'];
-    profile.value = responces.data['clients'][0];
-    nameEditingController = new TextEditingController(text: profile['name']);
-    lastnameEditingController =
-    new TextEditingController(text: profile['lastname']);
-    dios.Response getUservideo_cab = await Backend().getUservideo_cab(id: id);
-    dios.Response getUservideo_time = await Backend().getUservideo_time(id: id);
-    dios.Response getUservideo_time_all = await Backend().getUservideo_time_all(
-        id: id);
-    print(getUservideo_time.data['lessons']);
-    // dios.Response getStats =await Backend().getStat(id:id);
-    //this.getStats.value=getStats.data['user_stats'][0];
-    this.getUservideo_cab.value = getUservideo_cab.data['lessons_cabinet'];
-    this.getUservideo_time.value =
-    getUservideo_time.data['lessons'] != null ? getUservideo_time
-        .data['lessons'] : [];
-    this.getUservideo_time_all.value = getUservideo_time_all.data['lessons'];
-    print("finishGetDataUser");
-    Get.appUpdate();
   }
 
   @override
   void onReady() {
     super.onReady();
-    this.getUservideo_time = this.getUservideo_time;
   }
 
   @override
@@ -147,7 +182,6 @@ class MainController extends GetxController {
       cancelToken) async {
     print(video);
     Dio dio = Dio();
-    print(cours['banner_small']);
     try {
       var dir = await getApplicationDocumentsDirectory();
       listValue.add({"rec": 1, "total": 1});
@@ -209,7 +243,6 @@ class MainController extends GetxController {
                     "desc": "${cours['description']}"
                   })}');
                 }
-                print(box.read("downloads"));
                 if (course == null) {
                   box.write("$course_id", jsonEncode({
                     "id": "$course_id",

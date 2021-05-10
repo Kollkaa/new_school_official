@@ -310,9 +310,6 @@ class StateRegister extends State<RegisterPage>{
             print(responce.data);
             await box.write("auth", true);
             _mainController.profile={}.obs;
-            print(responce.data);
-            print(responce.data[0]);
-            print(responce.data[0]['id']);
             await box.write("id", responce.data[0]['id']);
             dios.Response responces =await Backend().getUser(id:responce.data[0]['id']);
 
@@ -324,8 +321,8 @@ class StateRegister extends State<RegisterPage>{
             _mainController.getStats.value=getStats.data['user_stats'][0];
             _mainController.getUservideo_cab.value=getUservideo_cab.data['lessons_cabinet'];
             _mainController.getUservideo_time.value=getUservideo_time.data['lessons'];
-            _mainController.getUservideo_time_all.value=getUservideo_time_all.data['lessons'];
-            print(responces.data['clients'][0]['name']);
+            _mainController.getUservideo_time_all.value=[];
+            _mainController.getUservideo_time_all.addAll(getUservideo_time_all.data['lessons']);            print(responces.data['clients'][0]['name']);
             _mainController.auth.value=true;
             _mainController.widgets.removeAt(4);
             _mainController.widgets.add(ProfilePage());

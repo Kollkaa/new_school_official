@@ -101,9 +101,6 @@ class StateStaticScreen extends State<StaticScreen>{
   List<charts.Series<OrdinalSales, String>> _createSampleDataAuth() {
 
    final tabletSalesData= _homeController.categorise.map((element) {
-     print("courses_in_progress ${_mainController.getStats['courses_in_progress']}");
-     print("courses_ended ${_mainController.getStats['courses_ended']}");
-
      if(_mainController.getStats['courses_ended'].indexWhere((el) => element['id']==el['category'])>=0){
        return OrdinalSales(element['name'], (_mainController.getStats['courses_ended'][_mainController.getStats['courses_ended'].indexWhere((el) => element['id']==el['category'])]['count']));
      }else{
@@ -114,7 +111,6 @@ class StateStaticScreen extends State<StaticScreen>{
 
    final desktopSalesData = _homeController.categorise.map((element) {
      if(_mainController.getStats['courses_in_progress'].indexWhere((el) => element['id']==el['category'])>=0){
-       print(element);
        return OrdinalSales(element['name'], _mainController.getStats['courses_in_progress'][_mainController.getStats['courses_in_progress'].indexWhere((el) => element['id']==el['category'])]['count']);
      }else{
        return OrdinalSales(element['name'], 0 );
@@ -1095,37 +1091,26 @@ class StateStaticScreen extends State<StaticScreen>{
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
+        _mainController.finishedCourses.length==0
+            ?Container():Container(
           padding: EdgeInsets.only(left: 20,right: 20),
           child:
           Text("Завершенные курсы",style: black_text_title),
         ),
-        Container(
+        _mainController.finishedCourses.length==0
+            ?Container(): Container(
           padding: EdgeInsets.only(left: 4,right: 4,top: 13),
           width: Get.width,
           height: 142,
-          child: _mainController.allCourse.where((element) => _mainController.finishedCourses.indexWhere((el) => element['id']==el['course_id'])<=0).toList().length==0?ListView.builder(
-              itemCount: 4,
-              itemBuilder: (i,c){
-                return Container(
-                  margin: EdgeInsets.only(right: 12),
-                  height: 142,
-                  width: 216,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    color: Colors.black.withOpacity(0.04),
-                  ),);
-              },
-
-            ): ListView.builder(
+          child:  ListView.builder(
                 padding: EdgeInsets.only(left: 15),
                 scrollDirection: Axis.horizontal,
-                itemCount: _mainController.allCourse.where((element) => _mainController.finishedCourses.indexWhere((el) => element['id']==el['course_id'])<=0).toList().length,
+                itemCount:  _mainController.allCourse.where((element) => _mainController.finishedCourses.indexWhere((el) => element['id']==el['course_id'])>=0).toList().length,
                 itemBuilder: (c,i){
                   return  Item(
-                      "${_mainController.allCourse.where((element) => _mainController.finishedCourses.indexWhere((el) => element['id']==el['course_id'])<=0).toList()[i]['name']}",
-                      "${_mainController.allCourse.where((element) => _mainController.finishedCourses.indexWhere((el) => element['id']==el['course_id'])<=0).toList()[i]['banner_small']}",
-                      _mainController.allCourse.where((element) => _mainController.finishedCourses.indexWhere((el) => element['id']==el['course_id'])<=0).toList()[i]['id'],
+                      "${_mainController.allCourse.where((element) => _mainController.finishedCourses.indexWhere((el) => element['id']==el['course_id'])>=0).toList()[i]['name']}",
+                      "${_mainController.allCourse.where((element) => _mainController.finishedCourses.indexWhere((el) => element['id']==el['course_id'])>=0).toList()[i]['banner_small']}",
+                      _mainController.allCourse.where((element) => _mainController.finishedCourses.indexWhere((el) => element['id']==el['course_id'])>=0).toList()[i]['id'],
                       _homeController,
                       _mainController);
                 }

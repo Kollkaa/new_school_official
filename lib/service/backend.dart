@@ -23,7 +23,11 @@ class Backend {
     );
 
   }
-
+  var getFinishedCoursesResponse;
+  var getUservideoTimeAllResponse;
+  var getUserVideoTimeResponse;
+  var getUserResponse;
+  var getUserVideoCabResponse;
 
   Future<dios.Response> signUp({String email,String pas})async{
     var response;
@@ -37,48 +41,51 @@ class Backend {
     return response;
 
   }
-  Future<dios.Response> getUser({String id})async{
+  Future getUser({String id})async{
     var response;
-    response= dio.post("/api/api.php",data:dios.FormData.fromMap({'type':  "client_info",
+    response=await dio.post("/api/api.php",data:dios.FormData.fromMap({'type':  "client_info",
       "apiKey": "2xdCQ9nH",
       "client_id": id,
 
     }));
+    getUserResponse=response.data;
 
-    return response;
+    return response.data;
 
   }
-  Future<dios.Response> getUservideo_time_all ({String id})async{
+  Future getUservideo_time_all ({String id})async{
     var response;
-    response= dio.post("/api/api.php",data:dios.FormData.fromMap({'type':  "client_video_time_all",
+    response= await dio.post("/api/api.php",data:dios.FormData.fromMap({'type':  "client_video_time_all",
       "apiKey": "2xdCQ9nH",
       "client_id": id,
 
     }));
-
-    return response;
+    print("getUservideo_time_all${response.data}");
+    getUservideoTimeAllResponse=response.data;
+    return response.data;
 
   }
-  Future<dios.Response> getUservideo_cab({String id})async{
+  Future getUservideo_cab({String id})async{
     var response;
-    response= dio.post("/api/api.php",data:dios.FormData.fromMap({'type':  "client_video_cab",
+    response= await dio.post("/api/api.php",data:dios.FormData.fromMap({'type':  "client_video_cab",
       "apiKey": "2xdCQ9nH",
       "client_id": id,
 
     }));
-
-    return response;
+    getUserVideoCabResponse=response.data;
+    return response.data;
 
   }
-  Future<dios.Response> getUservideo_time({String id})async{
+  Future getUservideo_time({String id})async{
     var response;
-    response= dio.post("/api/api.php",data:dios.FormData.fromMap({'type':  "client_video_time",
+    response= await dio.post("/api/api.php",data:dios.FormData.fromMap({'type':  "client_video_time",
       "apiKey": "2xdCQ9nH",
       "client_id": id,
 
     }));
-
-    return response;
+    print("getUservideo_time ${response.data}");
+    getUserVideoTimeResponse=response.data;
+    return response.data;
 
   }
   Future<dios.Response> auth({String email,String pas}) {
@@ -242,7 +249,6 @@ class Backend {
     request.fields['apiKey'] = '2xdCQ9nH';
     var response = await request.send();
     response.stream.transform(utf8.decoder).listen((value) {
-      print(value);
     });
     if(response.statusCode==200)
       {
@@ -260,9 +266,19 @@ class Backend {
     return response;
   }
 
-   setPos(course_id,lesson_id,value,video_duration) {
+   setPos(course_id,lesson_id,value,video_duration) async{
     var response;
-    response=dio.post("/api/api.php",data:dios.FormData.fromMap({
+    print({
+      'type': 'client_view_lesson',
+      'apiKey': '2xdCQ9nH',
+      'client_id': storage.read('id'),
+      'lesson_id':lesson_id,
+      'course_id':course_id,
+      'video_time':value,
+      'video_duration':video_duration,
+
+    });
+    response=await dio.post("/api/api.php",data:dios.FormData.fromMap({
       'type': 'client_view_lesson',
       'apiKey': '2xdCQ9nH',
       'client_id': storage.read('id'),
@@ -272,7 +288,8 @@ class Backend {
       'video_duration':video_duration,
 
     }));
-    return response;
+
+    return response.data;
   }
   getTestStat({id,course_id}){
     var response;
@@ -324,14 +341,16 @@ class Backend {
     }));
     return response;
   }
-  getFinishedCourses(client_id){
+
+  Future getFinishedCourses(client_id)async{
     var response;
-    response=dio.post("/api/api.php",data:dios.FormData.fromMap({
+    response=await dio.post("/api/api.php",data:dios.FormData.fromMap({
       'type': 'client_course_stats',
       'apiKey': '2xdCQ9nH',
       'client_id': client_id
     }));
-    return response;
+    getFinishedCoursesResponse=response.data;
+    return response.data;
   }
 
 }

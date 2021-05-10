@@ -58,7 +58,6 @@ class _ChewieDemoState extends State<TrailerScreen> {
       DeviceOrientation.portraitDown,
     ]);
     setState(( ) { } );
-    print(_homeController.course['kurses'][0]['trailer']);
 
     _videoPlayerController1 = VideoPlayerController.network(
         _homeController.course['kurses'][0]['trailer']);

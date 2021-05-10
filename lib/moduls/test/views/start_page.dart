@@ -84,9 +84,7 @@ class StartPage extends StatelessWidget{
             ),
             onPressed: ()async{
               testController.randomizer(5);
-              print(testController.list.length);
                var response =await Backend().startTest(id: testController.mainController.profile['id'],course_id: testController.homeController.course['kurses'][0]['id']);
-              print(response.data);
                testController.controller.jumpToPage(1);
                testController.startTimer();
 

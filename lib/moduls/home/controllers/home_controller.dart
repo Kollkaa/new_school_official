@@ -86,7 +86,6 @@ class HomeController extends GetxController {
     print(response.headers);
     if(response.statusCode==200)
       {
-        print(response.data);
         popular.value=response.data['popular'];
         news.value=response.data['new'];
       }

@@ -188,7 +188,6 @@ class StatePasEdit extends State<EditPasswordProfile> {
         ){
           var response = await Backend().editPassword(
             box.read("id"), _mainController.passConfEditingController.text,);
-          print(response.data);
          if(response.statusCode==200){
            Get.snackbar("",  "",duration:Duration(seconds: 1),backgroundColor: Colors.white,colorText: Colors.blue,snackPosition: SnackPosition.BOTTOM,messageText: Text("пароль изменен",textAlign: TextAlign.center,style: TextStyle(fontSize: 14,fontWeight: FontWeight.w400,color: Colors.green),));
 

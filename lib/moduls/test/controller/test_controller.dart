@@ -96,7 +96,6 @@ class TestController extends GetxController{
                 controller.jumpToPage(2);
               }
             } else {
-              print(progress.value);
 
               progress.value =progress.value- 1;
 

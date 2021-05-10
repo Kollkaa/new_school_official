@@ -32,7 +32,7 @@ class HomePage extends StatefulWidget {
 }
 class Statehome extends State<HomePage>{
   HomeController _homeController =Get.put(HomeController());
-  MainController _mainController = Get.put(MainController());
+  MainController _mainController = Get.find();
   AuthController _authController =Get.put(AuthController());
   final GetStorage box = GetStorage();
 
@@ -42,8 +42,8 @@ class Statehome extends State<HomePage>{
     super.initState();
   }
   initPrefs()async{
-    dios.Response responces =await Backend().getUser(id:box.read("id"));
-    _mainController.profile.value=responces.data['clients'][0];
+    var responces =await Backend().getUser(id:box.read("id"));
+    _mainController.profile.value=responces['clients'][0];
     setState(() {
 
     });
@@ -51,11 +51,6 @@ class Statehome extends State<HomePage>{
   }
   @override
   Widget build(BuildContext context) {
-    var finished_course=_mainController.allCourse.where((element) => _mainController.finishedCourses.indexWhere((el) => element['id']==el['course_id'])<=0).toList();
-
-    print("finished ${finished_course}");
-    print("continue ${_mainController.getUservideo_time.where((cont) => finished_course.indexWhere((element) => element['course_id']==cont['course_id'])<=0)}");
-
     return GetBuilder(
         init: _homeController,
         builder: (value)=>
@@ -121,7 +116,6 @@ class Statehome extends State<HomePage>{
                                           SettingPage()
                                       );
                                       var responces =await Backend().getUser(id:box.read("id"));
-                                      print(responces);
                                       _mainController.profile.value=responces.data['clients'][0];
                                       setState(() {
                                       });
@@ -135,6 +129,7 @@ class Statehome extends State<HomePage>{
                           ],
                         )
                     ),
+                    //Продолжить
                     Obx(
                           ()=>_homeController.banner.value
                               ? Container(
@@ -142,60 +137,32 @@ class Statehome extends State<HomePage>{
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _mainController.auth.value?_mainController.getUservideo_time.length!=0? Container(
+                            _mainController.auth.value?_mainController.listContCourse.length!=0? Container(
                               padding: EdgeInsets.only(left: 15),
                               child:
                               Text("Продолжить",style: black_text_title,),
                             ):Container():Container(),
-                            _mainController.auth.value?_mainController.getUservideo_time.length!=0
+                            _mainController.auth.value?_mainController.listContCourse.length!=0
                                 ?Container(
                               margin: EdgeInsets.only(top: 7),
                               width: Get.width,
                               height: 223,
                               child: ListView.builder(
-                                padding: EdgeInsets.only(left: 15),
-                                scrollDirection: Axis.horizontal,        addAutomaticKeepAlives: true,
-                                cacheExtent: Get.width*2,
-                                itemCount: _mainController.getUservideo_time.length,
-                                itemBuilder: (c,i){
-                                  if(
-                                  _mainController.getUservideo_time.reversed.toList().where((element) => _mainController.getUservideo_time.reversed.toList()[i]['course_id']==element['course_id']).length>1
-                                      && finished_course.where((element) => element['course_id']==_mainController.getUservideo_time.reversed.toList()[i]['course_id']).length==0
-                                  ){
-                                    if(_mainController.getUservideo_time.reversed.toList().indexWhere((element) => _mainController.getUservideo_time.reversed.toList()[i]['course_id']==element['course_id'])>=0){
-                                      if(
-                                      _mainController.getUservideo_time.reversed.toList()[i]['lesson_id']
-                                          ==
-                                      _mainController.getUservideo_time.reversed.toList()[
-                                      _mainController.getUservideo_time.reversed.toList().indexWhere((element) => _mainController.getUservideo_time.reversed.toList()[i]['course_id']==element['course_id'])
-                                      ]['lesson_id']&& finished_course.where((element) => element['id']==_mainController.getUservideo_time.reversed.toList()[i]['course_id']).length==0
-                                      ){
-                                        return  ItemCont(
-                                            _mainController.getUservideo_time.reversed.toList()[i]['lesson_id']
-                                            ,_mainController.getUservideo_time.reversed.toList()[i]['course_id']
-                                            ,_mainController.getUservideo_time.reversed.toList()[i]['time']
-                                            ,_homeController,_mainController,
-                                        );
-                                      }else{
-                                        return Container();
-                                      }
-                                    }else{
-                                      return Container();
-                                    }
-                                  }
-                                  if(
-                                  finished_course.where((element) => element['id']==_mainController.getUservideo_time.reversed.toList()[i]['course_id']).length==0
-                                  ){
-                                    print("Second");
-                                  return  ItemCont(
-                                      _mainController.getUservideo_time.reversed.toList()[i]['lesson_id']
-                                      ,_mainController.getUservideo_time.reversed.toList()[i]['course_id']
-                                      ,_mainController.getUservideo_time.reversed.toList()[i]['time']
+                                  padding: EdgeInsets.only(left: 15),
+                                  scrollDirection: Axis.horizontal,
+                                  addAutomaticKeepAlives: true,
+                                  cacheExtent: Get.width*2,
+                                  itemCount: _mainController.listContCourse.length,
+                                  itemBuilder: (c,i){
+                                    print("lesson_id ${i}i");
+                                    print("${_mainController.listContCourse[i]['lesson_id']} ${_mainController.listContCourse[i]['course_id']} ${_mainController.listContCourse[i]['time']}");
+                                    return ItemCont(
+                                      _mainController.listContCourse[i]['lesson_id']
+                                      ,_mainController.listContCourse[i]['course_id']
+                                      ,_mainController.listContCourse[i]['time']
                                       ,_homeController,_mainController,
-                                  );}else{
-                                    return Container();
+                                    );
                                   }
-                                }
 
 
                               ),
@@ -289,7 +256,7 @@ class Statehome extends State<HomePage>{
                       )
                               :Container(),
                     ),
-
+                    //Популярное
                     Obx(
                             ()=>Container(
                           padding: EdgeInsets.only(top: 34),
@@ -319,25 +286,31 @@ class Statehome extends State<HomePage>{
                                       ),);
                                   },
 
-                                ): ListView.builder(
+                                ):ListView.builder(
+                                    cacheExtent: Get.width*5,
                                     padding: EdgeInsets.only(left: 15),
-
                                     scrollDirection: Axis.horizontal,
+                                    addAutomaticKeepAlives: true,
+                                    physics: BouncingScrollPhysics(),
                                     itemCount: _homeController.popular.length,
-                                    itemBuilder: (c,i){
-                                      return  Item(
-                                          "${_homeController.popular[i]['name']}",
-                                          "${_homeController.popular[i]['banner_small']}",
-                                          _homeController.popular[i]['id'],
+                                    itemBuilder:(c,i){
+                                      var el=_homeController.popular[i];
+                                      return Item(
+                                          "${el['name']}",
+                                          "${el['banner_small']}",
+                                          el['id'],
                                           _homeController,
                                           _mainController);
-                                    }
+
+                                    },
+
                                 ),
                               )
                             ],
                           ),
                         )
                     ),
+                    //Новое
                     Obx(
                             ()=> Container(
                           padding: EdgeInsets.only(top: 30),
@@ -367,25 +340,29 @@ class Statehome extends State<HomePage>{
                                       ),);
                                   },
 
-                                ): ListView.builder(
+                                ): ListView(
+                                    cacheExtent: Get.width*5,
                                     padding: EdgeInsets.only(left: 15),
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: _homeController.news.length,
-                                    itemBuilder: (c,i){
-                                      return  Item(
-                                          "${_homeController.news[i]['name']}",
-                                          "${_homeController.news[i]['banner_small']}",
-                                          _homeController.news[i]['id'],
-                                          _homeController,
-                                          _mainController);
-                                    }
+                                    scrollDirection: Axis.horizontal,        addAutomaticKeepAlives: true,
+                                    physics: BouncingScrollPhysics(),
+                                    children:[
+                                      ..._homeController.news.map(
+                                          (el)=>Item(
+                                              "${el['name']}",
+                                              "${el['banner_small']}",
+                                              el['id'],
+                                              _homeController,
+                                              _mainController)
+                                      ).toList()
+                                    ]
+
                                 ),
                               )
                             ],
                           ),
                         )
                     ),
-
+                    //Категории
                     Obx(
                             ()=>Container(
                           padding: EdgeInsets.only(top: 30,bottom: 40),
@@ -429,9 +406,6 @@ class Statehome extends State<HomePage>{
                           ),
                         )
                     ),
-
-
-
                   ],
                 ),
               )
@@ -441,72 +415,6 @@ class Statehome extends State<HomePage>{
       )
     );
   }
-
-  Widget getItemContinuePlay(text,image){
-    return  GestureDetector(
-      child: Container(
-        margin: EdgeInsets.only(right: 12),
-        height: 223,
-        width: 339,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            color: Colors.black.withOpacity(0.04),
-            image: DecorationImage(image: AssetImage("assets/images/${image}"),fit: BoxFit.fill)
-        ),
-
-        child: Stack(
-          children: [
-            Positioned(
-              bottom: 0,
-              child: Container(
-
-                height: 50,
-                width: 339,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    gradient: LinearGradient(
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                        colors: [Colors.black.withOpacity(1), Colors.black.withOpacity(0)]
-                    )
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                padding: EdgeInsets.only(left: 20,right: 10,bottom: 12),
-                child: AutoSizeText(
-                  text,
-                  style: TextStyle(fontSize: 14,fontWeight: FontWeight.bold,color: Colors.white,letterSpacing: 0.5,fontFamily: "Raleway"),
-                  minFontSize: 10,
-                  maxLines: 1,
-                ),
-              ),
-            ),
-
-            Positioned(
-              bottom: 1,
-              left: 6,
-              child: Container(
-                height: 4,
-                width: Get.width*0.3,
-                color: Colors.white,
-              ),
-            )
-          ],
-        ),
-      ),
-      onTap: (){
-      },
-    );
-  }
-
-
-
-
 
 }
 
@@ -532,14 +440,21 @@ class Statehome extends State<HomePage>{
    var _image;
    bool _loading = true;
 
+  int lesAll=0;
+
+  int lesProg=0;
+
    @override
    void initState() {
      StreamController<int> controller = StreamController<int>();
      Stream stream = controller.stream;
      stream.listen((value) async{
        initImage();
+       var stat =await Backend().getStatCourse(widget.id);
+       lesAll=int.tryParse(stat.data[0]['lessons_count']);
+       lesProg=widget.mainController.getUservideo_time.where((el)=>el['course_id']==widget.id).length;
+       print("${widget.mainController.getUservideo_time_all.length} $lesAll/$lesProg");
      });
-     ;
      controller.add(1);
    }
    initImage(){
@@ -562,6 +477,7 @@ class Statehome extends State<HomePage>{
 
    @override
    Widget build(BuildContext context) {
+     print("${widget.mainController.getUservideo_time_all.length} $lesAll/$lesProg");
      return _loading ?Container(
        margin: EdgeInsets.only(right: 12),
        height: 142,
@@ -614,7 +530,16 @@ class Statehome extends State<HomePage>{
                  ),
                ),
              ),
-
+             widget.mainController.finishedCourses.where((element) => element['course_id']==widget.id).length==0?
+             !((Get.width*(lesProg/lesAll))>Get.width?Get.width-50:(Get.width*(lesProg/lesAll)-35)).isNaN?((Get.width*(lesProg/lesAll))>Get.width?Get.width-50:(Get.width*(lesProg/lesAll)-35))>=0? Positioned(
+               bottom: 1,
+               child: Container(
+                 margin: EdgeInsets.only(left: 7,right: 100),
+                 height: 2,
+                 width: (Get.width*(lesProg/lesAll))>Get.width?Get.width-50:(Get.width*(lesProg/lesAll)-35),
+                 color: Colors.white,
+               ),
+             ):Container():Container():Container()
            ],
          ),
        ),
@@ -781,6 +706,7 @@ class StateItemCont extends State<ItemCont>{
     Stream stream = controller.stream;
     stream.listen((value) async{
       var responce= await Backend().getCourse(widget.idCourse);
+      print("kurses ${responce.data}");
       course=responce.data.length!=0?responce.data['kurses'][0]:null;
       image= course!=null?course['banner_small']:null;
       StreamController<int> controller = StreamController<int>();
@@ -792,7 +718,7 @@ class StateItemCont extends State<ItemCont>{
       course!=null?controller.add(1):null;
       var stat =await Backend().getStatCourse(widget.idCourse);
       lesAll=int.tryParse(stat.data[0]['lessons_count']);
-      lesProg=widget.mainController.getUservideo_time_all.where((el)=>el['course_id']==widget.idCourse).length;
+      lesProg=widget.mainController.getUservideo_time.where((el)=>el['course_id']==widget.idCourse).length;
       setState(() {
 
       });
@@ -851,6 +777,152 @@ class StateItemCont extends State<ItemCont>{
 
                 height: 50,
                 width: 339,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [Colors.black.withOpacity(1), Colors.black.withOpacity(0)]
+                    )
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: EdgeInsets.only(left: 25,right: 10,bottom: 12),
+                child: AutoSizeText(
+                  course['topic'],
+                  style: white_title3_card_text_title,
+                  minFontSize: 10,
+                  maxLines: 1,
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 1,
+              child: Container(
+                margin: EdgeInsets.only(left: 7,right: 100),
+                height: 2,
+                width: (Get.width*(lesProg/lesAll))>Get.width?Get.width-50:(Get.width*(lesProg/lesAll)-35),
+                color: Colors.white,
+              ),
+            )
+          ],
+        ),
+      ),
+      onTap: ()async{
+        Get.toNamed(Routes.COURSE,arguments:widget.idCourse);
+
+        setState(() {
+        });
+      },
+    ):Container();
+  }
+}
+
+class ItemConte extends StatefulWidget{
+  String idVideo;
+  String idCourse;
+  var duration;
+  var homeController;
+  var mainController;
+
+  ItemConte(this.idVideo, this.idCourse,this.duration,this.homeController,this.mainController);
+
+  @override
+  State<StatefulWidget> createState() {
+    return StateItemConte();
+  }
+
+}
+class StateItemConte extends State<ItemCont>{
+
+  bool _loading = true;
+  var image;
+  var _image;
+  var video;
+  var course;
+  @override
+  void initState() {
+    getVideo();
+  }
+  var lesAll=0;
+  var lesProg=0;
+  void getVideo() async{
+    StreamController<int> controller = StreamController<int>();
+    Stream stream = controller.stream;
+    stream.listen((value) async{
+      var responce= await Backend().getCourse(widget.idCourse);
+      course=responce.data.length!=0?responce.data['kurses'][0]:null;
+      image= course!=null?course['banner_small']:null;
+      StreamController<int> controller = StreamController<int>();
+      Stream stream = controller.stream;
+      stream.listen((value) async{
+        initImage();
+      });
+      ;
+      course!=null?controller.add(1):null;
+      var stat =await Backend().getStatCourse(widget.idCourse);
+      lesAll=int.tryParse(stat.data[0]['lessons_count']);
+      lesProg=widget.mainController.getUservideo_time.where((el)=>el['course_id']==widget.idCourse).length;
+      setState(() {
+
+      });
+    });
+    controller.add(1);
+
+
+  }
+
+  initImage(){
+    _image = new NetworkImage(
+      '${image}',
+    );
+    _image.resolve(ImageConfiguration()).addListener(
+      ImageStreamListener(
+            (info, call) {
+          if (mounted) {
+            setState(() {
+              _loading = false;
+            });
+          }
+        },
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return image!=null&&!((Get.width*(lesProg/lesAll))>Get.width?Get.width-50:(Get.width*(lesProg/lesAll)-35)).isNaN? _loading ?Container(
+      margin: EdgeInsets.only(right: 20),
+      height: 142,
+      width: 216,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        color: Colors.black.withOpacity(0.04),
+      ),):
+    GestureDetector(
+      child: Container(
+        margin: EdgeInsets.only(right: 12),
+        height: 142,
+        width: 216,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            color: Colors.black.withOpacity(0.04),
+            image: DecorationImage(image: _image,fit: BoxFit.cover)
+        ),
+
+        child: Stack(
+          children: [
+            Positioned(
+              bottom: 0,
+              child: Container(
+
+                height: 50,
+                width: 216,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                     gradient: LinearGradient(

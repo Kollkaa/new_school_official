@@ -219,14 +219,12 @@ class StateEdit extends State<EditProfile>{
       ),
       onPressed: ()async{
         var response= await Backend().editNameSurname(box.read("id"), _mainController.nameEditingController.text, _mainController.lastnameEditingController.text);
-        print(response.data);
         var responces =await Backend().getUser(id:box.read("id"));
         _mainController.profile.value=responces.data['clients'][0];
          if(_image!=null){
            var responce=await Backend().editImage(box.read("id"),_image);
 
            var responces =await Backend().getUser(id:box.read("id"));
-           print(responces);
            _mainController.profile.value=responces.data['clients'][0];
            setState(() {
            });

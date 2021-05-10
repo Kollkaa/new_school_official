@@ -76,74 +76,59 @@ class _ChewieDemoState extends State<VideoScreen> {
       DeviceOrientation.portraitDown,
     ]);
     setState(( ) { } );
-    print(widget.lesson['videos'][0]['video_url']);
     if(Get.height>1920){
       if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="720")>=0){
-        print('"quality": "720"');
-
         videoPlayerController =new VideoPlayerController.network(
             widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="720")]['video_url']
         );
       } else if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="480")>=0){
-        print('"quality": "480"');
         videoPlayerController =new VideoPlayerController.network(
             widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="480")]['video_url']
         );
       }else if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="1080")>=0){
-        print('"quality": "1080"');
         videoPlayerController =new VideoPlayerController.network(
             widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="1080")]['video_url']
         );
       }
     }else if (Get.height>=2560){
       if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="1080")>=0){
-        print('"quality": "1080"');
         videoPlayerController =new VideoPlayerController.network(
             widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="1080")]['video_url']
         );
       } else if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="720")>=0){
-        print('"quality": "720"');
-
         videoPlayerController =new VideoPlayerController.network(
             widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="720")]['video_url']
         );
       } else if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="480")>=0){
-        print('"quality": "480"');
         videoPlayerController =new VideoPlayerController.network(
             widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="480")]['video_url']
         );
       }
     }else if (Get.height>=4096){
       if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="1080")>=0){
-        print('"quality": "1080"');
         videoPlayerController =new VideoPlayerController.network(
             widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="1080")]['video_url']
         );
       } else if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="720")>=0){
-        print('"quality": "720"');
         videoPlayerController =new VideoPlayerController.network(
             widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="720")]['video_url']
         );
       } else if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="480")>=0){
-        print('"quality": "480"');
         videoPlayerController =new VideoPlayerController.network(
             widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="480")]['video_url']
         );
       }
     }else{
       if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="480")>=0){
-        print('"quality": "480"');
         videoPlayerController =new VideoPlayerController.network(
             widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="480")]['video_url']
         );
       } else if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="720")>=0){
-        print('"quality": "720"');
 
         videoPlayerController =new VideoPlayerController.network(
             widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="720")]['video_url']
         );
       } else if(widget.lesson['videos'].indexWhere((el)=>el['quality']=="1080")>=0){
-        print('"quality": "1080"');
         videoPlayerController =new VideoPlayerController.network(
             widget.lesson['videos'][widget.lesson['videos'].indexWhere((el)=>el['quality']=="1080")]['video_url']
         );
@@ -178,6 +163,15 @@ class _ChewieDemoState extends State<VideoScreen> {
           Get.back();
           if((widget.index+1)<=_homeController.videos['lessons'].length-1){
             Get.to(VideoScreen(_homeController.videos['lessons'].reversed.toList()[(widget.index+1)],index:widget.index+1));
+            StreamController<int> controller = StreamController<int>();
+            Stream stream = controller.stream;
+            stream.listen((value) async{
+              await _mainController.initProfile(box.read("id"));
+              setState(() {
+
+              });
+            });
+            controller.add(1);
           }else{
             SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
             SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -220,8 +214,16 @@ class _ChewieDemoState extends State<VideoScreen> {
               Get.back();
               if(_mainController.auth.value){
                 if((widget.index+1)<=_homeController.videos['lessons'].length-1){
-                  print("12");
                   Get.to(VideoScreen(_homeController.videos['lessons'].reversed.toList()[(widget.index+1)],index:widget.index+1));
+                  StreamController<int> controller = StreamController<int>();
+                  Stream stream = controller.stream;
+                  stream.listen((value) async{
+                    await _mainController.initProfile(box.read("id"));
+                    setState(() {
+
+                    });
+                  });
+                  controller.add(1);
                 }else{
                   SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
                   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -236,7 +238,6 @@ class _ChewieDemoState extends State<VideoScreen> {
                   setState(() {
                   });
                   Get.toNamed(Routes.TEST);
-                  print("123");
                 }
               }
             },),));
@@ -288,17 +289,20 @@ class _ChewieDemoState extends State<VideoScreen> {
       StreamController<int> controller = StreamController<int>();
       Stream stream = controller.stream;
       stream.listen((value) async{
-        dios.Response getUservideo_time_all =await Backend().getUservideo_time_all(id:box.read('id'));
-        _mainController.getUservideo_time_all.value=getUservideo_time_all.data['lessons'];
+        await _mainController.initProfile(box.read("id"));
+        setState(() {
 
+        });
         var res=await Backend().setPos(
             _homeController.videos['lessons'].reversed.toList()[(widget.index)]['kurs_id'],
             _homeController.videos['lessons'].reversed.toList()[(widget.index)]['id'],
-            value,
+            _chewieController.videoPlayerController.value.position.inSeconds,
             _chewieController.videoPlayerController.value.duration.inSeconds);
         print(res.data);
         if(box.read('id')!=null){
           _mainController.initProfile(box.read("id"));
+          Get.appUpdate();
+
         }
       });
       controller.add(oldPos);
@@ -328,14 +332,13 @@ class _ChewieDemoState extends State<VideoScreen> {
             Stream stream = controller.stream;
             stream.listen((value) async{
               dios.Response getUservideo_time_all =await Backend().getUservideo_time_all(id:box.read('id'));
-              _mainController.getUservideo_time_all.value=getUservideo_time_all.data['lessons'];
-
+              _mainController.getUservideo_time_all.value=[];
+              _mainController.getUservideo_time_all.addAll(getUservideo_time_all.data['lessons']);
               var res=await Backend().setPos(
                   _homeController.videos['lessons'].reversed.toList()[(widget.index)]['kurs_id'],
                   _homeController.videos['lessons'].reversed.toList()[(widget.index)]['id'],
-                  value,
+                  _chewieController.videoPlayerController.value.position.inSeconds,
                   _chewieController.videoPlayerController.value.duration.inSeconds);
-              print(res.data);
               if(box.read('id')!=null){
                 _mainController.initProfile(box.read("id"));
               }

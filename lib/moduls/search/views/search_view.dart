@@ -27,14 +27,14 @@ class SearchScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Container(
+            //     padding: EdgeInsets.only(
+            //       left: 22,right: 22,top: 27
+            //     ),
+            //     child: Text("Поиск",style: TextStyle(fontSize: 25,color: Color(0xff000000),fontWeight: FontWeight.w700,height: 1,fontFamily: "Raleway"),)
+            // ),
             Container(
-                padding: EdgeInsets.only(
-                  left: 22,right: 22,top: 27
-                ),
-                child: Text("Поиск",style: TextStyle(fontSize: 25,color: Color(0xff000000),fontWeight: FontWeight.w700,height: 1,fontFamily: "Raleway"),)
-            ),
-            Container(
-                height: 31,
+                height: 44,
 
                 margin: EdgeInsets.only(
                   left: 22,right: 22,top: 15,bottom: 27
@@ -45,27 +45,47 @@ class SearchScreen extends StatelessWidget {
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Image.asset("assets/images/search.png",width: 22,height: 15,),
-                    Container(
-                      height: 38,
-                      width: Get.width-80,
-                      child:  TextField(
-                        textAlignVertical: TextAlignVertical.center,
-                        style: TextStyle(height: 1.6,fontSize:14,fontWeight: FontWeight.w300,color: Color(0xff434343),fontFamily: "Raleway"),
-                        decoration: InputDecoration(
-                            isDense: true,
-                            hintStyle: TextStyle(height: 1.6,fontSize:14,fontWeight: FontWeight.w300,color: Color(0xff434343).withOpacity(0.5),fontFamily: "Raleway"),
-                            contentPadding: EdgeInsets.all(1.0),//here your padding
-                            border: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            hintText: "Поиск по курсу"
+                    Row(
+                      children: [
+                        Image.asset("assets/images/search.png",width: 22,height: 15,),
+                        Container(
+                          height: 44,
+                          width: Get.width-120,
+                          padding: EdgeInsets.only(top: 8),
+                          child:  TextField(
+                            style: TextStyle(height: 1.6,fontSize:14,fontWeight: FontWeight.w300,color: Color(0xff434343),fontFamily: "Raleway"),
+                            decoration: InputDecoration(
+                                isDense: true,
+                                hintStyle: TextStyle(height: 1.6,fontSize:14,fontWeight: FontWeight.w300,color: Color(0xff434343).withOpacity(0.5),fontFamily: "Raleway"),
+                                contentPadding: EdgeInsets.all(1.0),//here your padding
+                                border: InputBorder.none,
+                                disabledBorder: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                errorBorder: InputBorder.none,
+                                hintText: "Поиск по курсу"
+                            ),
+                            controller: _mainController.controllerSearch,
+                            onChanged: _mainController.onChange,
+                          ),
                         ),
-                        onChanged: _mainController.onChange,
-                      ),
+                      ],
+                    ),
+                    Obx(
+                        ()=>_mainController.searchCourse.length!=0&&_mainController.controllerSearch.text.length!=0?Container(
+                          padding: EdgeInsets.only(right: 10),
+                          child: GestureDetector(
+                            child: Icon(Icons.cancel,color: Colors.black.withOpacity(0.15),),
+                            onTapDown: (_){
+                              _mainController.controllerSearch.text="";
+                              _mainController.searchCourse.value=[];
+                              Get.appUpdate();
+                            },
+                          ),
+                        ):Container()
                     )
+
                   ],
                 )
             ),
@@ -78,7 +98,7 @@ class SearchScreen extends StatelessWidget {
                         padding: EdgeInsets.only(
                           left: 8,right: 8,
                         ),
-                        child:_mainController.searchCourse.length!=0?  GridView.count(
+                        child:_mainController.searchCourse.length!=0&&_mainController.controllerSearch.text.length!=0?  GridView.count(
                           crossAxisCount: 2,
                           shrinkWrap: true,
                           scrollDirection: Axis.vertical,

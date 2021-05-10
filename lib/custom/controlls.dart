@@ -148,9 +148,30 @@ class _CupertinoControlsState extends State<CupertinoControls> {
                            else
                              return Container();
 
-                          }else{
-                            return Container();
                           }
+                          if(value!=null){
+                            StreamController<int> controller = StreamController<int>();
+                            Stream stream = controller.stream;
+                            stream.listen((val) async{
+                              var getUservideo_time_all =await Backend().getUservideo_time_all(id:box.read('id'));
+                              _mainController.getUservideo_time_all.value=[];
+                              _mainController.getUservideo_time_all.addAll(getUservideo_time_all['lessons']);
+                              var res=await Backend().setPos(
+                                  widget.kurs_id,
+                                  widget.id,
+                                  value.position.inSeconds,
+                                  widget.chewieController.videoPlayerController.value.duration.inSeconds);
+                              print(res);
+                              if(box.read('id')!=null){
+                                _mainController.initProfile(box.read("id"));
+                              }
+                              Get.appUpdate();
+
+                            });
+                            controller.add(value.position.inSeconds);
+                            return Container();
+                          }else{return Container();}
+
                         },
                       ):Container(),
                       SizedBox(width: 15,)
@@ -356,8 +377,6 @@ class _CupertinoControlsState extends State<CupertinoControls> {
       ) {
     return GestureDetector(
       onTap: () {
-
-        Get.back();
         SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
             statusBarColor: Colors.white,
@@ -371,24 +390,26 @@ class _CupertinoControlsState extends State<CupertinoControls> {
         StreamController<int> controller = StreamController<int>();
         Stream stream = controller.stream;
         stream.listen((value) async{
-          dios.Response getUservideo_time_all =await Backend().getUservideo_time_all(id:box.read('id'));
-          _mainController.getUservideo_time_all.value=getUservideo_time_all.data['lessons'];
+           var getUservideo_time_all =await Backend().getUservideo_time_all(id:box.read('id'));
+          _mainController.getUservideo_time_all.value=[];
+          _mainController.getUservideo_time_all.addAll(getUservideo_time_all['lessons']);
           var res=await Backend().setPos(
               widget.kurs_id,
               widget.id,
-              value,
+              chewieController.videoPlayerController.value.position.inSeconds,
               chewieController.videoPlayerController.value.duration.inSeconds);
-          print(res.data);
+          print(res);
           if(box.read('id')!=null){
-            _mainController.initProfile(box.read("id"));
+           await _mainController.initProfile(box.read("id"));
           }
+          Get.appUpdate();
+          Get.back();
+
         });
         controller.add(1);
         setState(() {
         });
 
-        setState(() {
-        });
       },
       child: AnimatedOpacity(
         opacity: _hideStuff ? 0.0 : 1.0,
@@ -684,9 +705,9 @@ class _CupertinoControlsState extends State<CupertinoControls> {
           var res=await Backend().setPos(
               widget.kurs_id,
               widget.id,
-              value,
+              chewieController.videoPlayerController.value.position.inSeconds,
               chewieController.videoPlayerController.value.duration.inSeconds);
-          print(res.data);
+          print(res);
         });
         controllers.add(2);
       } else {

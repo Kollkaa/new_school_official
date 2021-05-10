@@ -73,7 +73,6 @@ class DownloadPage extends StatelessWidget{
                           .downloads
                           .split("||")
                           .map((el){
-                        print(el);
                         return GestureDetector(
                           child: Row(mainAxisAlignment: MainAxisAlignment.start,
                             children: [
