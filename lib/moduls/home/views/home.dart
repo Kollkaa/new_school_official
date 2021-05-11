@@ -51,6 +51,51 @@ class Statehome extends State<HomePage>{
   }
   @override
   Widget build(BuildContext context) {
+    var finished_course=_mainController.allCourse.where((element) => _mainController.finishedCourses.indexWhere((el) => element['id']==el['course_id'])<=0).toList();
+
+    List<Widget> contunies=[];
+    _mainController.listContCourse.reversed.toList().map(
+        (el){
+          if(
+          _mainController.getUservideo_time.reversed.toList().where((element) => el['course_id']==element['course_id']).length>1
+              && finished_course.where((element) => element['course_id']==el['course_id']).length==0
+          ){
+            if(_mainController.getUservideo_time.reversed.toList().indexWhere((element) => el['course_id']==element['course_id'])>=0){
+              if(
+              el['lesson_id']
+                  ==
+                  _mainController.getUservideo_time.reversed.toList()[
+                  _mainController.getUservideo_time.reversed.toList().indexWhere((element) => el['course_id']==element['course_id'])
+                  ]['lesson_id']&& finished_course.where((element) => element['id']==el['course_id']).length==0
+              ){
+                contunies.add(ItemCont(
+                  el['lesson_id']
+                  ,el['course_id']
+                  ,el['time']
+                  ,_homeController,_mainController,
+                ));
+              }else{
+                return Container();
+              }
+            }else{
+              return Container();
+            }
+          }
+          if(
+          finished_course.where((element) => element['id']==el['course_id']).length==0
+          ){
+            print("Second");
+            contunies.add(ItemCont(
+             el['lesson_id']
+              ,el['course_id']
+              ,el['time']
+              ,_homeController,_mainController,
+            ));}else{
+            return Container();
+          }
+        }
+    );
+
     return GetBuilder(
         init: _homeController,
         builder: (value)=>
@@ -137,12 +182,12 @@ class Statehome extends State<HomePage>{
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _mainController.auth.value?_mainController.listContCourse.length!=0? Container(
+                            _mainController.auth.value?contunies.length!=0? Container(
                               padding: EdgeInsets.only(left: 15),
                               child:
                               Text("Продолжить",style: black_text_title,),
                             ):Container():Container(),
-                            _mainController.auth.value?_mainController.listContCourse.length!=0
+                            _mainController.auth.value?contunies.length!=0
                                 ?Container(
                               margin: EdgeInsets.only(top: 7),
                               width: Get.width,
@@ -152,16 +197,10 @@ class Statehome extends State<HomePage>{
                                   scrollDirection: Axis.horizontal,
                                   addAutomaticKeepAlives: true,
                                   cacheExtent: Get.width*2,
-                                  itemCount: _mainController.listContCourse.length,
+                                  itemCount: contunies.length,
                                   itemBuilder: (c,i){
-                                    print("lesson_id ${i}i");
-                                    print("${_mainController.listContCourse[i]['lesson_id']} ${_mainController.listContCourse[i]['course_id']} ${_mainController.listContCourse[i]['time']}");
-                                    return ItemCont(
-                                      _mainController.listContCourse[i]['lesson_id']
-                                      ,_mainController.listContCourse[i]['course_id']
-                                      ,_mainController.listContCourse[i]['time']
-                                      ,_homeController,_mainController,
-                                    );
+                                    return contunies[i];
+
                                   }
 
 

@@ -163,15 +163,7 @@ class _ChewieDemoState extends State<VideoScreen> {
           Get.back();
           if((widget.index+1)<=_homeController.videos['lessons'].length-1){
             Get.to(VideoScreen(_homeController.videos['lessons'].reversed.toList()[(widget.index+1)],index:widget.index+1));
-            StreamController<int> controller = StreamController<int>();
-            Stream stream = controller.stream;
-            stream.listen((value) async{
-              await _mainController.initProfile(box.read("id"));
-              setState(() {
 
-              });
-            });
-            controller.add(1);
           }else{
             SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
             SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -210,7 +202,6 @@ class _ChewieDemoState extends State<VideoScreen> {
             kurs_id:  _homeController.videos['lessons'].reversed.toList()[(widget.index)]['kurs_id'],
             method:(){
               myOverayEntry!=null?myOverayEntry.remove():null;
-
               Get.back();
               if(_mainController.auth.value){
                 if((widget.index+1)<=_homeController.videos['lessons'].length-1){
@@ -220,7 +211,6 @@ class _ChewieDemoState extends State<VideoScreen> {
                   stream.listen((value) async{
                     await _mainController.initProfile(box.read("id"));
                     setState(() {
-
                     });
                   });
                   controller.add(1);

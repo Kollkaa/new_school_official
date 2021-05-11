@@ -153,19 +153,8 @@ class _CupertinoControlsState extends State<CupertinoControls> {
                             StreamController<int> controller = StreamController<int>();
                             Stream stream = controller.stream;
                             stream.listen((val) async{
-                              var getUservideo_time_all =await Backend().getUservideo_time_all(id:box.read('id'));
-                              _mainController.getUservideo_time_all.value=[];
-                              _mainController.getUservideo_time_all.addAll(getUservideo_time_all['lessons']);
-                              var res=await Backend().setPos(
-                                  widget.kurs_id,
-                                  widget.id,
-                                  value.position.inSeconds,
-                                  widget.chewieController.videoPlayerController.value.duration.inSeconds);
-                              print(res);
-                              if(box.read('id')!=null){
-                                _mainController.initProfile(box.read("id"));
-                              }
-                              Get.appUpdate();
+
+
 
                             });
                             controller.add(value.position.inSeconds);
@@ -390,24 +379,30 @@ class _CupertinoControlsState extends State<CupertinoControls> {
         StreamController<int> controller = StreamController<int>();
         Stream stream = controller.stream;
         stream.listen((value) async{
-           var getUservideo_time_all =await Backend().getUservideo_time_all(id:box.read('id'));
+          var pos=chewieController.videoPlayerController.value.position.inSeconds;
+          var dur=chewieController.videoPlayerController.value.duration.inSeconds;
+          Get.back();
+
+          var getUservideo_time_all =await Backend().getUservideo_time_all(id:box.read('id'));
           _mainController.getUservideo_time_all.value=[];
           _mainController.getUservideo_time_all.addAll(getUservideo_time_all['lessons']);
           var res=await Backend().setPos(
               widget.kurs_id,
               widget.id,
-              chewieController.videoPlayerController.value.position.inSeconds,
-              chewieController.videoPlayerController.value.duration.inSeconds);
+              pos,
+              dur);
           print(res);
           if(box.read('id')!=null){
            await _mainController.initProfile(box.read("id"));
           }
-          Get.appUpdate();
-          Get.back();
+          setState(() {
+            print("aaa");
+          });
 
         });
         controller.add(1);
         setState(() {
+          print("aaa");
         });
 
       },
@@ -699,17 +694,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
         _hideStuff = false;
         _hideTimer?.cancel();
         controller.pause();
-        StreamController<int> controllers = StreamController<int>();
-        Stream stream = controllers.stream;
-        stream.listen((value) async{
-          var res=await Backend().setPos(
-              widget.kurs_id,
-              widget.id,
-              chewieController.videoPlayerController.value.position.inSeconds,
-              chewieController.videoPlayerController.value.duration.inSeconds);
-          print(res);
-        });
-        controllers.add(2);
+
       } else {
         _cancelAndRestartTimer();
 

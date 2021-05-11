@@ -773,6 +773,7 @@ var length;
 
   @override
   Widget build(BuildContext context) {
+    print("reload");
     return _loading ?Container(
       margin: EdgeInsets.only(right: 12),
       height: 142,
