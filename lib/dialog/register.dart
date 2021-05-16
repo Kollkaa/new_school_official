@@ -115,7 +115,15 @@ class StateReg extends State<Reg> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  SvgPicture.asset("assets/icons/apple.svg"),
+                                  Container(
+                                    child: SvgPicture.asset(
+                                      "assets/icons/newApple.svg",
+                                    ),
+                                    width: 20.0,
+                                  ),
+                                  SizedBox(
+                                    width: 8.0,
+                                  ),
                                   Container(
                                     height: 30,
                                     decoration: BoxDecoration(
@@ -137,11 +145,6 @@ class StateReg extends State<Reg> {
                                       ),
                                     ),
                                   ),
-                                  Opacity(
-                                    opacity: 0,
-                                    child: SvgPicture.asset(
-                                        "assets/icons/apple.svg"),
-                                  )
                                 ],
                               ))),
                           onPressed: () {},
@@ -168,22 +171,27 @@ class StateReg extends State<Reg> {
                                   ],
                                   borderRadius: BorderRadius.circular(5),
                                   border: Border.all(
-                                      width: 1, color: Color(0xff000000))),
+                                      width: 1, color: Color(0xffEBEBEB))),
                               child: Center(
                                   child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Image.asset(
-                                      "assets/images/ddjvludx0aa77mu 1.jpg"),
+                                  Container(
+                                    child: SvgPicture.asset(
+                                        "assets/icons/newGoogle.svg"),
+                                    width: 20.0,
+                                  ),
+                                  SizedBox(
+                                    width: 8.0,
+                                  ),
                                   Container(
                                     height: 30,
                                     decoration: BoxDecoration(
                                         border: Border(
                                             left: BorderSide(
                                                 width: 1,
-                                                color: Colors.white
-                                                    .withOpacity(0.3)))),
+                                                color: Color(0xFFEBEBEB)))),
                                     width: Get.width - 124,
                                     child: Center(
                                       child: Text(
@@ -197,11 +205,6 @@ class StateReg extends State<Reg> {
                                       ),
                                     ),
                                   ),
-                                  Opacity(
-                                    opacity: 0,
-                                    child: Image.asset(
-                                        "assets/images/ddjvludx0aa77mu 1.jpg"),
-                                  )
                                 ],
                               ))),
                           onPressed: () {},

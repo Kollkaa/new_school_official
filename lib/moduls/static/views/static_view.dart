@@ -1,31 +1,20 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:dio/dio.dart' as dios;
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:chewie/chewie.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:new_school_official/custom/loader.dart';
-import 'package:new_school_official/dialog/atuhor.dart';
-import 'package:new_school_official/dialog/treyler.dart';
-import 'package:new_school_official/moduls/auth/views/register.dart';
 import 'package:new_school_official/moduls/home/controllers/home_controller.dart';
 import 'package:new_school_official/moduls/main/controllers/main_controller.dart';
-import 'package:new_school_official/moduls/search/controllers/search_controller.dart';
 import 'package:new_school_official/moduls/static/controllers/static_controller.dart';
 import 'package:new_school_official/routes/app_pages.dart';
 import 'package:new_school_official/service/backend.dart';
 import 'package:new_school_official/storage/colors/main_color.dart';
 import 'package:new_school_official/storage/styles/text_style.dart';
-import 'package:new_school_official/widgets/speackear.dart';
-import 'package:video_player/video_player.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:dio/dio.dart' as dios;
-
-import 'dialog_count.dart';
 const Color blueColor = Color(0xff1565C0);
 const Color orangeColor = Color(0xffFFA000);
 
@@ -175,6 +164,7 @@ class StateStaticScreen extends State<StaticScreen>{
                   ),
                   child: Text("Все обучение оцифрованно в разделе статистики. Доступно для зарегестрированного пользователя.",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w300,color: Colors.black,height: 1.5,fontFamily: 'Raleway'),)
               ),
+              SizedBox(height:20.0),
               _mainController.auth.value?Container():Container(
                 margin: EdgeInsets.only(top: 7,left: 15,right: 15 ),
                 width: Get.width-30,
@@ -233,10 +223,8 @@ class StateStaticScreen extends State<StaticScreen>{
                                 ),
                               ),
                             ),
-                            onTap: ()async{
-                              _mainController.widgets.removeAt(4);
-                              _mainController.widgets.add(RegisterPage());
-                              Get.dialog(Author());
+                            onTap: (){
+                              _mainController.onIndexChanged(4);
                             },
                           ),
                           opacity: 0.7,
@@ -664,6 +652,12 @@ class StateStaticScreen extends State<StaticScreen>{
   }
 
   Widget getActivities(){
+    var list =[];
+    var listStart=getMonth();
+    listStart.removeRange(DateTime.now().month,getMonth().length);
+    list.addAll(getMonth().sublist(DateTime.now().month,getMonth().length));
+    list.addAll(listStart);
+    list =list.reversed.toList();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -681,257 +675,51 @@ class StateStaticScreen extends State<StaticScreen>{
               Container(
                 width: 1,height: 23,color: Color(0xffc4c4c4),
               ),
-              Text("   Всего 135 дней",style: TextStyle(fontSize: 11,fontWeight: FontWeight.w500,color: Color(0xff6A6A6A),fontFamily: "Raleway"))
+              Text("   Всего 0 дней",style: TextStyle(fontSize: 11,fontWeight: FontWeight.w500,color: Color(0xff6A6A6A),fontFamily: "Raleway"))
             ],
           ),
         ),
         Container(
-          height: 167,
+          height: 185,
           width: Get.width,
-          child: SingleChildScrollView(
+          child: ListView.builder(
+            reverse: true,
+            padding: EdgeInsets.only(left: 13),
             scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                SizedBox(width: 20,),
-                Container(
-                  width: 76,
-                  height: 170,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: GridView.count(
-                          crossAxisSpacing: 4,
-                          mainAxisSpacing: 4,
+            itemCount: list.length,
+            itemBuilder: (c,i){
+              return  Container(
+                margin: EdgeInsets.only(right: 13),
+                width: 76,
+                height: 175,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: GridView.builder(
+                        itemCount: list[i]['day'],
+                        itemBuilder: (c,index){
+                          return GestureDetector(
+                            child: Container(
+                              height: 16,
+                              width: 16,
+                              color: Color(0xfff2f2f2),
+                            ),
+                          );
+                        },
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 4,
-                          children: [
-
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-
-                          ],
+                          crossAxisSpacing: 4.0,
+                          mainAxisSpacing: 4.0,
                         ),
                       ),
-                      SizedBox(height: 13,),
-
-                      Text("Ноябрь",style: TextStyle(fontSize: 9,color: Color(0xff6a6a6a),fontWeight: FontWeight.w400,letterSpacing: 0.5,fontFamily: "Raleway"))
-                    ],
-                  ),
+                    ),
+                    SizedBox(height: 13,),
+                    Text("${list[i]['name']} ",style: TextStyle(fontSize: 9,color: Color(0xff6a6a6a),fontWeight: FontWeight.w400,letterSpacing: 0.5,fontFamily: "Raleway"))
+                  ],
                 ),
-                SizedBox(width: 13,),
+              );
 
-                Container(
-                  width: 76,
-                  height: 170,
-                  child:Column(
-                    children: [
-                      Expanded(
-                        child: GridView.count(
-                          crossAxisSpacing: 4,
-                          mainAxisSpacing: 4,
-                          crossAxisCount: 4,
-                          children: [
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 13,),
-
-                      Text("Декабрь",style: TextStyle(fontSize: 9,color: Color(0xff6a6a6a),fontWeight: FontWeight.w400,letterSpacing: 0.5,fontFamily: "Raleway"))
-                    ],
-                  ),
-                ),
-                SizedBox(width: 13,),
-
-                Container(
-                  width: 76,
-                  height: 170,
-                  child:Column(
-                    children: [
-                      Expanded(
-                        child: GridView.count(
-                          crossAxisSpacing: 4,
-                          mainAxisSpacing: 4,
-                          crossAxisCount: 4,
-                          children: [
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 13,),
-
-                      Text("Январь",style: TextStyle(fontSize: 9,color: Color(0xff6a6a6a),fontWeight: FontWeight.w400,letterSpacing: 0.5,fontFamily: "Raleway"))
-                    ],
-                  ),
-                ),
-                SizedBox(width: 13,),
-
-                Container(
-                  width: 76,
-                  height: 170,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: GridView.count(
-                          crossAxisSpacing: 4,
-                          mainAxisSpacing: 4,
-                          crossAxisCount: 4,
-                          children: [
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 13,),
-
-                      Text("Февраль",style: TextStyle(fontSize: 9,color: Color(0xff6a6a6a),fontWeight: FontWeight.w400,letterSpacing: 0.5,fontFamily: "Raleway"))
-                    ],
-                  ),
-                ),
-                SizedBox(width: 13,),
-
-                Container(
-                  width: 76,
-                  height: 170,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: GridView.count(
-                          crossAxisSpacing: 4,
-                          mainAxisSpacing: 4,
-                          crossAxisCount: 4,
-                          children: [
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-                            Container(width: 16,height: 16,color: Color(0xffF2F2F2),),
-
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 13,),
-                      Text("Март",style: TextStyle(fontSize: 9,color: Color(0xff6a6a6a),fontWeight: FontWeight.w400,letterSpacing: 0.5,fontFamily: "Raleway"))
-                    ],
-                  ),
-                ),
-                SizedBox(width: 20,),
-              ],
-            ),
+            },
           ),
         ),
         SizedBox(
@@ -948,6 +736,7 @@ class StateStaticScreen extends State<StaticScreen>{
     list.addAll(getMonth().sublist(DateTime.now().month,getMonth().length));
     list.addAll(listStart);
     list =list.reversed.toList();
+    print(list);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

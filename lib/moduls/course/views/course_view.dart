@@ -9,9 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:new_school_official/dialog/atuhor.dart';
 import 'package:new_school_official/dialog/treyler.dart';
-import 'package:new_school_official/moduls/auth/views/register.dart';
 import 'package:new_school_official/moduls/course/controllers/course_controller.dart';
 import 'package:new_school_official/moduls/home/controllers/home_controller.dart';
 import 'package:new_school_official/moduls/main/controllers/main_controller.dart';
@@ -77,10 +75,10 @@ class StateCourse extends State<CourseScreen> {
           return "Начать учиться";
         }
       } catch (E) {
-        return "Начать учиться noAuthError";
+        return "Начать учиться";
       }
     } else {
-      return "Начать учиться noAuth";
+      return "Начать учиться";
     }
   }
 
@@ -378,16 +376,20 @@ class StateCourse extends State<CourseScreen> {
                                         setState(() {});
                                       }
                                     } else {
-                                      // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-                                      //     statusBarColor: Colors.white,
-                                      //     statusBarIconBrightness: Brightness.dark,
-                                      //     statusBarBrightness: Brightness.dark,
-                                      //     systemNavigationBarColor: Colors.white
-                                      // ));
-                                      _mainController.widgets.removeAt(4);
-                                      _mainController.widgets
-                                          .add(RegisterPage());
-                                      Get.dialog(Author());
+                                      await Get.to(VideoScreen(
+                                          _homeController
+                                              .videos['lessons'].reversed
+                                              .toList()[0],
+                                          index: 0));
+                                      StreamController<int> controller =
+                                          StreamController<int>();
+                                      Stream stream = controller.stream;
+                                      stream.listen((value) async {
+                                        await _mainController
+                                            .initProfile(box.read('id'));
+                                        setState(() {});
+                                      });
+                                      controller.add(1);
                                     }
                                   },
                                 ),
@@ -990,6 +992,7 @@ class StateCourse extends State<CourseScreen> {
             width: 135,
             decoration: BoxDecoration(
                 shape: BoxShape.circle,
+                color: Colors.black.withOpacity(0.04),
                 image: DecorationImage(
                     image: NetworkImage(
                         "${_homeController.course['kurses'][0]['spicker_image']}"),
@@ -1160,6 +1163,9 @@ class StateItem extends State<Item> {
                         ));
                   } else {
                     if (widget.lock) {
+                      print(widget.lesson);
+                      print(widget.index);
+                      print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
                       await Get.to(
                           VideoScreen(widget.lesson, index: widget.index));
                       StreamController<int> controller =
@@ -1171,9 +1177,25 @@ class StateItem extends State<Item> {
                       });
                       controller.add(1);
                     } else {
-                      widget.mainController.widgets.removeAt(4);
-                      widget.mainController.widgets.add(RegisterPage());
-                      Get.dialog(Author());
+                      if (widget.mainController.auth.value) {
+                        Get.snackbar(null, null,
+                            snackPosition: SnackPosition.BOTTOM,
+                            colorText: Colors.redAccent,
+                            messageText: Center(
+                              child: Text(
+                                "Нужно посмотреть предыдущий урок",
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    fontFamily: "Raleway",
+                                    letterSpacing: 0.5,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.redAccent),
+                              ),
+                            ));
+                      } else {
+                        widget.mainController.onIndexChanged(4);
+                        Get.back();
+                      }
                     }
                   }
                 },
