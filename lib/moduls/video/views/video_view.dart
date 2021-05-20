@@ -52,8 +52,15 @@ class _ChewieDemoState extends State<VideoScreen> {
       _chewieController.removeListener(() {});
       _chewieController.dispose();
     }
+    loadProfile();
 
     super.dispose();
+  }
+
+  loadProfile() async {
+    if (_mainController.profile['id'] != null) {
+      await _mainController.initProfile(_mainController.profile['id']);
+    }
   }
 
   VideoPlayerController videoPlayerController =
@@ -173,7 +180,8 @@ class _ChewieDemoState extends State<VideoScreen> {
       ),
     );
     _chewieController.videoPlayerController.addListener(() {
-      if (_mainController.auth.value) if (_chewieController
+      if (_mainController.auth.value &&
+          _mainController.profile['subscriber'] != '0') if (_chewieController
               .videoPlayerController.value.position.inSeconds ==
           _chewieController.videoPlayerController.value.duration.inSeconds) {
         Get.back();
@@ -214,7 +222,8 @@ class _ChewieDemoState extends State<VideoScreen> {
               child: CupertinoControls(
                 chewieController: _chewieController,
                 backgroundColor: Color(0xff232323),
-                image: _mainController.auth.value
+                image: _mainController.auth.value &&
+                        _mainController.profile['subscriber'] != '0'
                     ? ((_homeController.videos['lessons'].length - 1) >=
                             (widget.index + 1))
                         ? _homeController.videos['lessons'].reversed
@@ -229,7 +238,8 @@ class _ChewieDemoState extends State<VideoScreen> {
                 method: () {
                   myOverayEntry != null ? myOverayEntry.remove() : null;
                   Get.back();
-                  if (_mainController.auth.value) {
+                  if (_mainController.auth.value &&
+                      _mainController.profile['subscriber'] != '0') {
                     if ((widget.index + 1) <=
                         _homeController.videos['lessons'].length - 1) {
                       Get.to(VideoScreen(
@@ -270,31 +280,28 @@ class _ChewieDemoState extends State<VideoScreen> {
       return WillPopScope(
           child: Material(
             child: MediaQuery.removePadding(
-                context: context,
-                removeTop: true,
-                child: Stack(
-                  children: [
-                    Container(
-                      color: Colors.black,
-                      height: Get.height,
-                      width: Get.width,
-                      child: Center(
-                        child: _chewieController != null &&
-                                _chewieController
-                                    .videoPlayerController.value.initialized
-                            ? Chewie(
-                                controller: _chewieController,
-                              )
-                            : Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CircularProgressIndicator(),
-                                ],
-                              ),
-                      ),
-                    ),
-                  ],
-                )),
+              context: context,
+              removeTop: true,
+              child: Container(
+                color: Colors.black,
+                height: Get.height,
+                width: Get.width,
+                child: Center(
+                  child: _chewieController != null &&
+                          _chewieController
+                              .videoPlayerController.value.initialized
+                      ? Chewie(
+                          controller: _chewieController,
+                        )
+                      : Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircularProgressIndicator(),
+                          ],
+                        ),
+                ),
+              ),
+            ),
           ),
           onWillPop: () {
             Get.back();

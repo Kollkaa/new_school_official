@@ -16,6 +16,9 @@ import 'package:new_school_official/storage/colors/main_color.dart';
 import 'auth.dart';
 
 class RegisterPage extends StatefulWidget {
+  final bool backButton;
+
+  RegisterPage(this.backButton);
   @override
   State<StatefulWidget> createState() {
     return StateRegister();
@@ -25,180 +28,196 @@ class RegisterPage extends StatefulWidget {
 class StateRegister extends State<RegisterPage> {
   AuthController _authController = Get.put(AuthController());
   MainController _mainController = Get.find();
+
   final GetStorage box = GetStorage();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: white_color,
-        body: Center(
-          child: Container(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  makeTitleh2(),
-                  makeDescription(),
-                  makeTextFieldLog(),
-                  makeTextFieldPass(),
-                  makeButton(),
-                  Text(
-                    "или",
-                    style: TextStyle(
-                        fontSize: 14,
-                        color: Color(0xff999999),
-                        fontWeight: FontWeight.w400,
-                        height: 1,
-                        fontFamily: "Raleway"),
+        body: ListView(
+          children: [
+            widget.backButton
+                ? makeBackButton()
+                : SizedBox(
+                    height: 45.0,
                   ),
-                  Container(
-                      margin: EdgeInsets.only(top: 21),
-                      child: FlatButton(
-                        padding: EdgeInsets.all(1),
-                        minWidth: Get.width - 50,
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        child: Container(
-                            height: 50,
-                            width: Get.width - 50,
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Color.fromRGBO(50, 50, 71, 0.06),
-                                      offset: Offset(0, 2),
-                                      spreadRadius: 4,
-                                      blurRadius: 2)
-                                ],
-                                color: Colors.black,
-                                borderRadius: BorderRadius.circular(5),
-                                border: Border.all(
-                                    width: 1, color: Color(0xff000000))),
-                            child: Center(
-                                child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Container(
-                                  child: SvgPicture.asset(
-                                    "assets/icons/newApple.svg",
-                                  ),
-                                  width: 20.0,
-                                ),
-                                SizedBox(
-                                  width: 8.0,
-                                ),
-                                Container(
-                                  height: 30,
-                                  decoration: BoxDecoration(
-                                      border: Border(
-                                          left: BorderSide(
-                                              width: 1,
-                                              color: Colors.white
-                                                  .withOpacity(0.3)))),
-                                  width: Get.width - 122,
+            Center(
+              child: Container(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      makeTitleh2(),
+                      makeDescription(),
+                      makeTextFieldLog(),
+                      makeTextFieldPass(),
+                      makeButton(),
+                      Text(
+                        "или",
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: Color(0xff999999),
+                            fontWeight: FontWeight.w400,
+                            height: 1,
+                            fontFamily: "Raleway"),
+                      ),
+                      Container(
+                          margin: EdgeInsets.only(top: 21),
+                          child: FlatButton(
+                            padding: EdgeInsets.all(1),
+                            minWidth: Get.width - 50,
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                            child: Container(
+                                height: 50,
+                                width: Get.width - 50,
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color:
+                                              Color.fromRGBO(50, 50, 71, 0.06),
+                                          offset: Offset(0, 2),
+                                          spreadRadius: 4,
+                                          blurRadius: 2)
+                                    ],
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(5),
+                                    border: Border.all(
+                                        width: 1, color: Color(0xff000000))),
+                                child: Center(
+                                    child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      child: SvgPicture.asset(
+                                        "assets/icons/newApple.svg",
+                                      ),
+                                      width: 20.0,
+                                    ),
+                                    SizedBox(
+                                      width: 8.0,
+                                    ),
+                                    Container(
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                          border: Border(
+                                              left: BorderSide(
+                                                  width: 1,
+                                                  color: Colors.white
+                                                      .withOpacity(0.3)))),
+                                      width: Get.width - 122,
+                                      child: Center(
+                                        child: Text(
+                                          "Вход с Apple ID",
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w400,
+                                              height: 1,
+                                              fontFamily: "Raleway"),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ))),
+                            onPressed: () {},
+                          )),
+                      Container(
+                          margin: EdgeInsets.only(top: 21),
+                          child: FlatButton(
+                            padding: EdgeInsets.all(1),
+                            minWidth: Get.width - 50,
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                            child: Container(
+                                height: 50,
+                                width: Get.width - 50,
+                                padding: EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color:
+                                              Color.fromRGBO(50, 50, 71, 0.06),
+                                          offset: Offset(0, 2),
+                                          spreadRadius: 4,
+                                          blurRadius: 2)
+                                    ],
+                                    borderRadius: BorderRadius.circular(5),
+                                    border: Border.all(
+                                        width: 1, color: Color(0xffEBEBEB))),
+                                child: Center(
+                                    child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      child: SvgPicture.asset(
+                                          "assets/icons/newGoogle.svg"),
+                                      width: 20.0,
+                                    ),
+                                    SizedBox(
+                                      width: 8.0,
+                                    ),
+                                    Container(
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                          border: Border(
+                                              left: BorderSide(
+                                                  width: 1,
+                                                  color: Color(0xFFEBEBEB)))),
+                                      width: Get.width - 124,
+                                      child: Center(
+                                        child: Text(
+                                          "Вход с Google",
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w400,
+                                              height: 1,
+                                              fontFamily: "Raleway"),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ))),
+                            onPressed: () {},
+                          )),
+                      widget.backButton
+                          ? Container()
+                          : FlatButton(
+                              child: Container(
+                                  height: 50,
+                                  width: Get.width - 50,
                                   child: Center(
                                     child: Text(
-                                      "Вход с Apple ID",
+                                      "Уже есть аккаунт?",
+                                      textAlign: TextAlign.center,
                                       style: TextStyle(
                                           fontSize: 14,
-                                          color: Colors.white,
+                                          color: Color(0xff484848),
                                           fontWeight: FontWeight.w400,
-                                          height: 1,
                                           fontFamily: "Raleway"),
                                     ),
-                                  ),
-                                ),
-                              ],
-                            ))),
-                        onPressed: () {},
-                      )),
-                  Container(
-                      margin: EdgeInsets.only(top: 21),
-                      child: FlatButton(
-                        padding: EdgeInsets.all(1),
-                        minWidth: Get.width - 50,
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        child: Container(
-                            height: 50,
-                            width: Get.width - 50,
-                            padding: EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Color.fromRGBO(50, 50, 71, 0.06),
-                                      offset: Offset(0, 2),
-                                      spreadRadius: 4,
-                                      blurRadius: 2)
-                                ],
-                                borderRadius: BorderRadius.circular(5),
-                                border: Border.all(
-                                    width: 1, color: Color(0xffEBEBEB))),
-                            child: Center(
-                                child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Container(
-                                  child: SvgPicture.asset(
-                                      "assets/icons/newGoogle.svg"),
-                                  width: 20.0,
-                                ),
-                                SizedBox(
-                                  width: 8.0,
-                                ),
-                                Container(
-                                  height: 30,
-                                  decoration: BoxDecoration(
-                                      border: Border(
-                                          left: BorderSide(
-                                              width: 1,
-                                              color: Color(0xFFEBEBEB)))),
-                                  width: Get.width - 124,
-                                  child: Center(
-                                    child: Text(
-                                      "Вход с Google",
-                                      style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w400,
-                                          height: 1,
-                                          fontFamily: "Raleway"),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ))),
-                        onPressed: () {},
-                      )),
-                  FlatButton(
-                    child: Container(
-                        height: 50,
-                        width: Get.width - 50,
-                        child: Center(
-                          child: Text(
-                            "Уже есть аккаунт?",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 14,
-                                color: Color(0xff484848),
-                                fontWeight: FontWeight.w400,
-                                fontFamily: "Raleway"),
-                          ),
-                        )),
-                    onPressed: () {
-                      if (!_mainController.auth.value) {
-                        _mainController.widgets.removeAt(4);
-                        _mainController.widgets.add(AuthPage());
-                        _mainController.currentIndex.value = 4;
-                      }
-                    },
-                  )
-                ],
+                                  )),
+                              onPressed: () {
+                                if (!_mainController.auth.value) {
+                                  _mainController.widgets.removeAt(4);
+                                  _mainController.widgets.add(AuthPage());
+                                  _mainController.currentIndex.value = 4;
+                                }
+                              },
+                            )
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
+            )
+          ],
         ));
   }
 
@@ -217,6 +236,39 @@ class StateRegister extends State<RegisterPage> {
             color: Color(0xff3A3A3A),
             fontWeight: FontWeight.w300,
             fontFamily: "Raleway"));
+  }
+
+  Widget makeBackButton() {
+    return Container(
+      padding: EdgeInsets.only(top: 27, bottom: 40),
+      child: GestureDetector(
+        child: Row(
+          children: [
+            SizedBox(
+              width: 15,
+            ),
+            Icon(
+              Icons.arrow_back_ios,
+              color: Color(0xff000000),
+            ),
+            SizedBox(
+              width: 3,
+            ),
+            Text(
+              "Назад",
+              style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black,
+                  fontFamily: 'Raleway'),
+            ),
+          ],
+        ),
+        onTap: () {
+          Navigator.pop(context);
+        },
+      ),
+    );
   }
 
   Widget makeTextFieldLog() {
@@ -361,35 +413,17 @@ class StateRegister extends State<RegisterPage> {
                   await box.write("auth", true);
                   _mainController.profile = {}.obs;
                   await box.write("id", responce.data[0]['id']);
-                  dios.Response responces =
-                      await Backend().getUser(id: responce.data[0]['id']);
-
-                  dios.Response getUservideo_cab = await Backend()
-                      .getUservideo_cab(id: responce.data[0]['id']);
-                  dios.Response getUservideo_time = await Backend()
-                      .getUservideo_time(id: responce.data[0]['id']);
-                  dios.Response getUservideo_time_all = await Backend()
-                      .getUservideo_time_all(id: responce.data[0]['id']);
-                  dios.Response getStats =
-                      await Backend().getStat(id: responce.data[0]['id']);
-                  _mainController.profile.value = responces.data['clients'][0];
-                  _mainController.getStats.value =
-                      getStats.data['user_stats'][0];
-                  _mainController.getUservideo_cab.value =
-                      getUservideo_cab.data['lessons_cabinet'];
-                  _mainController.getUservideo_time.value =
-                      getUservideo_time.data['lessons'];
-                  _mainController.getUservideo_time_all.value = [];
-                  _mainController.getUservideo_time_all
-                      .addAll(getUservideo_time_all.data['lessons']);
-                  print(responces.data['clients'][0]['name']);
+                  await _mainController.initProfile(responce.data[0]['id']);
                   _mainController.auth.value = true;
                   _mainController.widgets.removeAt(4);
                   _mainController.widgets.add(ProfilePage());
-                  if (responces.data['clients'][0]['subscriber'] == 1) {
-                    _mainController.currentIndex.value = 0;
+                  if (int.tryParse(_mainController.profile['subscriber']) !=
+                      1) {
+                    Get.dialog(Payment(
+                      subscriber: _mainController.profile['subscriber'],
+                    ));
                   } else {
-                    Get.dialog(Payment());
+                    _mainController.currentIndex.value = 4;
                   }
                   setState(() {});
                 } else if (responce.data[0]['error']) {
@@ -416,9 +450,11 @@ class StateRegister extends State<RegisterPage> {
                   _mainController.widgets.add(ProfilePage());
                   if (int.tryParse(_mainController.profile[0]['subscriber']) !=
                       1) {
-                    Get.dialog(Payment());
+                    Get.dialog(Payment(
+                      subscriber: '0',
+                    ));
                   } else {
-                    _mainController.currentIndex.value = 0;
+                    _mainController.currentIndex.value = 4;
                   }
                   setState(() {});
                 }

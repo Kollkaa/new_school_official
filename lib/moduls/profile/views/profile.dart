@@ -437,7 +437,7 @@ class StateProfile extends State<ProfilePage> {
                                           element['id'] == el['course_id'])
                                       .length >=
                                   1)
-                              .toList()),
+                              .toList(),_homeController),
                   SizedBox(
                     height: 40,
                   )
@@ -534,7 +534,7 @@ class StateProfile extends State<ProfilePage> {
     );
   }
 
-  Widget getType(text, length, item, type) {
+  Widget getType(text, length, item, type, homeController) {
     return Container(
       padding: EdgeInsets.only(bottom: 40),
       child: Column(
@@ -557,7 +557,7 @@ class StateProfile extends State<ProfilePage> {
                 itemCount: length,
                 itemBuilder: (c, i) {
                   return item("${type[i]['name']}",
-                      "${type[i]['banner_small']}", type[i]['id']);
+                      "${type[i]['banner_small']}", type[i]['id'], homeController);
                 }),
           )
         ],
@@ -565,7 +565,7 @@ class StateProfile extends State<ProfilePage> {
     );
   }
 
-  Widget getitemOtherCard(text, image, id) {
+  Widget getitemOtherCard(text, image, id, homeController) {
     return GestureDetector(
       child: Container(
         margin: EdgeInsets.only(right: 12),
@@ -612,12 +612,15 @@ class StateProfile extends State<ProfilePage> {
         ),
       ),
       onTap: () async {
+        homeController.videos = {}.obs;
+        Get.appUpdate();
         Get.toNamed(Routes.COURSE, arguments: id);
       },
     );
   }
 
   void initStat() async {
+    await _mainController.initProfile(_mainController.profile['id']);
     dios.Response getStats = await Backend().getStat(id: box.read('id'));
     _mainController.getStats.value = getStats.data['user_stats'][0];
     setState(() {});
@@ -769,9 +772,9 @@ class StateItemCont extends State<ItemCont> {
                   ),
                 ),
                 onTap: () async {
+                  widget.homeController.videos = {}.obs;
+                  Get.appUpdate();
                   Get.toNamed(Routes.COURSE, arguments: widget.idCourse);
-
-                  setState(() {});
                 },
               )
         : Container();

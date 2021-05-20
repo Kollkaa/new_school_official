@@ -190,7 +190,9 @@ class StateAuth extends State<AuthPage> {
                       if (!_mainController.auth.value) {
                         print("213");
                         _mainController.widgets.removeAt(4);
-                        _mainController.widgets.add(RegisterPage());
+                        _mainController.widgets.add(RegisterPage(
+                          false,
+                        ));
                         _mainController.currentIndex.value = 4;
                       }
                     },
@@ -346,15 +348,14 @@ class StateAuth extends State<AuthPage> {
                 await box.write("auth", true);
                 _mainController.profile = {}.obs;
                 await box.write("id", responce.data[0]['id']);
-                dios.Response getStats =
-                    await Backend().getStat(id: responce.data[0]['id']);
                 await _mainController.initProfile(responce.data[0]['id']);
                 _mainController.auth.value = true;
                 _mainController.widgets.removeAt(4);
                 _mainController.widgets.add(ProfilePage());
-                if (int.tryParse(_mainController.profile[0]['subscriber']) !=
-                    1) {
-                  Get.dialog(Payment());
+                if (int.tryParse(_mainController.profile['subscriber']) != 1) {
+                  Get.dialog(Payment(
+                    subscriber: _mainController.profile['subscriber'],
+                  ));
                 } else {
                   _mainController.currentIndex.value = 0;
                 }

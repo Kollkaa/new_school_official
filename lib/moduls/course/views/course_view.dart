@@ -9,7 +9,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:new_school_official/dialog/dialog_payment.dart';
 import 'package:new_school_official/dialog/treyler.dart';
+import 'package:new_school_official/moduls/auth/views/register.dart';
 import 'package:new_school_official/moduls/course/controllers/course_controller.dart';
 import 'package:new_school_official/moduls/home/controllers/home_controller.dart';
 import 'package:new_school_official/moduls/main/controllers/main_controller.dart';
@@ -38,6 +40,18 @@ class StateCourse extends State<CourseScreen> {
   void initState() {
     super.initState();
     initPre();
+  }
+
+  @override
+  void dispose() {
+    loadProfile();
+    super.dispose();
+  }
+
+  loadProfile() async {
+    if (_mainController.profile['id'] != null) {
+      await _mainController.initProfile(_mainController.profile['id']);
+    }
   }
 
   initPre() async {
@@ -801,31 +815,37 @@ class StateCourse extends State<CourseScreen> {
             height: 13,
           ),
           ..._homeController.course['kurses'][0]['materials']
-              .map((el) => Container(
-                    padding: EdgeInsets.only(bottom: 5),
-                    margin: EdgeInsets.only(bottom: 17),
-                    decoration: BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(
-                                width: 1, color: Color(0xffECECEC)))),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("${el['material_name']}",
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w300,
-                                letterSpacing: 0.5,
-                                color: Colors.black,
-                                fontFamily: "Raleway")),
-                        _mainController.auth.value
-                            ? SvgPicture.asset("assets/icons/down-arrow 1.svg")
-                            : Image.asset(
-                                "assets/images/padlock 1_grey.png",
-                                height: 16,
-                                width: 16,
-                              )
-                      ],
+              .map((el) => GestureDetector(
+                    onTap: () {
+                      print(el);
+                    },
+                    child: Container(
+                      padding: EdgeInsets.only(bottom: 5),
+                      margin: EdgeInsets.only(bottom: 17),
+                      decoration: BoxDecoration(
+                          border: Border(
+                              bottom: BorderSide(
+                                  width: 1, color: Color(0xffECECEC)))),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("${el['material_name']}",
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w300,
+                                  letterSpacing: 0.5,
+                                  color: Colors.black,
+                                  fontFamily: "Raleway")),
+                          _mainController.auth.value
+                              ? SvgPicture.asset(
+                                  "assets/icons/down-arrow 1.svg")
+                              : Image.asset(
+                                  "assets/images/padlock 1_grey.png",
+                                  height: 16,
+                                  width: 16,
+                                )
+                        ],
+                      ),
                     ),
                   ))
               .toList()
@@ -1178,23 +1198,31 @@ class StateItem extends State<Item> {
                       controller.add(1);
                     } else {
                       if (widget.mainController.auth.value) {
-                        Get.snackbar(null, null,
-                            snackPosition: SnackPosition.BOTTOM,
-                            colorText: Colors.redAccent,
-                            messageText: Center(
-                              child: Text(
-                                "Нужно посмотреть предыдущий урок",
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    fontFamily: "Raleway",
-                                    letterSpacing: 0.5,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.redAccent),
+                        if (widget.mainController.profile['subscriber'] ==
+                            '1') {
+                          Get.snackbar(null, null,
+                              snackPosition: SnackPosition.BOTTOM,
+                              colorText: Colors.redAccent,
+                              messageText: Center(
+                                child: Text(
+                                  "Нужно посмотреть предыдущий урок",
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontFamily: "Raleway",
+                                      letterSpacing: 0.5,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.redAccent),
+                                ),
+                              ));
+                        } else {
+                          Get.to(
+                              Payment(
+                                subscriber: '0',
                               ),
-                            ));
+                              duration: Duration());
+                        }
                       } else {
-                        widget.mainController.onIndexChanged(4);
-                        Get.back();
+                        Get.to(RegisterPage(true), duration: Duration());
                       }
                     }
                   }
@@ -1249,25 +1277,59 @@ class StateItem extends State<Item> {
                     ),
                     widget.mainController.auth.value
                         ? widget.lock
-                            ? GestureDetector(
-                                child: SvgPicture.asset(
-                                  "assets/icons/Layer 16.svg",
-                                  color: Colors.black,
-                                  width: 14,
-                                  height: 14,
-                                ),
-                                onTapDown: (_) {
-                                  widget.mainController.controller.add({
-                                    "url":
-                                        "${widget.lesson['videos'][0]['video_url']}",
-                                    "course_id": "${widget.lesson['kurs_id']}",
-                                    "course": widget
-                                        .homeController.course['kurses'][0],
-                                    "video_id": "${widget.lesson['id']}",
-                                    "video": widget.lesson
-                                  });
-                                },
-                              )
+                            ? false
+                                ? GestureDetector(
+                                    child: SvgPicture.asset(
+                                      "assets/icons/Layer 16.svg",
+                                      color: Colors.black,
+                                      width: 14,
+                                      height: 14,
+                                    ),
+                                    onTapDown: (_) {
+                                      widget.mainController.controller.add({
+                                        "url":
+                                            "${widget.lesson['videos'][0]['video_url']}",
+                                        "course_id":
+                                            "${widget.lesson['kurs_id']}",
+                                        "course": widget
+                                            .homeController.course['kurses'][0],
+                                        "video_id": "${widget.lesson['id']}",
+                                        "video": widget.lesson
+                                      });
+                                    },
+                                  )
+                                : GestureDetector(
+                                    child: Container(
+                                      width: 20.0,
+                                      height: 20.0,
+                                      child: Stack(children: [
+                                        CircularProgressIndicator(
+                                          value: 0.4,
+                                          backgroundColor: Color(0xFFF9F9F9F9),
+                                          strokeWidth: 1.5,
+                                        ),
+                                        Center(
+                                          child: Container(
+                                            height: 7.5,
+                                            width: 7.5,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ]),
+                                    ),
+                                    onTapDown: (_) {
+                                      widget.mainController.controller.add({
+                                        "url":
+                                            "${widget.lesson['videos'][0]['video_url']}",
+                                        "course_id":
+                                            "${widget.lesson['kurs_id']}",
+                                        "course": widget
+                                            .homeController.course['kurses'][0],
+                                        "video_id": "${widget.lesson['id']}",
+                                        "video": widget.lesson
+                                      });
+                                    },
+                                  )
                             : Container()
                         : Container()
                   ],

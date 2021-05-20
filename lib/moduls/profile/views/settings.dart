@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:new_school_official/dialog/dialog_payment.dart';
+import 'package:new_school_official/moduls/main/controllers/main_controller.dart';
 import 'package:new_school_official/moduls/profile/controllers/profile_controller.dart';
 import 'package:new_school_official/moduls/profile/views/edit_name_profile.dart';
 
@@ -11,6 +13,8 @@ import 'edit_password_profile.dart';
 
 class SettingPage extends StatelessWidget {
   ProfileController _profileController = Get.find();
+  MainController _mainController = Get.find();
+  String subscriber;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -172,7 +176,11 @@ class SettingPage extends StatelessWidget {
                       ),
                     ),
                     onTap: () {
-                      Get.to(EditEmailProfile(), duration: Duration());
+                      Get.to(
+                          Payment(
+                            subscriber: _mainController.profile['subscriber'],
+                          ),
+                          duration: Duration());
                     },
                   ),
                   GestureDetector(
