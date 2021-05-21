@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dio/dio.dart' as dios;
@@ -223,12 +224,6 @@ class StateCourse extends State<CourseScreen> {
                                     "assets/icons/share-3 1.svg"),
                               ),
                               onTap: () {
-                                _mainController.listCanselToken
-                                    .forEach((element) {
-                                  try {
-                                    element.cancel();
-                                  } catch (e) {}
-                                });
                                 Share.share('https://mapus.com.ua/tasks/',
                                     subject: 'Share');
                               },
@@ -1084,20 +1079,20 @@ class StateItem extends State<Item> {
   var _image;
   bool _loading = true;
 
-  var length;
-
   var value;
 
   var video;
 
+  var downloadID;
+
   GetStorage box = GetStorage();
+
+  bool isVideoDownloaded = false;
 
   MainController _mainController = Get.find();
 
   @override
   void initState() {
-    length = widget.mainController.listCanselToken.length;
-
     _image = new NetworkImage(
       '${widget.lesson['video_image']}',
     );
@@ -1119,8 +1114,16 @@ class StateItem extends State<Item> {
       "video_id": "${widget.lesson['id']}",
       "video": widget.lesson
     };
-    print(_mainController.listValue);
     print('listvalue');
+    downloadID = video['course_id'].toString() + video['video_id'].toString();
+    try {
+      isVideoDownloaded = box
+              .read(video['course_id'])
+              .split("||")
+              .where((el) => jsonDecode(el)['id'] == video['video_id'])
+              .length >
+          0;
+    } catch (e) {}
   }
 
   @override
@@ -1289,54 +1292,56 @@ class StateItem extends State<Item> {
                       ),
                     ),
                     Obx(() => _mainController.auth.value
-                        ? widget.lock
-                            ? _mainController.listValue
-                                        .where((el) =>
-                                            el["video"] ==
-                                            video['course_id'].toString() +
-                                                video['video_id'].toString())
-                                        .toList()
-                                        .length <=
-                                    0
-                                ? GestureDetector(
-                                    child: SvgPicture.asset(
-                                      "assets/icons/Layer 16.svg",
-                                      color: Colors.black,
-                                      width: 14,
-                                      height: 14,
-                                    ),
-                                    onTapDown: (_) {
-                                      _mainController.controller.add(video);
-                                    },
-                                  )
-                                : GestureDetector(
-                                    child: Container(
-                                      width: 20.0,
-                                      height: 20.0,
-                                      child: Stack(children: [
-                                        CircularProgressIndicator(
-                                          value: _mainController.listValue
-                                              .where((el) =>
-                                                  el["video"] ==
-                                                  video['course_id']
-                                                          .toString() +
-                                                      video['video_id']
-                                                          .toString())
-                                              .toList()[0]['progress'],
-                                          backgroundColor: Color(0xFFF9F9F9F9),
-                                          strokeWidth: 1.5,
+                        ? !isVideoDownloaded
+                            ? widget.lock
+                                ? !_mainController.listValue
+                                        .containsKey(downloadID)
+                                    ? GestureDetector(
+                                        child: SvgPicture.asset(
+                                          "assets/icons/Layer 16.svg",
+                                          color: Colors.black,
+                                          width: 14,
+                                          height: 14,
                                         ),
-                                        Center(
-                                          child: Container(
-                                            height: 7.5,
-                                            width: 7.5,
-                                            color: Colors.grey,
-                                          ),
+                                        onTapDown: (_) {
+                                          _mainController.controller.add(video);
+                                        },
+                                      )
+                                    : GestureDetector(
+                                        child: Container(
+                                          width: 20.0,
+                                          height: 20.0,
+                                          child: Stack(children: [
+                                            CircularProgressIndicator(
+                                              value: _mainController
+                                                      .listValue[downloadID]
+                                                  ['progress'],
+                                              backgroundColor:
+                                                  Color(0xFFF9F9F9F9),
+                                              strokeWidth: 1.5,
+                                            ),
+                                            Center(
+                                              child: Container(
+                                                height: 7.5,
+                                                width: 7.5,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ]),
                                         ),
-                                      ]),
-                                    ),
-                                    onTapDown: (_) {},
-                                  )
+                                        onTapDown: (_) {
+                                          try {
+                                            _mainController
+                                                .listValue[downloadID]
+                                                    ["cancelToken"]
+                                                .cancel();
+                                          } catch (e) {}
+                                          _mainController.listValue
+                                              .remove(downloadID);
+                                          Get.appUpdate();
+                                        },
+                                      )
+                                : Container()
                             : Container()
                         : Container())
                   ],

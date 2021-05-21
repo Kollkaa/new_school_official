@@ -57,8 +57,7 @@ class MainController extends GetxController {
   StreamController<dynamic> controller = StreamController<dynamic>();
   Stream stream;
 
-  var listCanselToken = [];
-  var listValue = [];
+  var listValue = Map();
 
   var downloads;
 
@@ -78,7 +77,6 @@ class MainController extends GetxController {
     stream = controller.stream;
     stream.listen((value) async {
       CancelToken cancelToken = CancelToken();
-      listCanselToken.add(cancelToken);
       await downloadFile(value['url'], value['course_id'], value['course'],
           value['video_id'], value['video'], cancelToken);
     });
@@ -174,29 +172,27 @@ class MainController extends GetxController {
 
   Future downloadFile(
       String url, course_id, cours, video_id, video, cancelToken) async {
-    int CTI = listCanselToken.length - 1;
+    String downloadID = course_id.toString() + video_id.toString();
     print(video);
     Dio dio = Dio();
     try {
       var dir = await getApplicationDocumentsDirectory();
       print(dir);
       print('dir');
-      listValue.add({
+      listValue[downloadID] = {
         "rec": 1,
         "total": 1,
         "progress": num.parse((1 / 1).toStringAsFixed(2)),
-        "video": course_id.toString() + video_id.toString(),
         "download": true,
         "cancelToken": cancelToken
-      });
+      };
       var responce = await dio
           .download(url, "${dir.path}/$course_id/$video_id.mp4",
               onReceiveProgress: (rec, total) async {
-        listValue[CTI] = {
+        listValue[downloadID] = {
           "rec": rec,
           "total": total,
           "progress": num.parse((rec / total).toStringAsFixed(2)),
-          "video": course_id.toString() + video_id.toString(),
           "download": true,
           "cancelToken": cancelToken
         };
@@ -204,8 +200,7 @@ class MainController extends GetxController {
         print(listValue);
         if (rec == total) {
           print("finish download file ${dir.path}/$course_id/$video_id.mp4");
-          listValue.removeAt(CTI);
-          listCanselToken.removeAt(CTI);
+          listValue.remove(downloadID);
           var downloads = box.read("downloads");
           var course = box.read("$course_id");
           if (downloads == null) {
@@ -222,7 +217,7 @@ class MainController extends GetxController {
               box.write(
                   "$course_id",
                   jsonEncode({
-                    "id": "$course_id",
+                    "id": "$video_id",
                     "image": "${video['video_image']}",
                     "title": "${video['video_name']}",
                     "desc": "${video['video_description']}",
@@ -230,7 +225,7 @@ class MainController extends GetxController {
                   }));
             } else {
               if (course.toString().indexOf("${jsonEncode({
-                        "id": "$course_id",
+                        "id": "$video_id",
                         "image": "${video['video_image']}",
                         "title": "${video['video_name']}",
                         "desc": "${video['video_description']}",
@@ -241,7 +236,7 @@ class MainController extends GetxController {
                 box.write(
                     "$course_id",
                     '$course||${jsonEncode({
-                      "id": "$course_id",
+                      "id": "$video_id",
                       "image": "${video['video_image']}",
                       "title": "${video['video_name']}",
                       "desc": "${video['video_description']}",
@@ -272,7 +267,7 @@ class MainController extends GetxController {
               box.write(
                   "$course_id",
                   jsonEncode({
-                    "id": "$course_id",
+                    "id": "$video_id",
                     "image": "${video['video_image']}",
                     "title": "${video['video_name']}",
                     "desc": "${video['video_description']}",
@@ -280,7 +275,7 @@ class MainController extends GetxController {
                   }));
             } else {
               if (course.toString().indexOf("${jsonEncode({
-                        "id": "$course_id",
+                        "id": "$video_id",
                         "image": "${video['video_image']}",
                         "title": "${video['video_name']}",
                         "desc": "${video['video_description']}",
@@ -291,7 +286,7 @@ class MainController extends GetxController {
                 box.write(
                     "$course_id",
                     '$course||${jsonEncode({
-                      "id": "$course_id",
+                      "id": "$video_id",
                       "image": "${video['video_image']}",
                       "title": "${video['video_name']}",
                       "desc": "${video['video_description']}",
