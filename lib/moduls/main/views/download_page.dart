@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:new_school_official/moduls/main/controllers/main_controller.dart';
@@ -97,65 +99,119 @@ class DownloadPage extends StatelessWidget {
                               height: 36,
                             ),
                             ...mainController.downloads.split("||").map((el) {
-                              return GestureDetector(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      height: 61,
-                                      width: 93,
-                                      margin:
-                                          EdgeInsets.only(bottom: 21, left: 20),
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(5),
-                                          color: Colors.black,
-                                          image: DecorationImage(
-                                              image: NetworkImage(
-                                                  "${jsonDecode(el)['image']}"))),
-                                    ),
-                                    SizedBox(
-                                      width: 18,
-                                    ),
-                                    Container(
-                                      height: 61,
+                              print('+');
+                              return Slidable(
+                                actions: [],
+                                secondaryActions: [
+                                  GestureDetector(
+                                    onTap: () async {
+                                      // var newDownloads = mainController
+                                      //     .downloads
+                                      //     .split("||")
+                                      //     .where((elem) =>
+                                      //         jsonDecode(elem)['id'] !=
+                                      //         jsonDecode(el)['id'])
+                                      //     .toList();
+                                      // var JSON = '';
+                                      // newDownloads.forEach((el) =>
+                                      //     JSON += jsonEncode(el) + '||');
+                                      // JSON = JSON.substring(0, JSON.length - 2);
+                                      // await box.write("downloads", JSON);
+                                      // Dio dio = Dio();
+                                      // print(el);
+                                      // print(jsonDecode(el)["id"]);
+                                      // var dir =
+                                      //     await getExternalStorageDirectory();
+                                      // try {
+                                      //   dio.delete(
+                                      //       "${dir.path}/${jsonDecode(el)["id"]}");
+                                      // } catch (e) {
+                                      //   print(e);
+                                      // }
+                                    },
+                                    child: Container(
+                                      width: 80,
+                                      height: 80,
+                                      color: Colors.redAccent,
                                       child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
                                         mainAxisAlignment:
-                                            MainAxisAlignment.start,
+                                            MainAxisAlignment.center,
                                         children: [
-                                          Text(
-                                            "${jsonDecode(el)['title']}",
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.black,
-                                                fontFamily: "Raleway"),
-                                          ),
-                                          SizedBox(
-                                            height: 4,
-                                          ),
-                                          Text(
-                                              "Загружено: ${box.read("${jsonDecode(el)['id']}").split("||").length} урока",
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w300,
-                                                  color: Color(0xff6A6A6A),
-                                                  fontFamily: "Raleway")),
+                                          Icon(
+                                            Icons.delete,
+                                            color: Colors.white,
+                                          )
                                         ],
                                       ),
-                                    )
-                                  ],
+                                    ),
+                                  )
+                                ],
+                                actionPane: SlidableDrawerActionPane(),
+                                actionExtentRatio: 0.25,
+                                child: GestureDetector(
+                                  onTapDown: (_) {
+                                    print(el);
+                                    print(jsonDecode(el)['id']);
+                                    print(box.read("${jsonDecode(el)['id']}"));
+                                    Get.to(ListVideo(
+                                        box.read("${jsonDecode(el)['id']}"),
+                                        jsonDecode(el)['title']));
+                                  },
+                                  child: Container(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          height: 61,
+                                          width: 93,
+                                          margin: EdgeInsets.only(
+                                              bottom: 21, left: 20),
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              color: Colors.black,
+                                              image: DecorationImage(
+                                                  image: NetworkImage(
+                                                      "${jsonDecode(el)['image']}"))),
+                                        ),
+                                        SizedBox(
+                                          width: 18,
+                                        ),
+                                        Container(
+                                          height: 61,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "${jsonDecode(el)['title']}",
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black,
+                                                    fontFamily: "Raleway"),
+                                              ),
+                                              SizedBox(
+                                                height: 4,
+                                              ),
+                                              Text(
+                                                  "Загружено: ${box.read("${jsonDecode(el)['id']}").split("||").length} урока",
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w300,
+                                                      color: Color(0xff6A6A6A),
+                                                      fontFamily: "Raleway")),
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                                onTapDown: (_) {
-                                  print(el);
-                                  print(jsonDecode(el)['id']);
-                                  print(box.read("${jsonDecode(el)['id']}"));
-                                  Get.to(ListVideo(
-                                      box.read("${jsonDecode(el)['id']}"),
-                                      jsonDecode(el)['title']));
-                                },
                               );
                             }).toList(),
                           ])

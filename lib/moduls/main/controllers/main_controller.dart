@@ -55,9 +55,12 @@ class MainController extends GetxController {
 
   var email = "".obs;
   StreamController<dynamic> controller = StreamController<dynamic>();
+  StreamController<dynamic> materialController = StreamController<dynamic>();
   Stream stream;
+  Stream materialStream;
 
   var listValue = Map();
+  var materialValue = Map();
 
   var downloads;
 
@@ -77,8 +80,20 @@ class MainController extends GetxController {
     stream = controller.stream;
     stream.listen((value) async {
       CancelToken cancelToken = CancelToken();
-      await downloadFile(value['url'], value['course_id'], value['course'],
-          value['video_id'], value['video'], cancelToken);
+      await downloadFile(
+          value['url'],
+          value['course_id'],
+          value['course'],
+          value['video_id'],
+          value['video'],
+          value['downloaded'],
+          value['onDownloadError'],
+          cancelToken);
+    });
+    materialStream = materialController.stream;
+    materialStream.listen((value) async {
+      CancelToken cancelToken = CancelToken();
+      // await downloadMaterial();
     });
 
     allCourse = (await Backend().getAllCourses()).data['kurses'];
@@ -170,8 +185,8 @@ class MainController extends GetxController {
     downloads = box.read("downloads");
   }
 
-  Future downloadFile(
-      String url, course_id, cours, video_id, video, cancelToken) async {
+  Future downloadFile(String url, course_id, cours, video_id, video,
+      Function downloaded, Function onDownloadError, cancelToken) async {
     String downloadID = course_id.toString() + video_id.toString();
     print(video);
     Dio dio = Dio();
@@ -299,10 +314,150 @@ class MainController extends GetxController {
         }
       }, cancelToken: cancelToken);
       print(responce.data);
+    } catch (e) {}
+    try {
+      downloaded();
     } catch (e) {
-      print(e);
+      onDownloadError();
     }
     print("Download completed");
+    Get.appUpdate();
+  }
+
+  Future downloadMaterial(String url, course_id, cours, video_id, video,
+      Function downloaded, Function onDownloadError, cancelToken) async {
+    String downloadID = course_id.toString() + video_id.toString();
+    print(video);
+    Dio dio = Dio();
+    try {
+      var dir = await getApplicationDocumentsDirectory();
+      listValue[downloadID] = {
+        "rec": 1,
+        "total": 1,
+        "progress": num.parse((1 / 1).toStringAsFixed(4)),
+        "download": true,
+        "cancelToken": cancelToken
+      };
+      var responce = await dio
+          .download(url, "${dir.path}/$course_id/$video_id.mp4",
+              onReceiveProgress: (rec, total) async {
+        listValue[downloadID] = {
+          "rec": rec,
+          "total": total,
+          "progress": num.parse((rec / total).toStringAsFixed(2)),
+          "download": true,
+          "cancelToken": cancelToken
+        };
+        Get.appUpdate();
+        print(listValue);
+        if (rec == total) {
+          print("finish download file ${dir.path}/$course_id/$video_id.mp4");
+          listValue.remove(downloadID);
+          var downloads = box.read("downloads");
+          var course = box.read("$course_id");
+          if (downloads == null) {
+            print(course);
+            box.write(
+                "downloads",
+                jsonEncode({
+                  "id": "$course_id",
+                  "image": "${cours['banner_small']}",
+                  "title": "${cours['topic']}",
+                  "desc": "${cours['description']}"
+                }));
+            if (course == null) {
+              box.write(
+                  "$course_id",
+                  jsonEncode({
+                    "id": "$video_id",
+                    "image": "${video['video_image']}",
+                    "title": "${video['video_name']}",
+                    "desc": "${video['video_description']}",
+                    "video": "/$course_id/$video_id.mp4"
+                  }));
+            } else {
+              if (course.toString().indexOf("${jsonEncode({
+                        "id": "$video_id",
+                        "image": "${video['video_image']}",
+                        "title": "${video['video_name']}",
+                        "desc": "${video['video_description']}",
+                        "video": "/$course_id/$video_id.mp4"
+                      })}") >=
+                  0) {
+              } else {
+                box.write(
+                    "$course_id",
+                    '$course||${jsonEncode({
+                      "id": "$video_id",
+                      "image": "${video['video_image']}",
+                      "title": "${video['video_name']}",
+                      "desc": "${video['video_description']}",
+                      "video": "/$course_id/$video_id.mp4"
+                    })}');
+                print(box.read("$course_id"));
+              }
+            }
+          } else {
+            if (downloads.toString().indexOf("${jsonEncode({
+                      "id": "$course_id",
+                      "image": "${cours['banner_small']}",
+                      "title": "${cours['topic']}",
+                      "desc": "${cours['description']}"
+                    })}") >=
+                0) {
+            } else {
+              await box.write(
+                  "downloads",
+                  '$downloads||${jsonEncode({
+                    "id": "$course_id",
+                    "image": "${cours['banner_small']}",
+                    "title": "${cours['topic']}",
+                    "desc": "${cours['description']}"
+                  })}');
+            }
+            if (course == null) {
+              box.write(
+                  "$course_id",
+                  jsonEncode({
+                    "id": "$video_id",
+                    "image": "${video['video_image']}",
+                    "title": "${video['video_name']}",
+                    "desc": "${video['video_description']}",
+                    "video": "/$course_id/$video_id.mp4"
+                  }));
+            } else {
+              if (course.toString().indexOf("${jsonEncode({
+                        "id": "$video_id",
+                        "image": "${video['video_image']}",
+                        "title": "${video['video_name']}",
+                        "desc": "${video['video_description']}",
+                        "video": "/$course_id/$video_id.mp4"
+                      })}") >=
+                  0) {
+              } else {
+                box.write(
+                    "$course_id",
+                    '$course||${jsonEncode({
+                      "id": "$video_id",
+                      "image": "${video['video_image']}",
+                      "title": "${video['video_name']}",
+                      "desc": "${video['video_description']}",
+                      "video": "/$course_id/$video_id.mp4"
+                    })}');
+                print(box.read("$course_id"));
+              }
+            }
+          }
+        }
+      }, cancelToken: cancelToken);
+      print(responce.data);
+    } catch (e) {
+      onDownloadError();
+    }
+    downloaded();
+    print("Download completed");
+    Get.appUpdate();
+    Get.appUpdate();
   }
 
   getVideo(course) {

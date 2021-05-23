@@ -36,6 +36,7 @@ class StateCourse extends State<CourseScreen> {
   final GetStorage box = GetStorage();
   var lessonLast;
   var indexLast;
+  var notDownloadedVideos;
 
   @override
   void initState() {
@@ -55,17 +56,53 @@ class StateCourse extends State<CourseScreen> {
     }
   }
 
+  onDownloadError() {
+    Get.snackbar(null, null,
+        snackPosition: SnackPosition.BOTTOM,
+        colorText: Colors.redAccent,
+        messageText: Center(
+          child: Text(
+            "Недостаточно места на устройстве",
+            style: TextStyle(
+                fontSize: 12,
+                fontFamily: "Raleway",
+                letterSpacing: 0.5,
+                fontWeight: FontWeight.w600,
+                color: Colors.redAccent),
+          ),
+        ));
+  }
+
+  checkDownloads() {
+    setState(() {
+      try {
+        print("lengths");
+        var downloadedVideos = box.read(_courseController.id).split("||");
+        var allVideos = _homeController.videos['lessons'].reversed.toList();
+
+        notDownloadedVideos = allVideos.where((el) =>
+            downloadedVideos
+                .where((elem) =>
+                    num.parse(jsonDecode(elem)['id']) == num.parse(el['id']))
+                .length ==
+            0);
+        print(notDownloadedVideos);
+      } catch (e) {
+        print(e);
+        notDownloadedVideos = [1];
+      }
+    });
+  }
+
   initPre() async {
     var response = await Backend().getCourse(_courseController.id);
-    print(response.headers);
     if (response.statusCode == 200) {
       var statCourse = await Backend().getStatCourse(_courseController.id);
       _homeController.statCourse = statCourse.data[0];
-      print(response.data);
       _homeController.course = response.data;
       response = await Backend().getVideos(_courseController.id);
       _homeController.videos = response.data;
-      setState(() {});
+      checkDownloads();
     }
   }
 
@@ -79,14 +116,12 @@ class StateCourse extends State<CourseScreen> {
       return "Курс пройден";
     }
     if (_mainController.auth.value) {
-      print(_mainController.getUservideo_time);
       try {
         if (_mainController.getUservideo_time_all.indexWhere(
                 (element) => element['course_id'] == lessonLast['kurs_id']) >=
             0) {
           return "Продолжить";
         } else {
-          print("auth true");
           return "Начать учиться";
         }
       } catch (E) {
@@ -123,7 +158,6 @@ class StateCourse extends State<CourseScreen> {
               } else {
                 if (indexInLookLessonPrevius < 0) {
                 } else {
-                  print("+");
                   lessonLast =
                       _homeController.videos['lessons'].reversed.toList()[i];
                   indexLast = i;
@@ -134,7 +168,6 @@ class StateCourse extends State<CourseScreen> {
         }
       }
     }
-    print("indexInLookLessonPrevius ${indexInLookLessonPrevius}");
     return MaterialApp(
         home: Scaffold(
       resizeToAvoidBottomPadding: true,
@@ -454,59 +487,121 @@ class StateCourse extends State<CourseScreen> {
                                           setState(() {});
                                         },
                                       ),
-                                      _mainController.auth.value
-                                          ? SizedBox(
-                                              width: 25,
-                                            )
-                                          : Container(),
-                                      _mainController.auth.value
-                                          ? GestureDetector(
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  SvgPicture.asset(
-                                                    "assets/icons/Layer 16.svg",
-                                                    height: 15,
-                                                    width: 15,
-                                                  ),
-                                                  SizedBox(
-                                                    width: 7,
-                                                  ),
-                                                  Text(
-                                                    "Загрузить",
-                                                    style: TextStyle(
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.w300,
-                                                        fontFamily: "Raleway",
-                                                        letterSpacing: 0.5,
-                                                        color: Colors.white),
+                                      Visibility(
+                                        visible:
+                                            notDownloadedVideos.length != 0,
+                                        child: _mainController.auth.value
+                                            ? SizedBox(
+                                                width: 25,
+                                              )
+                                            : Container(),
+                                      ),
+                                      Obx(() => Visibility(
+                                            visible:
+                                                notDownloadedVideos.length != 0,
+                                            child: _mainController.auth.value
+                                                ? GestureDetector(
+                                                    child: Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        SvgPicture.asset(
+                                                          "assets/icons/Layer 16.svg",
+                                                          height: 15,
+                                                          width: 15,
+                                                        ),
+                                                        SizedBox(
+                                                          width: 7,
+                                                        ),
+                                                        Text(
+                                                          "Загрузить",
+                                                          style: TextStyle(
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w300,
+                                                              fontFamily:
+                                                                  "Raleway",
+                                                              letterSpacing:
+                                                                  0.5,
+                                                              color:
+                                                                  Colors.white),
+                                                        )
+                                                      ],
+                                                    ),
+                                                    onTapDown: (_) {
+                                                      // notDownloadedVideos
+                                                      //     .forEach((el) {
+                                                      //   _mainController
+                                                      //       .controller
+                                                      //       .add({
+                                                      //     "url":
+                                                      //         "${el['videos'][0]['video_url']}",
+                                                      //     "course_id":
+                                                      //         "${el['kurs_id']}",
+                                                      //     "video_id":
+                                                      //         "${el['id']}",
+                                                      //     "course":
+                                                      //         "${_homeController.course['kurses'][0]}",
+                                                      //     "video": "${el}",
+                                                      //     "downloaded":
+                                                      //         checkDownloads,
+                                                      //     "onDownloadError":
+                                                      //         onDownloadError
+                                                      //   });
+                                                      // });
+                                                    },
                                                   )
-                                                ],
-                                              ),
-                                              onTapDown: (_) {
-                                                _homeController
-                                                    .videos['lessons'].reversed
-                                                    .toList()
-                                                    .forEach((el) {
-                                                  print(
-                                                      "${_homeController.course['kurses'][0]}");
-                                                  _mainController.controller
-                                                      .add({
-                                                    "url":
-                                                        "${el['videos'][0]['video_url']}",
-                                                    "course_id":
-                                                        "${el['kurs_id']}",
-                                                    "video_id": "${el['id']}",
-                                                    "course":
-                                                        "${_homeController.course['kurses'][0]}",
-                                                    "video": "${el}"
-                                                  });
-                                                });
-                                              },
-                                            )
-                                          : Container()
+                                                : GestureDetector(
+                                                    child: Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Container(
+                                                          width: 17.0,
+                                                          height: 17.0,
+                                                          child:
+                                                              Stack(children: [
+                                                            CircularProgressIndicator(
+                                                              value: 0.5,
+                                                              backgroundColor:
+                                                                  Colors.white,
+                                                              strokeWidth: 1.5,
+                                                            ),
+                                                            Center(
+                                                              child: Container(
+                                                                height: 5.5,
+                                                                width: 5.5,
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                            ),
+                                                          ]),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 7,
+                                                        ),
+                                                        Text(
+                                                          "Остановить",
+                                                          style: TextStyle(
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w300,
+                                                              fontFamily:
+                                                                  "Raleway",
+                                                              letterSpacing:
+                                                                  0.5,
+                                                              color:
+                                                                  Colors.white),
+                                                        )
+                                                      ],
+                                                    ),
+                                                    onTapDown: (_) {},
+                                                  ),
+                                          ))
                                     ],
                                   ),
                                 )
@@ -535,15 +630,17 @@ class StateCourse extends State<CourseScreen> {
                                 if (getTitle() == "Курс пройден") {
                                   return Stack(children: [
                                     Item(
-                                        _homeController
-                                            .videos['lessons'].reversed
-                                            .toList()[i],
-                                        true,
-                                        _homeController,
-                                        _mainController,
-                                        i,
-                                        false,
-                                        look: true),
+                                      _homeController.videos['lessons'].reversed
+                                          .toList()[i],
+                                      true,
+                                      _homeController,
+                                      _mainController,
+                                      i,
+                                      false,
+                                      look: true,
+                                      onDownloadError: onDownloadError,
+                                      checkDownloads: checkDownloads,
+                                    ),
                                     Positioned(
                                         bottom: 80,
                                         right: 24,
@@ -556,13 +653,16 @@ class StateCourse extends State<CourseScreen> {
                                 }
                                 if (indexLast == 0 && i == 0) {
                                   return Item(
-                                      _homeController.videos['lessons'].reversed
-                                          .toList()[i],
-                                      true,
-                                      _homeController,
-                                      _mainController,
-                                      i,
-                                      false);
+                                    _homeController.videos['lessons'].reversed
+                                        .toList()[i],
+                                    true,
+                                    _homeController,
+                                    _mainController,
+                                    i,
+                                    false,
+                                    onDownloadError: onDownloadError,
+                                    checkDownloads: checkDownloads,
+                                  );
                                 } else {
                                   if (i <= indexLast) {
                                     return Stack(children: [
@@ -576,6 +676,8 @@ class StateCourse extends State<CourseScreen> {
                                         i,
                                         false,
                                         look: true,
+                                        onDownloadError: onDownloadError,
+                                        checkDownloads: checkDownloads,
                                       ),
                                       Positioned(
                                           bottom: 80,
@@ -589,26 +691,32 @@ class StateCourse extends State<CourseScreen> {
                                   } else {
                                     if (i - 1 == indexLast && indexLast != 0) {
                                       return Item(
-                                          _homeController
-                                              .videos['lessons'].reversed
-                                              .toList()[i],
-                                          true,
-                                          _homeController,
-                                          _mainController,
-                                          i,
-                                          false);
+                                        _homeController
+                                            .videos['lessons'].reversed
+                                            .toList()[i],
+                                        true,
+                                        _homeController,
+                                        _mainController,
+                                        i,
+                                        false,
+                                        onDownloadError: onDownloadError,
+                                        checkDownloads: checkDownloads,
+                                      );
                                     }
                                   }
                                 }
                                 return Stack(children: [
                                   Item(
-                                      _homeController.videos['lessons'].reversed
-                                          .toList()[i],
-                                      false,
-                                      _homeController,
-                                      _mainController,
-                                      i,
-                                      false),
+                                    _homeController.videos['lessons'].reversed
+                                        .toList()[i],
+                                    false,
+                                    _homeController,
+                                    _mainController,
+                                    i,
+                                    false,
+                                    onDownloadError: onDownloadError,
+                                    checkDownloads: checkDownloads,
+                                  ),
                                   Positioned(
                                       bottom: 80,
                                       right: 24,
@@ -708,7 +816,6 @@ class StateCourse extends State<CourseScreen> {
                                         ],
                                       ),
                                       onTapDown: (_) {
-                                        print("wae");
                                         if (_mainController
                                                 .getUservideo_time_all
                                                 .indexWhere((element) =>
@@ -1064,10 +1171,16 @@ class Item extends StatefulWidget {
   var lessonLast;
   var indexLast;
   bool look;
+  var onDownloadError;
+  var checkDownloads;
 
   Item(this.lesson, this.lock, this.homeController, this.mainController,
       this.index, this.donSee,
-      {this.lessonLast, this.indexLast, this.look});
+      {this.lessonLast,
+      this.indexLast,
+      this.look,
+      this.onDownloadError,
+      this.checkDownloads});
 
   @override
   State<StatefulWidget> createState() {
@@ -1112,23 +1225,32 @@ class StateItem extends State<Item> {
       "course_id": "${widget.lesson['kurs_id']}",
       "course": widget.homeController.course['kurses'][0],
       "video_id": "${widget.lesson['id']}",
-      "video": widget.lesson
+      "video": widget.lesson,
+      "downloaded": checkDownload,
+      "onDownloadError": widget.onDownloadError
     };
-    print('listvalue');
     downloadID = video['course_id'].toString() + video['video_id'].toString();
+    checkDownload();
+  }
+
+  checkDownload() {
     try {
-      isVideoDownloaded = box
-              .read(video['course_id'])
-              .split("||")
-              .where((el) => jsonDecode(el)['id'] == video['video_id'])
-              .length >
-          0;
+      widget.checkDownloads();
     } catch (e) {}
+    setState(() {
+      try {
+        isVideoDownloaded = box
+                .read(video['course_id'])
+                .split("||")
+                .where((el) => jsonDecode(el)['id'] == video['video_id'])
+                .length >
+            0;
+      } catch (e) {}
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    print("reload");
     return _loading
         ? Container(
             margin: EdgeInsets.only(right: 12),
@@ -1181,7 +1303,6 @@ class StateItem extends State<Item> {
                 ),
                 onTap: () async {
                   if (widget.donSee) {
-                    print(widget.lessonLast);
                     // await Get.dialog(VideoScreen(widget.lessonLast,index:widget.indexLast));
                     Get.snackbar(null, null,
                         snackPosition: SnackPosition.BOTTOM,
@@ -1199,9 +1320,6 @@ class StateItem extends State<Item> {
                         ));
                   } else {
                     if (widget.lock) {
-                      print(widget.lesson);
-                      print(widget.index);
-                      print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
                       await Get.to(
                           VideoScreen(widget.lesson, index: widget.index));
                       StreamController<int> controller =
@@ -1338,6 +1456,7 @@ class StateItem extends State<Item> {
                                           } catch (e) {}
                                           _mainController.listValue
                                               .remove(downloadID);
+                                          print(_mainController.listValue);
                                           Get.appUpdate();
                                         },
                                       )

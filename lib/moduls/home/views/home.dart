@@ -1049,8 +1049,6 @@ class StateItemCont extends State<ItemCont> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.lesProg);
-    print('build');
     return image != null &&
             !((Get.width * (widget.lesProg / lesAll)) > Get.width
                     ? Get.width - 50
