@@ -32,6 +32,7 @@ dependencies:
   image_picker: any
   webview_flutter: any
   percent_indicator: any
+  flutter_slidable: any
 
 dev_dependencies:
   flutter_test:
