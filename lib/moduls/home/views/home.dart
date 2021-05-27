@@ -43,6 +43,7 @@ class Statehome extends State<HomePage> {
   }
 
   initPrefs() async {
+    print(contunies);
     if (_mainController.profile['id'] != null) {
       await _mainController.initProfile(_mainController.profile['id']);
     }
@@ -54,6 +55,7 @@ class Statehome extends State<HomePage> {
   }
 
   void loadContinues() {
+    print(_mainController.listContCourse.length);
     _mainController.listContCourse.forEach((el) {
       contunies.add(ItemCont(
           el['lesson_id'],
@@ -145,7 +147,8 @@ class Statehome extends State<HomePage> {
                                             _mainController.currentIndex.value =
                                                 4;
                                           } else {
-                                            await Get.dialog(SettingPage());
+                                            await Get.dialog(SettingPage(),
+                                                useSafeArea: false);
                                             var responces = await Backend()
                                                 .getUser(id: box.read("id"));
                                             _mainController.profile.value =
@@ -364,7 +367,7 @@ class Statehome extends State<HomePage> {
                                             margin: EdgeInsets.only(top: 7),
                                             width: Get.width,
                                             height: 223,
-                                            child: ListView.builder(
+                                            child: Obx(() => ListView.builder(
                                                 padding:
                                                     EdgeInsets.only(left: 20),
                                                 scrollDirection:
@@ -375,7 +378,7 @@ class Statehome extends State<HomePage> {
                                                     .getUservideo_time.length,
                                                 itemBuilder: (c, i) {
                                                   var lesProg = _mainController
-                                                      .getUservideo_time
+                                                      .getUservideo_time_all
                                                       .where((el) =>
                                                           el['course_id'] ==
                                                           _mainController
@@ -507,7 +510,7 @@ class Statehome extends State<HomePage> {
                                                   } else {
                                                     return Container();
                                                   }
-                                                }),
+                                                })),
                                           )
                                         : Container(),
                                   ],
@@ -731,7 +734,7 @@ class StateItem extends State<Item> {
       initImage();
       var stat = await Backend().getStatCourse(widget.id);
       lesAll = int.tryParse(stat.data[0]['lessons_count']);
-      lesProg = widget.mainController.getUservideo_time
+      lesProg = widget.mainController.getUservideo_time_all
           .where((el) => el['course_id'] == widget.id)
           .length;
     });
@@ -757,107 +760,104 @@ class StateItem extends State<Item> {
 
   @override
   Widget build(BuildContext context) {
-    return _loading
-        ? Container(
+    return _image != null &&
+            !((Get.width * (lesProg / lesAll)) > Get.width
+                    ? Get.width - 50
+                    : (Get.width * (lesProg / lesAll) - 35))
+                .isNaN
+        ? _loading
+            ? Container(
+                margin: EdgeInsets.only(right: 12),
+                height: 142,
+                width: 216,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  color: Colors.black.withOpacity(0.1),
+                ),
+              )
+            : GestureDetector(
+                child: Container(
+                  margin: EdgeInsets.only(right: 12),
+                  height: 142,
+                  width: 216,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      color: Colors.black.withOpacity(0.04),
+                      image: DecorationImage(image: _image, fit: BoxFit.cover)),
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        bottom: 0,
+                        child: Container(
+                          height: 50,
+                          width: 216,
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10)),
+                              gradient: LinearGradient(
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter,
+                                  colors: [
+                                    Colors.black.withOpacity(1),
+                                    Colors.black.withOpacity(0)
+                                  ])),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.only(
+                                    left: 18, right: 10, bottom: 12),
+                                child: AutoSizeText(
+                                  widget.text,
+                                  style: white_title2_card_text_title,
+                                  minFontSize: 10,
+                                  maxLines: 1,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      widget.mainController.finishedCourses
+                                  .where((element) =>
+                                      element['course_id'] == widget.id)
+                                  .length ==
+                              0
+                          ? widget.mainController.auth.value
+                              ? Positioned(
+                                  bottom: 1,
+                                  child: Container(
+                                    margin: EdgeInsets.only(left: 7, right: 7),
+                                    height: 2,
+                                    width: (202 * (lesProg / (lesAll))),
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : Container()
+                          : Container()
+                    ],
+                  ),
+                ),
+                onTap: () async {
+                  // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+                  //     statusBarIconBrightness: Brightness.light,
+                  //     statusBarBrightness: Brightness.light,
+                  //     systemNavigationBarColor: Colors.white
+                  // ));
+                  widget.homeController.videos = {}.obs;
+                  Get.appUpdate();
+                  Get.toNamed(Routes.COURSE, arguments: widget.id);
+                },
+              )
+        : Container(
             margin: EdgeInsets.only(right: 12),
             height: 142,
             width: 216,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(10)),
-              color: Colors.black.withOpacity(0.04),
+              color: Colors.black.withOpacity(0.1),
             ),
-          )
-        : GestureDetector(
-            child: Container(
-              margin: EdgeInsets.only(right: 12),
-              height: 142,
-              width: 216,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  color: Colors.black.withOpacity(0.04),
-                  image: DecorationImage(image: _image, fit: BoxFit.cover)),
-              child: Stack(
-                children: [
-                  Positioned(
-                    bottom: 0,
-                    child: Container(
-                      height: 50,
-                      width: 216,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                          gradient: LinearGradient(
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                              colors: [
-                                Colors.black.withOpacity(1),
-                                Colors.black.withOpacity(0)
-                              ])),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.only(
-                                left: 18, right: 10, bottom: 12),
-                            child: AutoSizeText(
-                              widget.text,
-                              style: white_title2_card_text_title,
-                              minFontSize: 10,
-                              maxLines: 1,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  widget.mainController.finishedCourses
-                              .where((element) =>
-                                  element['course_id'] == widget.id)
-                              .length ==
-                          0
-                      ? !((Get.width * (lesProg / lesAll)) > Get.width
-                                  ? Get.width - 50
-                                  : (Get.width * (lesProg / lesAll) - 35))
-                              .isNaN
-                          ? ((Get.width * (lesProg / lesAll)) > Get.width
-                                      ? Get.width - 50
-                                      : (Get.width * (lesProg / lesAll) -
-                                          35)) >=
-                                  0
-                              ///////////////////////////////////////////////////////////////////
-                              ? widget.mainController.auth.value
-                                  ? Positioned(
-                                      bottom: 1,
-                                      child: Container(
-                                        margin: EdgeInsets.only(
-                                            left: 7, right: 100),
-                                        height: 2,
-                                        width: (Get.width *
-                                                    (lesProg / lesAll)) >
-                                                Get.width
-                                            ? Get.width - 50
-                                            : (Get.width * (lesProg / lesAll) -
-                                                35),
-                                        color: Colors.white,
-                                      ),
-                                    )
-                                  : Container()
-                              : Container()
-                          : Container()
-                      : Container()
-                ],
-              ),
-            ),
-            onTap: () async {
-              // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-              //     statusBarIconBrightness: Brightness.light,
-              //     statusBarBrightness: Brightness.light,
-              //     systemNavigationBarColor: Colors.white
-              // ));
-              widget.homeController.videos = {}.obs;
-              Get.appUpdate();
-              Get.toNamed(Routes.COURSE, arguments: widget.id);
-            },
           );
   }
 }
@@ -920,7 +920,7 @@ class StateItemCat extends State<ItemCat> {
             width: 142,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(10)),
-              color: Colors.black.withOpacity(0.04),
+              color: Colors.black.withOpacity(0.1),
             ),
           )
         : GestureDetector(
@@ -972,8 +972,10 @@ class StateItemCat extends State<ItemCat> {
               ),
             ),
             onTap: () async {
-              await widget.homeController
-                  .getCoursesByCat(widget.id, widget.text);
+              try {
+                await widget.homeController
+                    .getCoursesByCat(widget.id, widget.text);
+              } catch (e) {}
             },
           );
   }
@@ -1002,6 +1004,7 @@ class StateItemCont extends State<ItemCont> {
   var _image;
   var video;
   var course;
+
   @override
   void initState() {
     getVideo();
@@ -1061,7 +1064,7 @@ class StateItemCont extends State<ItemCont> {
                 width: 142,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(10)),
-                  color: Colors.black.withOpacity(0.04),
+                  color: Colors.black.withOpacity(0.1),
                 ),
               )
             : GestureDetector(
@@ -1073,53 +1076,57 @@ class StateItemCont extends State<ItemCont> {
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                       color: Colors.black.withOpacity(0.04),
                       image: DecorationImage(image: _image, fit: BoxFit.cover)),
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        bottom: 0,
-                        child: Container(
-                          height: 50,
-                          width: 339,
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
-                              gradient: LinearGradient(
-                                  begin: Alignment.bottomCenter,
-                                  end: Alignment.topCenter,
-                                  colors: [
-                                    Colors.black.withOpacity(1),
-                                    Colors.black.withOpacity(0)
-                                  ])),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: Container(
-                          padding:
-                              EdgeInsets.only(left: 25, right: 10, bottom: 12),
-                          child: AutoSizeText(
-                            course['topic'],
-                            style: white_title3_card_text_title,
-                            minFontSize: 10,
-                            maxLines: 1,
+                  child: Container(
+                    height: 50,
+                    width: 339,
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          bottom: 0,
+                          child: Container(
+                            height: 50,
+                            width: 339,
+                            decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)),
+                                gradient: LinearGradient(
+                                    begin: Alignment.bottomCenter,
+                                    end: Alignment.topCenter,
+                                    colors: [
+                                      Colors.black.withOpacity(1),
+                                      Colors.black.withOpacity(0)
+                                    ])),
                           ),
                         ),
-                      ),
-                      Positioned(
-                        bottom: 1,
-                        child: Container(
-                          margin: EdgeInsets.only(left: 7, right: 100),
-                          height: 2,
-                          width: (Get.width * (widget.lesProg / lesAll)) >
-                                  Get.width
-                              ? Get.width - 50
-                              : (Get.width * (widget.lesProg / lesAll) - 35),
-                          color: Colors.white,
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Container(
+                            padding: EdgeInsets.only(
+                                left: 25, right: 10, bottom: 12),
+                            child: AutoSizeText(
+                              course['topic'],
+                              style: white_title3_card_text_title,
+                              minFontSize: 10,
+                              maxLines: 1,
+                            ),
+                          ),
                         ),
-                      )
-                    ],
+                        Positioned(
+                          bottom: 1,
+                          child: Container(
+                            margin: EdgeInsets.only(left: 7, right: 7),
+                            height: 2,
+                            width: ((339 - 14) * (widget.lesProg / (lesAll))) >
+                                    9999
+                                ? 0
+                                : ((339 - 14) * (widget.lesProg / (lesAll))),
+                            color: Colors.white,
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 onTap: () async {
@@ -1134,164 +1141,8 @@ class StateItemCont extends State<ItemCont> {
             width: 342,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(10)),
-              color: Colors.black.withOpacity(0.04),
+              color: Colors.black.withOpacity(0.1),
             ),
           );
-  }
-}
-
-class ItemConte extends StatefulWidget {
-  String idVideo;
-  String idCourse;
-  var duration;
-  var homeController;
-  var mainController;
-
-  ItemConte(this.idVideo, this.idCourse, this.duration, this.homeController,
-      this.mainController);
-
-  @override
-  State<StatefulWidget> createState() {
-    return StateItemConte();
-  }
-}
-
-class StateItemConte extends State<ItemCont> {
-  bool _loading = true;
-  var image;
-  var _image;
-  var video;
-  var course;
-
-  @override
-  void initState() {
-    getVideo();
-  }
-
-  var lesAll = 0;
-  var lesProg = 0;
-
-  void getVideo() async {
-    StreamController<int> controller = StreamController<int>();
-    Stream stream = controller.stream;
-    stream.listen((value) async {
-      var responce = await Backend().getCourse(widget.idCourse);
-      course = responce.data.length != 0 ? responce.data['kurses'][0] : null;
-      image = course != null ? course['banner_small'] : null;
-      StreamController<int> controller = StreamController<int>();
-      Stream stream = controller.stream;
-      stream.listen((value) async {
-        initImage();
-      });
-      ;
-      course != null ? controller.add(1) : null;
-      var stat = await Backend().getStatCourse(widget.idCourse);
-      lesAll = int.tryParse(stat.data[0]['lessons_count']);
-      lesProg = widget.mainController.getUservideo_time
-          .where((el) => el['course_id'] == widget.idCourse)
-          .length;
-      setState(() {});
-    });
-    controller.add(1);
-  }
-
-  initImage() {
-    _image = new NetworkImage(
-      '${image}',
-    );
-    _image.resolve(ImageConfiguration()).addListener(
-      ImageStreamListener(
-        (info, call) {
-          if (mounted) {
-            setState(() {
-              _loading = false;
-            });
-          }
-        },
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return image != null &&
-            !((Get.width * (lesProg / lesAll)) > Get.width
-                    ? Get.width - 50
-                    : (Get.width * (lesProg / lesAll) - 35))
-                .isNaN
-        ? _loading
-            ? Container(
-                margin: EdgeInsets.only(right: 20),
-                height: 142,
-                width: 216,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  color: Colors.black.withOpacity(0.04),
-                ),
-              )
-            : GestureDetector(
-                child: Container(
-                  margin: EdgeInsets.only(right: 12),
-                  height: 142,
-                  width: 216,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      color: Colors.black.withOpacity(0.04),
-                      image: DecorationImage(image: _image, fit: BoxFit.cover)),
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        bottom: 0,
-                        child: Container(
-                          height: 50,
-                          width: 216,
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10)),
-                              gradient: LinearGradient(
-                                  begin: Alignment.bottomCenter,
-                                  end: Alignment.topCenter,
-                                  colors: [
-                                    Colors.black.withOpacity(1),
-                                    Colors.black.withOpacity(0)
-                                  ])),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: Container(
-                          padding:
-                              EdgeInsets.only(left: 25, right: 10, bottom: 12),
-                          child: AutoSizeText(
-                            course['topic'],
-                            style: white_title3_card_text_title,
-                            minFontSize: 10,
-                            maxLines: 1,
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 1,
-                        child: Container(
-                          margin: EdgeInsets.only(left: 7, right: 100),
-                          height: 2,
-                          width: (Get.width * (lesProg / lesAll)) > Get.width
-                              ? Get.width - 50
-                              : (Get.width * (lesProg / lesAll) - 35),
-                          color: Colors.white,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                onTap: () async {
-                  Get.toNamed(Routes.COURSE, arguments: widget.idCourse);
-
-                  setState(() {});
-                },
-              )
-        : Container();
   }
 }

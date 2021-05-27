@@ -9,7 +9,7 @@
 
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="new_school_official"
+        android:label="New School"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

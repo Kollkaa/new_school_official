@@ -35,8 +35,6 @@ class ProfileController extends GetxController {
     await (_mainController.searchCourse.value = []);
     await _mainController.widgets.removeAt(4);
     await _mainController.widgets.add(AuthPage());
-    print(_mainController.profile);
-    print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
     Get.appUpdate();
   }
 }

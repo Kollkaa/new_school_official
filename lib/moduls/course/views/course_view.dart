@@ -33,10 +33,13 @@ class StateCourse extends State<CourseScreen> {
   CourseController _courseController = Get.put(CourseController());
   HomeController _homeController = Get.find();
   MainController _mainController = Get.find();
+
+  var materialIndex = -1;
   final GetStorage box = GetStorage();
   var lessonLast;
   var indexLast;
   var notDownloadedVideos;
+  List<bool> isDownloadedMaterials;
 
   @override
   void initState() {
@@ -73,10 +76,28 @@ class StateCourse extends State<CourseScreen> {
         ));
   }
 
+  checkMaterialDownloads() {
+    isDownloadedMaterials = List.filled(
+        _homeController.course['kurses'][0]['materials'].length, false);
+    var index = 0;
+    _homeController.course['kurses'][0]['materials'].forEach((el) {
+      try {
+        isDownloadedMaterials[index] = box
+                .read(
+                    "material" + "${_homeController.course['kurses'][0]['id']}")
+                .split('||')
+                .where((elem) => jsonDecode(elem)['id'] == el['id'])
+                .length >
+            0;
+      } catch (e) {}
+      index++;
+    });
+    setState(() {});
+  }
+
   checkDownloads() {
     setState(() {
       try {
-        print("lengths");
         var downloadedVideos = box.read(_courseController.id).split("||");
         var allVideos = _homeController.videos['lessons'].reversed.toList();
 
@@ -86,9 +107,7 @@ class StateCourse extends State<CourseScreen> {
                     num.parse(jsonDecode(elem)['id']) == num.parse(el['id']))
                 .length ==
             0);
-        print(notDownloadedVideos);
       } catch (e) {
-        print(e);
         notDownloadedVideos = [1];
       }
     });
@@ -103,7 +122,9 @@ class StateCourse extends State<CourseScreen> {
       response = await Backend().getVideos(_courseController.id);
       _homeController.videos = response.data;
       checkDownloads();
+      checkMaterialDownloads();
     }
+    Get.appUpdate();
   }
 
   String getTitle() {
@@ -156,8 +177,7 @@ class StateCourse extends State<CourseScreen> {
                       ['done'] ==
                   0) {
               } else {
-                if (indexInLookLessonPrevius < 0) {
-                } else {
+                if (indexInLookLessonPrevius >= 0) {
                   lessonLast =
                       _homeController.videos['lessons'].reversed.toList()[i];
                   indexLast = i;
@@ -498,7 +518,9 @@ class StateCourse extends State<CourseScreen> {
                                       ),
                                       Obx(() => Visibility(
                                             visible:
-                                                notDownloadedVideos.length != 0,
+                                                notDownloadedVideos.length !=
+                                                        0 &&
+                                                    _mainController.auth.value,
                                             child: _mainController.auth.value
                                                 ? GestureDetector(
                                                     child: Row(
@@ -901,59 +923,116 @@ class StateCourse extends State<CourseScreen> {
   }
 
   Widget getMeterial(_homeController, _mainController) {
-    return Container(
-      margin: EdgeInsets.only(left: 16, right: 16, bottom: 41),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Материалы",
-              style: TextStyle(
-                  fontSize: 19,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.5,
-                  color: Colors.black,
-                  fontFamily: "Raleway")),
-          SizedBox(
-            height: 13,
-          ),
-          ..._homeController.course['kurses'][0]['materials']
-              .map((el) => GestureDetector(
-                    onTap: () {
-                      print(el);
-                    },
-                    child: Container(
-                      padding: EdgeInsets.only(bottom: 5),
-                      margin: EdgeInsets.only(bottom: 17),
-                      decoration: BoxDecoration(
-                          border: Border(
-                              bottom: BorderSide(
-                                  width: 1, color: Color(0xffECECEC)))),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("${el['material_name']}",
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w300,
-                                  letterSpacing: 0.5,
-                                  color: Colors.black,
-                                  fontFamily: "Raleway")),
-                          _mainController.auth.value
-                              ? SvgPicture.asset(
-                                  "assets/icons/down-arrow 1.svg")
-                              : Image.asset(
-                                  "assets/images/padlock 1_grey.png",
-                                  height: 16,
-                                  width: 16,
-                                )
-                        ],
-                      ),
+    return Obx(() => Container(
+          margin: EdgeInsets.only(left: 16, right: 16, bottom: 41),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Материалы",
+                  style: TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.5,
+                      color: Colors.black,
+                      fontFamily: "Raleway")),
+              SizedBox(
+                height: 13,
+              ),
+              ..._homeController.course['kurses'][0]['materials']
+                  .asMap()
+                  .entries
+                  .map((entry) {
+                String downloadID =
+                    _homeController.course['kurses'][0]['id'].toString() +
+                        entry.value['id'].toString();
+                var file = {
+                  "url": "${entry.value['material_file']}",
+                  "course_id": "${_homeController.course['kurses'][0]['id']}",
+                  "material_id": "${entry.value['id']}",
+                  "material": entry.value,
+                  "downloaded": checkMaterialDownloads,
+                  "onDownloadError": onDownloadError
+                };
+                return GestureDetector(
+                  onTap: () {
+                    if (_mainController.auth.value) {
+                      if (!isDownloadedMaterials[entry.key])
+                        _mainController.materialController.add(file);
+                      else
+                        print("open");
+                    }
+                  },
+                  child: Container(
+                    padding: EdgeInsets.only(bottom: 5),
+                    margin: EdgeInsets.only(bottom: 17),
+                    decoration: BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(
+                                width: 1, color: Color(0xffECECEC)))),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("${entry.value['material_name']}",
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w300,
+                                letterSpacing: 0.5,
+                                color: Colors.black,
+                                fontFamily: "Raleway")),
+                        _mainController.auth.value
+                            ? !isDownloadedMaterials[entry.key]
+                                ? !_mainController.materialValue
+                                        .containsKey(downloadID)
+                                    ? SvgPicture.asset(
+                                        "assets/icons/down-arrow 1.svg")
+                                    : GestureDetector(
+                                        child: Container(
+                                          width: 20.0,
+                                          height: 20.0,
+                                          child: Stack(children: [
+                                            CircularProgressIndicator(
+                                              value: _mainController
+                                                      .materialValue[downloadID]
+                                                  ['progress'],
+                                              backgroundColor:
+                                                  Color(0xFFF9F9F9F9),
+                                              strokeWidth: 1.5,
+                                            ),
+                                            Center(
+                                              child: Container(
+                                                height: 7.5,
+                                                width: 7.5,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ]),
+                                        ),
+                                        onTapDown: (_) {
+                                          try {
+                                            _mainController
+                                                .materialValue[downloadID]
+                                                    ["cancelToken"]
+                                                .cancel();
+                                          } catch (e) {}
+                                          _mainController.materialValue
+                                              .remove(downloadID);
+                                          Get.appUpdate();
+                                        },
+                                      )
+                                : Container()
+                            : Image.asset(
+                                "assets/images/padlock 1_grey.png",
+                                height: 16,
+                                width: 16,
+                              )
+                      ],
                     ),
-                  ))
-              .toList()
-        ],
-      ),
-    );
+                  ),
+                );
+              }).toList()
+            ],
+          ),
+        ));
   }
 
   Widget getMDescription(_homeController) {
@@ -1322,14 +1401,19 @@ class StateItem extends State<Item> {
                     if (widget.lock) {
                       await Get.to(
                           VideoScreen(widget.lesson, index: widget.index));
-                      StreamController<int> controller =
-                          StreamController<int>();
-                      Stream stream = controller.stream;
-                      stream.listen((value) async {
-                        await widget.mainController.initProfile(box.read('id'));
-                        setState(() {});
-                      });
-                      controller.add(1);
+                      if (_mainController.auth.value) {
+                        StreamController<int> controller =
+                            StreamController<int>();
+                        Stream stream = controller.stream;
+                        stream.listen((value) async {
+                          await widget.mainController
+                              .initProfile(box.read('id'));
+                          try {
+                            setState(() {});
+                          } catch (e) {}
+                        });
+                        controller.add(1);
+                      }
                     } else {
                       if (widget.mainController.auth.value) {
                         if (widget.mainController.profile['subscriber'] ==
@@ -1456,7 +1540,6 @@ class StateItem extends State<Item> {
                                           } catch (e) {}
                                           _mainController.listValue
                                               .remove(downloadID);
-                                          print(_mainController.listValue);
                                           Get.appUpdate();
                                         },
                                       )

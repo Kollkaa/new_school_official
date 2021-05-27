@@ -32,11 +32,14 @@ class StateProfile extends State<ProfilePage> {
   MainController _mainController = Get.find();
   final GetStorage box = GetStorage();
   bool loadedImage = false;
+  var nonCompletedTests;
 
   Image _image;
+
   @override
   void initState() {
     super.initState();
+
     initStat();
     loadImage();
   }
@@ -64,8 +67,6 @@ class StateProfile extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    print(box.read("id"));
-
     return Scaffold(
       backgroundColor: white_color,
       body: SafeArea(
@@ -109,10 +110,11 @@ class StateProfile extends State<ProfilePage> {
                                       } else {
                                         await Get.to(SettingPage(),
                                             duration: Duration());
-                                        var responces = await Backend()
+                                        var responses = await Backend()
                                             .getUser(id: box.read("id"));
+                                        // ignore: deprecated_member_use, invalid_use_of_protected_member
                                         _mainController.profile.value =
-                                            responces.data['clients'][0];
+                                            responses.data['clients'][0];
                                         setState(() {});
                                       }
                                     },
@@ -302,7 +304,7 @@ class StateProfile extends State<ProfilePage> {
                         )
                       : Container(),
 
-                  _mainController.listContCourse.length != 0
+                  nonCompletedTests.length != 0
                       ? Container(
                           padding: EdgeInsets.only(left: 20),
                           child: Text(
@@ -312,7 +314,7 @@ class StateProfile extends State<ProfilePage> {
                           ),
                         )
                       : Container(),
-                  _mainController.getUservideo_time.length != 0
+                  nonCompletedTests.length != 0
                       ? Container(
                           margin: EdgeInsets.only(top: 7),
                           width: Get.width,
@@ -322,96 +324,17 @@ class StateProfile extends State<ProfilePage> {
                               scrollDirection: Axis.horizontal,
                               addAutomaticKeepAlives: true,
                               cacheExtent: Get.width * 2,
-                              itemCount:
-                                  _mainController.getUservideo_time.length,
+                              itemCount: nonCompletedTests.length,
                               itemBuilder: (c, i) {
-                                if (_mainController.getUservideo_time.reversed
-                                            .toList()
-                                            .where((element) =>
-                                                _mainController
-                                                    .getUservideo_time.reversed
-                                                    .toList()[i]['course_id'] ==
-                                                element['course_id'])
-                                            .length >
-                                        1 &&
-                                    _mainController.finishedCourses
-                                            .where((element) {
-                                          return element['course_id'] ==
-                                              _mainController
-                                                  .getUservideo_time.reversed
-                                                  .toList()[i]['course_id'];
-                                        }).length ==
-                                        0) {
-                                  if (_mainController.getUservideo_time.reversed
-                                          .toList()
-                                          .indexWhere((element) =>
-                                              _mainController
-                                                  .getUservideo_time.reversed
-                                                  .toList()[i]['course_id'] ==
-                                              element['course_id']) >=
-                                      0) {
-                                    if (_mainController
-                                            .getUservideo_time.reversed
-                                            .toList()[i]['lesson_id'] ==
-                                        _mainController
-                                                    .getUservideo_time.reversed
-                                                    .toList()[
-                                                _mainController
-                                                    .getUservideo_time.reversed
-                                                    .toList()
-                                                    .indexWhere((element) =>
-                                                        _mainController
-                                                                .getUservideo_time
-                                                                .reversed
-                                                                .toList()[i]
-                                                            ['course_id'] ==
-                                                        element['course_id'])]
-                                            ['lesson_id']) {
-                                      return ItemCont(
-                                        _mainController
-                                            .getUservideo_time.reversed
-                                            .toList()[i]['lesson_id'],
-                                        _mainController
-                                            .getUservideo_time.reversed
-                                            .toList()[i]['course_id'],
-                                        _mainController
-                                            .getUservideo_time.reversed
-                                            .toList()[i]['time'],
-                                        _homeController,
-                                        _mainController,
-                                      );
-                                    } else {
-                                      return Container();
-                                    }
-                                  } else {
-                                    return Container();
-                                  }
-                                }
-                                if (_mainController.finishedCourses
-                                        .where((element) =>
-                                            element['course_id'] ==
-                                            _mainController
-                                                .getUservideo_time.reversed
-                                                .toList()[i]['course_id'])
-                                        .length ==
-                                    0) {
-                                  return ItemCont(
-                                    _mainController.getUservideo_time.reversed
-                                        .toList()[i]['lesson_id'],
-                                    _mainController.getUservideo_time.reversed
-                                        .toList()[i]['course_id'],
-                                    _mainController.getUservideo_time.reversed
-                                        .toList()[i]['time'],
-                                    _homeController,
-                                    _mainController,
-                                  );
-                                } else {
-                                  return Container();
-                                }
+                                return getitemOtherCard(
+                                    "${nonCompletedTests[i]['name']}",
+                                    "${nonCompletedTests[i]['banner_small']}",
+                                    nonCompletedTests[i]['id'],
+                                    _homeController);
                               }),
                         )
                       : Container(),
-                  _mainController.getUservideo_time.length != 0
+                  nonCompletedTests.length != 0
                       ? SizedBox(
                           height: 45,
                         )
@@ -437,7 +360,8 @@ class StateProfile extends State<ProfilePage> {
                                           element['id'] == el['course_id'])
                                       .length >=
                                   1)
-                              .toList(),_homeController),
+                              .toList(),
+                          _homeController),
                   SizedBox(
                     height: 40,
                   )
@@ -543,7 +467,7 @@ class StateProfile extends State<ProfilePage> {
           Container(
             padding: EdgeInsets.only(left: 20),
             child: Text(
-              "${text}",
+              "$text",
               style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
             ),
           ),
@@ -556,8 +480,11 @@ class StateProfile extends State<ProfilePage> {
                 scrollDirection: Axis.horizontal,
                 itemCount: length,
                 itemBuilder: (c, i) {
-                  return item("${type[i]['name']}",
-                      "${type[i]['banner_small']}", type[i]['id'], homeController);
+                  return item(
+                      "${type[i]['name']}",
+                      "${type[i]['banner_small']}",
+                      type[i]['id'],
+                      homeController);
                 }),
           )
         ],
@@ -566,67 +493,110 @@ class StateProfile extends State<ProfilePage> {
   }
 
   Widget getitemOtherCard(text, image, id, homeController) {
-    return GestureDetector(
-      child: Container(
-        margin: EdgeInsets.only(right: 12),
-        height: 142,
-        width: 216,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            color: Colors.blue,
-            image: DecorationImage(
-                image: NetworkImage("${image}"), fit: BoxFit.cover)),
-        child: Stack(
-          children: [
-            Positioned(
-              bottom: 0,
-              child: Container(
-                height: 50,
-                width: 216,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    gradient: LinearGradient(
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                        colors: [
-                          Colors.black.withOpacity(1),
-                          Colors.black.withOpacity(0)
-                        ])),
+    return image != null
+        ? GestureDetector(
+            child: Container(
+              margin: EdgeInsets.only(right: 12),
+              height: 142,
+              width: 216,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  color: Colors.blue,
+                  image: DecorationImage(
+                      image: NetworkImage("$image"), fit: BoxFit.cover)),
+              child: Stack(
+                children: [
+                  Positioned(
+                    bottom: 0,
+                    child: Container(
+                      height: 50,
+                      width: 216,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          gradient: LinearGradient(
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                              colors: [
+                                Colors.black.withOpacity(1),
+                                Colors.black.withOpacity(0)
+                              ])),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      padding: EdgeInsets.only(left: 18, right: 10, bottom: 12),
+                      child: AutoSizeText(
+                        text,
+                        style: white_title2_card_text_title,
+                        minFontSize: 10,
+                        maxLines: 1,
+                      ),
+                    ),
+                  )
+                ],
               ),
             ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                padding: EdgeInsets.only(left: 18, right: 10, bottom: 12),
-                child: AutoSizeText(
-                  text,
-                  style: white_title2_card_text_title,
-                  minFontSize: 10,
-                  maxLines: 1,
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-      onTap: () async {
-        homeController.videos = {}.obs;
-        Get.appUpdate();
-        Get.toNamed(Routes.COURSE, arguments: id);
-      },
-    );
+            onTap: () async {
+              homeController.videos = {}.obs;
+              Get.appUpdate();
+              Get.toNamed(Routes.COURSE, arguments: id);
+            },
+          )
+        : Container(
+            margin: EdgeInsets.only(right: 12),
+            height: 142,
+            width: 216,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Colors.black.withOpacity(0.1),
+            ),
+          );
   }
 
   void initStat() async {
+    nonCompletedTests = [];
+    _mainController.allCourse =
+        (await Backend().getAllCourses()).data['kurses'];
+    print(_mainController.profile['id']);
+    checkCompletedTests();
     await _mainController.initProfile(_mainController.profile['id']);
     dios.Response getStats = await Backend().getStat(id: box.read('id'));
+    // ignore: deprecated_member_use, deprecated_member_use, invalid_use_of_protected_member
     _mainController.getStats.value = getStats.data['user_stats'][0];
+
     setState(() {});
+  }
+
+  checkCompletedTests() async {
+    var allCourses = (await Backend().getAllCourses()).data["kurses"];
+    print(_mainController.finishedCourses);
+    for (var i = 0; i < allCourses.length; i++) {
+      var stat = await Backend().getStatCourse(allCourses[i]['id']);
+      var length = num.parse(stat.data[0]["lessons_count"]);
+      var response = await Backend().getVideos(allCourses[i]['id']);
+      var videos = response.data;
+
+      if (_mainController.getUservideo_time_all.indexWhere((element) =>
+              element['lesson_id'] ==
+              videos['lessons'].reversed.toList()[length - 1]['id']) >=
+          0) {
+        if (_mainController.finishedCourses
+                .where((el) => el['course_id'] == allCourses[i]['id'])
+                .length ==
+            0) {
+          setState(() {
+            nonCompletedTests.add(allCourses[i]);
+          });
+        }
+      }
+    }
   }
 }
 
+// ignore: must_be_immutable
 class ItemCont extends StatefulWidget {
   String idVideo;
   String idCourse;
@@ -651,28 +621,31 @@ class StateItemCont extends State<ItemCont> {
   var course;
   @override
   void initState() {
+    super.initState();
     getVideo();
   }
 
   var lesAll = 0;
   var lesProg = 0;
   void getVideo() async {
+    // ignore: close_sinks
     StreamController<int> controller = StreamController<int>();
     Stream stream = controller.stream;
     stream.listen((value) async {
-      var responce = await Backend().getCourse(widget.idCourse);
-      course = responce.data.length != 0 ? responce.data['kurses'][0] : null;
+      var response = await Backend().getCourse(widget.idCourse);
+      course = response.data.length != 0 ? response.data['kurses'][0] : null;
       image = course != null ? course['banner_small'] : null;
+      // ignore: close_sinks
       StreamController<int> controller = StreamController<int>();
       Stream stream = controller.stream;
       stream.listen((value) async {
         initImage();
       });
-      ;
+      // ignore: unnecessary_statements
       course != null ? controller.add(1) : null;
       var stat = await Backend().getStatCourse(widget.idCourse);
       lesAll = int.tryParse(stat.data[0]['lessons_count']);
-      lesProg = widget.mainController.getUservideo_time
+      lesProg = widget.mainController.getUservideo_time_all
           .where((el) => el['course_id'] == widget.idCourse)
           .length;
       setState(() {});
@@ -682,7 +655,7 @@ class StateItemCont extends State<ItemCont> {
 
   initImage() {
     _image = new NetworkImage(
-      '${image}',
+      '$image',
     );
     _image.resolve(ImageConfiguration()).addListener(
       ImageStreamListener(
@@ -699,7 +672,7 @@ class StateItemCont extends State<ItemCont> {
 
   @override
   Widget build(BuildContext context) {
-    return image != null &&
+    return _image != null &&
             !((Get.width * (lesProg / lesAll)) > Get.width
                     ? Get.width - 50
                     : (Get.width * (lesProg / lesAll) - 35))
@@ -711,7 +684,7 @@ class StateItemCont extends State<ItemCont> {
                 width: 216,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(10)),
-                  color: Colors.black.withOpacity(0.04),
+                  color: Colors.black.withOpacity(0.1),
                 ),
               )
             : GestureDetector(
@@ -751,7 +724,7 @@ class StateItemCont extends State<ItemCont> {
                               EdgeInsets.only(left: 25, right: 10, bottom: 12),
                           child: AutoSizeText(
                             course['topic'],
-                            style: white_title3_card_text_title,
+                            style: white_title2_card_text_title,
                             minFontSize: 10,
                             maxLines: 1,
                           ),
@@ -760,11 +733,9 @@ class StateItemCont extends State<ItemCont> {
                       Positioned(
                         bottom: 1,
                         child: Container(
-                          margin: EdgeInsets.only(left: 7, right: 100),
+                          margin: EdgeInsets.only(left: 7, right: 7),
                           height: 2,
-                          width: (Get.width * (lesProg / lesAll)) > Get.width
-                              ? Get.width - 50
-                              : (Get.width * (lesProg / lesAll) - 35),
+                          width: (202 * (lesProg / (lesAll))),
                           color: Colors.white,
                         ),
                       )
@@ -777,6 +748,14 @@ class StateItemCont extends State<ItemCont> {
                   Get.toNamed(Routes.COURSE, arguments: widget.idCourse);
                 },
               )
-        : Container();
+        : Container(
+            margin: EdgeInsets.only(right: 12),
+            height: 142,
+            width: 216,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              color: Colors.black.withOpacity(0.1),
+            ),
+          );
   }
 }

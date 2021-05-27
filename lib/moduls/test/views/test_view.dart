@@ -1,7 +1,8 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:new_school_official/moduls/main/controllers/main_controller.dart';
 import 'package:new_school_official/moduls/test/controller/test_controller.dart';
 import 'package:new_school_official/moduls/test/views/finish_page.dart';
 import 'package:new_school_official/moduls/test/views/question_page.dart';
@@ -13,135 +14,166 @@ class TestScreen extends StatefulWidget {
   State<StatefulWidget> createState() {
     return StateTestScreen();
   }
-
 }
-class StateTestScreen extends State<TestScreen>{
-  TestController testController=Get.put(TestController());
+
+class StateTestScreen extends State<TestScreen> {
+  TestController testController = Get.put(TestController());
+  final GetStorage box = GetStorage();
+  MainController _mainController = Get.find();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: white_color,
         body: SafeArea(
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      GestureDetector(
-                        child: Container(
-                          padding: EdgeInsets.only(
-                            left: 12,right: 14,top: 27,
-                          ),
-                          child: Icon(Icons.clear,size: 25,),
-                        ),
-                        onTapDown: (_){
-                          Get.dialog(
-                            Center(
-                              child:Container(
-                                child: Material(
-                                  color: Colors.transparent,
-                                  child: Container(
-                                    width: 248,
-                                    height: 106,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      color: Colors.white
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              GestureDetector(
+                child: Container(
+                  padding: EdgeInsets.only(
+                    left: 12,
+                    right: 14,
+                    top: 27,
+                  ),
+                  child: Icon(
+                    Icons.clear,
+                    size: 25,
+                  ),
+                ),
+                onTapDown: (_) {
+                  Get.dialog(Center(
+                      child: Container(
+                          child: Material(
+                              color: Colors.transparent,
+                              child: Container(
+                                width: 248,
+                                height: 106,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: Colors.white),
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      height: 6,
                                     ),
-                                    child: Column(
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
-                                        SizedBox(height: 6,),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.end,
-                                          children: [
-                                            GestureDetector(
-                                              child: Icon(Icons.clear,size: 15,),
-                                              onTapDown: (_){
-                                                Get.back();
-                                              },
-                                            ),
-                                            SizedBox(width: 4,),
-
-                                          ],
+                                        GestureDetector(
+                                          child: Icon(
+                                            Icons.clear,
+                                            size: 15,
+                                          ),
+                                          onTapDown: (_) {
+                                            Get.back();
+                                          },
                                         ),
-                                        SizedBox(height: 6,),
-
-                                        Container(
-                                          child: Text("Точно хотите выйти?",
-                                            style:TextStyle(fontSize: 14,fontWeight: FontWeight.w600,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Releway"
-                                            )
-                                          )
+                                        SizedBox(
+                                          width: 4,
                                         ),
-                                        SizedBox(height: 12,),
-                                        Row(
-                                          children: [
-                                            GestureDetector(
-                                              child: Container(
-                                                  padding: EdgeInsets.only(top: 11,bottom: 12),
-                                                  width: 123,
-                                                  decoration: BoxDecoration(
-                                                      border: Border(top: BorderSide(width: 0.5,color:Colors.black.withOpacity(0.07)))
-                                                  ),
-                                                  child: Center(
-                                                    child: Text("Нет",
-                                                        style:TextStyle(fontSize: 12,fontWeight: FontWeight.w400,height: 1.2,color: Colors.black,letterSpacing: 0.5,fontFamily: "Releway"
-                                                        )
-                                                    ),
-                                                  )
-                                              ),
-                                              onTapDown: (_){
-                                                Get.back();
-                                              },
-                                            ),
-                                            GestureDetector(
-                                              child: Container(
-                                                  width: 123,
-                                                  padding: EdgeInsets.only(top: 11,bottom: 12),
-                                                  decoration: BoxDecoration(
-                                                      border: Border(left:BorderSide(width: 0.5,color:Colors.black.withOpacity(0.07)),top: BorderSide(width: 0.5,color:Colors.black.withOpacity(0.07)))
-                                                  ),
-                                                  child:Center(
-                                                    child:  Text("Да",
-                                                        style:TextStyle(fontSize: 12,fontWeight: FontWeight.w400,height: 1.2,color: Color(0xffeb5757),letterSpacing: 0.5,fontFamily: "Releway"
-                                                        )
-                                                    ),
-                                                  )
-                                              ),
-                                              onTapDown: (_){
-                                                Get.back();Get.back();
-                                              },
-                                            )
-                                          ],
-                                        ),
-
                                       ],
                                     ),
-                                  )
-                                )
-                              )
-                            )
-                          );
-                        },
-                      )
-                    ],
-                  ),
-                  Expanded(
-                    child: PageView(
-                      allowImplicitScrolling: false,
-                      physics: NeverScrollableScrollPhysics(),
-                      controller: testController.controller,
-                      children: [
-                        StartPage(),
-                        QuestionPage(),
-                        FinishPage()
-                      ],
-                    ),
-                  )
-                ]
-            )
-        )
-    );
+                                    SizedBox(
+                                      height: 6,
+                                    ),
+                                    Container(
+                                        child: Text("Точно хотите выйти?",
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                height: 1.2,
+                                                color: Colors.black,
+                                                letterSpacing: 0.5,
+                                                fontFamily: "Releway"))),
+                                    SizedBox(
+                                      height: 12,
+                                    ),
+                                    Row(
+                                      children: [
+                                        GestureDetector(
+                                          child: Container(
+                                              padding: EdgeInsets.only(
+                                                  top: 11, bottom: 12),
+                                              width: 123,
+                                              decoration: BoxDecoration(
+                                                  border: Border(
+                                                      top: BorderSide(
+                                                          width: 0.5,
+                                                          color: Colors.black
+                                                              .withOpacity(
+                                                                  0.07)))),
+                                              child: Center(
+                                                child: Text("Нет",
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        height: 1.2,
+                                                        color: Colors.black,
+                                                        letterSpacing: 0.5,
+                                                        fontFamily: "Releway")),
+                                              )),
+                                          onTapDown: (_) {
+                                            Get.back();
+                                          },
+                                        ),
+                                        GestureDetector(
+                                          child: Container(
+                                              width: 123,
+                                              padding: EdgeInsets.only(
+                                                  top: 11, bottom: 12),
+                                              decoration: BoxDecoration(
+                                                  border: Border(
+                                                      left: BorderSide(
+                                                          width: 0.5,
+                                                          color: Colors.black
+                                                              .withOpacity(
+                                                                  0.07)),
+                                                      top: BorderSide(
+                                                          width: 0.5,
+                                                          color: Colors.black
+                                                              .withOpacity(
+                                                                  0.07)))),
+                                              child: Center(
+                                                child: Text("Да",
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        height: 1.2,
+                                                        color:
+                                                            Color(0xffeb5757),
+                                                        letterSpacing: 0.5,
+                                                        fontFamily: "Releway")),
+                                              )),
+                                          onTapDown: (_) {
+                                            _mainController
+                                                .initProfile(box.read("id"));
+
+                                            Get.appUpdate();
+                                            Get.back();
+                                            Get.back();
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              )))));
+                },
+              )
+            ],
+          ),
+          Expanded(
+            child: PageView(
+              allowImplicitScrolling: false,
+              physics: NeverScrollableScrollPhysics(),
+              controller: testController.controller,
+              children: [StartPage(), QuestionPage(), FinishPage()],
+            ),
+          )
+        ])));
   }
-
-
 }

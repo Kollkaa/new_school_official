@@ -15,12 +15,25 @@ class CourseController extends GetxController {
 
   getStatByTest() async {
     var bak = Backend();
+    print(id);
+    print(_mainController.profile['id']);
     var responce =
         await bak.getTestStat(course_id: id, id: _mainController.profile['id']);
     var response = await bak.getTestByidCourse(course_id: id);
-    length = response.data['questions'].length;
+    print(response);
+    try {
+      length = response.data['questions'].length;
+    } catch (e) {
+      length = 0;
+    }
     print(responce.data);
     statTest = responce.data['test_result'][0];
+    if (statTest["answers_to_pass"] == '0') {
+      statTest["answers_to_pass"] = '4';
+      statTest["passed"] = false;
+      statTest["message"] = "Тест не пройден";
+    }
+    print(statTest);
     Get.appUpdate();
   }
 
