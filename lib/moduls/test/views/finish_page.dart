@@ -8,7 +8,8 @@ import 'package:new_school_official/moduls/test/controller/test_controller.dart'
 import 'package:new_school_official/routes/app_pages.dart';
 
 class FinishPage extends StatelessWidget {
-  TestController testController = Get.find();
+  final TestController testController;
+  FinishPage(this.testController);
 
   final GetStorage box = GetStorage();
   MainController _mainController = Get.find();
@@ -124,7 +125,13 @@ class FinishPage extends StatelessWidget {
                         )),
                     onTapDown: (_) {
                       _mainController.initProfile(box.read("id"));
-                      _courseController.statTest =  {'error': false, 'answers_correct': 2, 'answers_to_pass': 2, 'passed': true, 'message': 'Тест пройден'};
+                      _courseController.statTest = {
+                        'error': false,
+                        'answers_correct': 2,
+                        'answers_to_pass': 2,
+                        'passed': true,
+                        'message': 'Тест пройден'
+                      };
                       Get.appUpdate();
                       Get.back();
                     },

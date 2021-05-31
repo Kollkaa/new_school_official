@@ -236,15 +236,15 @@ class _ChewieDemoState extends State<VideoScreen> {
               statusBarBrightness: Brightness.dark,
               systemNavigationBarIconBrightness: Brightness.dark,
               systemNavigationBarColor: Colors.white));
-          // SystemChrome.setPreferredOrientations([
-          //   DeviceOrientation.portraitUp,
-          // ]);
           SystemChrome.setPreferredOrientations([
-            DeviceOrientation.landscapeRight,
-            DeviceOrientation.landscapeLeft,
             DeviceOrientation.portraitUp,
-            DeviceOrientation.portraitDown,
           ]);
+          // SystemChrome.setPreferredOrientations([
+          //   DeviceOrientation.landscapeRight,
+          //   DeviceOrientation.landscapeLeft,
+          //   DeviceOrientation.portraitUp,
+          //   DeviceOrientation.portraitDown,
+          // ]);
           // setState(() {});
           Get.back();
           Get.toNamed(Routes.TEST);
@@ -315,15 +315,15 @@ class _ChewieDemoState extends State<VideoScreen> {
                                 statusBarIconBrightness: Brightness.dark,
                                 statusBarBrightness: Brightness.dark,
                                 systemNavigationBarColor: Colors.white));
-                        // SystemChrome.setPreferredOrientations([
-                        //   DeviceOrientation.portraitUp,
-                        // ]);
                         SystemChrome.setPreferredOrientations([
-                          DeviceOrientation.landscapeRight,
-                          DeviceOrientation.landscapeLeft,
                           DeviceOrientation.portraitUp,
-                          DeviceOrientation.portraitDown,
                         ]);
+                        // SystemChrome.setPreferredOrientations([
+                        //   DeviceOrientation.landscapeRight,
+                        //   DeviceOrientation.landscapeLeft,
+                        //   DeviceOrientation.portraitUp,
+                        //   DeviceOrientation.portraitDown,
+                        // ]);
                         // setState(() {});
                         // Get.toNamed(Routes.TEST);
                         Get.back();
@@ -337,15 +337,15 @@ class _ChewieDemoState extends State<VideoScreen> {
                           statusBarBrightness: Brightness.dark,
                           systemNavigationBarIconBrightness: Brightness.dark,
                           systemNavigationBarColor: Colors.white));
-                      // SystemChrome.setPreferredOrientations([
-                      //   DeviceOrientation.portraitUp,
-                      // ]);
                       SystemChrome.setPreferredOrientations([
-                        DeviceOrientation.landscapeRight,
-                        DeviceOrientation.landscapeLeft,
                         DeviceOrientation.portraitUp,
-                        DeviceOrientation.portraitDown,
                       ]);
+                      // SystemChrome.setPreferredOrientations([
+                      //   DeviceOrientation.landscapeRight,
+                      //   DeviceOrientation.landscapeLeft,
+                      //   DeviceOrientation.portraitUp,
+                      //   DeviceOrientation.portraitDown,
+                      // ]);
                       // setState(() {});
 
                     }
@@ -385,7 +385,7 @@ class _ChewieDemoState extends State<VideoScreen> {
             ),
           ),
           onWillPop: () {
-            Get.back();
+            // Get.back();
             SystemChrome.setEnabledSystemUIOverlays(
                 [SystemUiOverlay.bottom, SystemUiOverlay.top]);
             SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -394,15 +394,15 @@ class _ChewieDemoState extends State<VideoScreen> {
                 statusBarBrightness: Brightness.dark,
                 systemNavigationBarIconBrightness: Brightness.dark,
                 systemNavigationBarColor: Colors.white));
-            // SystemChrome.setPreferredOrientations([
-            //   DeviceOrientation.portraitUp,
-            // ]);
             SystemChrome.setPreferredOrientations([
-              DeviceOrientation.landscapeRight,
-              DeviceOrientation.landscapeLeft,
               DeviceOrientation.portraitUp,
-              DeviceOrientation.portraitDown,
             ]);
+            // SystemChrome.setPreferredOrientations([
+            //   DeviceOrientation.landscapeRight,
+            //   DeviceOrientation.landscapeLeft,
+            //   DeviceOrientation.portraitUp,
+            //   DeviceOrientation.portraitDown,
+            // ]);
             // ignore: close_sinks
             // StreamController<int> controller = StreamController<int>();
             // Stream stream = controller.stream;

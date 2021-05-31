@@ -12,7 +12,7 @@ class TestController extends GetxController {
   MainController mainController = Get.find();
   HomeController homeController = Get.find();
   var currentIndexQuestion = 0.obs;
-  var controller = new PageController(initialPage: 0);
+  var controller;
   var questionsCount;
   var test;
   var stat;
@@ -37,6 +37,7 @@ class TestController extends GetxController {
     stat = await Backend().getTestStat(
         id: mainController.profile['id'],
         course_id: homeController.course['kurses'][0]['id']);
+    controller = new PageController(initialPage: 0);
     print(test);
     print(questionsCount);
     print(stat);

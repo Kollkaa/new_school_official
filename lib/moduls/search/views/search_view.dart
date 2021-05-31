@@ -34,70 +34,67 @@ class SearchScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                     color: Color(0xFFF9F9F9)),
-                child: Expanded(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Image.asset(
-                            "assets/images/search.png",
-                            width: 30,
-                            height: 20,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Image.asset(
+                          "assets/images/search.png",
+                          width: 30,
+                          height: 20,
+                        ),
+                        Container(
+                          height: 44,
+                          width: Get.width - 120,
+                          padding: EdgeInsets.only(top: 8),
+                          child: TextField(
+                            style: TextStyle(
+                                height: 1.6,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w300,
+                                color: Color(0xff434343),
+                                fontFamily: "Raleway"),
+                            decoration: InputDecoration(
+                                isDense: true,
+                                hintStyle: TextStyle(
+                                    height: 1.6,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w300,
+                                    color: Color(0xff434343).withOpacity(0.5),
+                                    fontFamily: "Raleway"),
+                                contentPadding:
+                                    EdgeInsets.all(1.0), //here your padding
+                                border: InputBorder.none,
+                                disabledBorder: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                errorBorder: InputBorder.none,
+                                hintText: "Поиск по курсу"),
+                            controller: _mainController.controllerSearch,
+                            onChanged: _mainController.onChange,
                           ),
-                          Container(
-                            height: 44,
-                            width: Get.width - 120,
-                            padding: EdgeInsets.only(top: 8),
-                            child: TextField(
-                              style: TextStyle(
-                                  height: 1.6,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w300,
-                                  color: Color(0xff434343),
-                                  fontFamily: "Raleway"),
-                              decoration: InputDecoration(
-                                  isDense: true,
-                                  hintStyle: TextStyle(
-                                      height: 1.6,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w300,
-                                      color: Color(0xff434343).withOpacity(0.5),
-                                      fontFamily: "Raleway"),
-                                  contentPadding:
-                                      EdgeInsets.all(1.0), //here your padding
-                                  border: InputBorder.none,
-                                  disabledBorder: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  errorBorder: InputBorder.none,
-                                  hintText: "Поиск по курсу"),
-                              controller: _mainController.controllerSearch,
-                              onChanged: _mainController.onChange,
+                        ),
+                      ],
+                    ),
+                    Obx(() => _mainController.searchCourse.length != 0 ||
+                            _mainController.controllerSearch.text.length != 0
+                        ? Container(
+                            padding: EdgeInsets.only(right: 10),
+                            child: GestureDetector(
+                              child: Icon(
+                                Icons.cancel,
+                                color: Colors.black.withOpacity(0.15),
+                              ),
+                              onTapDown: (_) {
+                                _mainController.controllerSearch.text = "";
+                                _mainController.searchCourse.value = [];
+                                Get.appUpdate();
+                              },
                             ),
-                          ),
-                        ],
-                      ),
-                      Obx(() =>
-                          _mainController.controllerSearch.text.length != 0
-                              ? Container(
-                                  padding: EdgeInsets.only(right: 10),
-                                  child: GestureDetector(
-                                    child: Icon(
-                                      Icons.cancel,
-                                      color: Colors.black.withOpacity(0.15),
-                                    ),
-                                    onTapDown: (_) {
-                                      _mainController.controllerSearch.text =
-                                          "";
-                                      _mainController.searchCourse.value = [];
-                                      Get.appUpdate();
-                                    },
-                                  ),
-                                )
-                              : Container())
-                    ],
-                  ),
+                          )
+                        : Container())
+                  ],
                 )),
 
             Obx(() => Expanded(

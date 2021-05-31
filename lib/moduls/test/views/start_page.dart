@@ -5,7 +5,8 @@ import 'package:new_school_official/moduls/test/controller/test_controller.dart'
 import 'package:new_school_official/service/backend.dart';
 
 class StartPage extends StatelessWidget {
-  TestController testController = Get.find();
+  final TestController testController;
+  StartPage(this.testController);
   @override
   Widget build(BuildContext context) {
     return testController.test != null

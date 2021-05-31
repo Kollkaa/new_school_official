@@ -20,6 +20,7 @@ class StateTestScreen extends State<TestScreen> {
   TestController testController = Get.put(TestController());
   final GetStorage box = GetStorage();
   MainController _mainController = Get.find();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -171,7 +172,11 @@ class StateTestScreen extends State<TestScreen> {
               allowImplicitScrolling: false,
               physics: NeverScrollableScrollPhysics(),
               controller: testController.controller,
-              children: [StartPage(), QuestionPage(), FinishPage()],
+              children: [
+                StartPage(testController),
+                QuestionPage(testController),
+                FinishPage(testController)
+              ],
             ),
           )
         ])));

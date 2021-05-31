@@ -128,10 +128,10 @@ class StateCourse extends State<CourseScreen> {
   }
 
   String getTitle() {
-    if (_courseController.statTest['passed']) {
-      return "Курс пройден";
-    }
     if (_mainController.auth.value) {
+      if (_courseController.statTest['passed']) {
+        return "Курс пройден";
+      }
       try {
         if (_courseController.videoEnded == _courseController.videoCount) {
           return "Пройти тест";

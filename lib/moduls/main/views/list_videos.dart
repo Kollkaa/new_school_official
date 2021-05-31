@@ -137,15 +137,15 @@ class ListVideoState extends State<ListVideo> {
                     statusBarBrightness: Brightness.dark,
                     systemNavigationBarIconBrightness: Brightness.dark,
                     systemNavigationBarColor: Colors.white));
-                // SystemChrome.setPreferredOrientations([
-                //   DeviceOrientation.portraitUp,
-                // ]);
                 SystemChrome.setPreferredOrientations([
-                  DeviceOrientation.landscapeRight,
-                  DeviceOrientation.landscapeLeft,
                   DeviceOrientation.portraitUp,
-                  DeviceOrientation.portraitDown,
                 ]);
+                // SystemChrome.setPreferredOrientations([
+                //   DeviceOrientation.landscapeRight,
+                //   DeviceOrientation.landscapeLeft,
+                //   DeviceOrientation.portraitUp,
+                //   DeviceOrientation.portraitDown,
+                // ]);
                 setState(() {});
               },
             );

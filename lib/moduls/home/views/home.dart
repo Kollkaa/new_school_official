@@ -718,7 +718,7 @@ class StateItem extends State<Item> {
   var _image;
   bool _loading = true;
 
-  int lesAll = 0;
+  int lesAll = 1;
 
   int lesProg = 0;
 
@@ -728,11 +728,13 @@ class StateItem extends State<Item> {
     Stream stream = controller.stream;
     stream.listen((value) async {
       initImage();
-      var stat = await Backend().getStatCourse(widget.id);
-      lesAll = int.tryParse(stat.data[0]['lessons_count']);
-      lesProg = widget.mainController.getUservideo_time_all
-          .where((el) => el['course_id'] == widget.id)
-          .length;
+      if (widget.mainController.auth.value) {
+        var stat = await Backend().getStatCourse(widget.id);
+        lesAll = int.tryParse(stat.data[0]['lessons_count']);
+        lesProg = widget.mainController.getUservideo_time_all
+            .where((el) => el['course_id'] == widget.id)
+            .length;
+      }
     });
     controller.add(1);
   }

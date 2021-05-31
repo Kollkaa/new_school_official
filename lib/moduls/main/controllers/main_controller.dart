@@ -80,6 +80,7 @@ class MainController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
+    controllerSearch.text = '';
     downloads = box.read("downloads");
     stream = controller.stream;
     stream.listen((value) async {

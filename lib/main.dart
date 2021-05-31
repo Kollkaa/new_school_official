@@ -20,15 +20,15 @@ void main() async {
       statusBarBrightness: Brightness.dark,
       systemNavigationBarIconBrightness: Brightness.dark,
       systemNavigationBarColor: Colors.white));
-  // SystemChrome.setPreferredOrientations([
-  //   DeviceOrientation.portraitUp,
-  // ]);
   SystemChrome.setPreferredOrientations([
-    DeviceOrientation.landscapeRight,
-    DeviceOrientation.landscapeLeft,
     DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
   ]);
+  // SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.landscapeRight,
+  //   DeviceOrientation.landscapeLeft,
+  //   DeviceOrientation.portraitUp,
+  //   DeviceOrientation.portraitDown,
+  // ]);
   runApp(new Localizations(
     locale: const Locale('en', 'US'),
     delegates: <LocalizationsDelegate<dynamic>>[

@@ -409,15 +409,15 @@ class _CupertinoControlsState extends State<CupertinoControls> {
             statusBarBrightness: Brightness.dark,
             systemNavigationBarIconBrightness: Brightness.dark,
             systemNavigationBarColor: Colors.white));
-        // SystemChrome.setPreferredOrientations([
-        //   DeviceOrientation.portraitUp,
-        // ]);
         SystemChrome.setPreferredOrientations([
-          DeviceOrientation.landscapeRight,
-          DeviceOrientation.landscapeLeft,
           DeviceOrientation.portraitUp,
-          DeviceOrientation.portraitDown,
         ]);
+        // SystemChrome.setPreferredOrientations([
+        //   DeviceOrientation.landscapeRight,
+        //   DeviceOrientation.landscapeLeft,
+        //   DeviceOrientation.portraitUp,
+        //   DeviceOrientation.portraitDown,
+        // ]);
         // ignore: close_sinks
         StreamController<int> controller = StreamController<int>();
         Stream stream = controller.stream;
