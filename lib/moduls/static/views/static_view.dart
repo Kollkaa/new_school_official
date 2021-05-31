@@ -932,6 +932,7 @@ class StateStaticScreen extends State<StaticScreen> {
                       child: GridView.builder(
                         itemCount: list[i]['day'],
                         itemBuilder: (c, index) {
+                          index = index+1;
                           Color color;
                           if (_mainController.getStats['lessons_stats']
                               .indexWhere((el) =>
