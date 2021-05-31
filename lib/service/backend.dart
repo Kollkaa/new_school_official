@@ -58,7 +58,6 @@ class Backend {
           "apiKey": "2xdCQ9nH",
           "client_id": id,
         }));
-    print("getUservideo_time_all${response.data}");
     getUservideoTimeAllResponse = response.data;
     return response.data;
   }
@@ -83,7 +82,6 @@ class Backend {
           "apiKey": "2xdCQ9nH",
           "client_id": id,
         }));
-    print("getUservideo_time ${response.data}");
     getUserVideoTimeResponse = response.data;
     return response.data;
   }
@@ -142,7 +140,6 @@ class Backend {
   }
 
   Future<dios.Response> editEmail(id, email) {
-    print(baseUrl);
     return dio.post("/api/api.php",
         data: dios.FormData.fromMap({
           'type': 'client_edit_email',
@@ -261,15 +258,15 @@ class Backend {
 
   setPos(course_id, lesson_id, value, video_duration) async {
     var response;
-    print({
-      'type': 'client_view_lesson',
-      'apiKey': '2xdCQ9nH',
-      'client_id': storage.read('id'),
-      'lesson_id': lesson_id,
-      'course_id': course_id,
-      'video_time': value,
-      'video_duration': video_duration,
-    });
+    // print({
+    //   'type': 'client_view_lesson',
+    //   'apiKey': '2xdCQ9nH',
+    //   'client_id': storage.read('id'),
+    //   'lesson_id': lesson_id,
+    //   'course_id': course_id,
+    //   'video_time': value,
+    //   'video_duration': video_duration,
+    // });
     response = await dio.post("/api/api.php",
         data: dios.FormData.fromMap({
           'type': 'client_view_lesson',
@@ -350,6 +347,18 @@ class Backend {
           'client_id': client_id
         }));
     getFinishedCoursesResponse = response.data;
+    return response.data;
+  }
+
+  Future getVideoStat(clientId, courseId) async {
+    var response;
+    response = await dio.post("/api/api.php",
+        data: dios.FormData.fromMap({
+          'type': 'client_course_stats_lessons',
+          'apiKey': '2xdCQ9nH',
+          'course_id': courseId,
+          'client_id': clientId,
+        }));
     return response.data;
   }
 }

@@ -12,7 +12,8 @@ class TestController extends GetxController {
   MainController mainController = Get.find();
   HomeController homeController = Get.find();
   var currentIndexQuestion = 0.obs;
-  var controller = new PageController(initialPage: 0);
+  var controller;
+  var questionsCount;
   var test;
   var stat;
   var correct = 0.obs;
@@ -32,18 +33,21 @@ class TestController extends GetxController {
   getTest() async {
     test = await Backend()
         .getTestByidCourse(course_id: homeController.course['kurses'][0]['id']);
-    test.data['questions'];
+    questionsCount = test.data['questions'].length;
     stat = await Backend().getTestStat(
         id: mainController.profile['id'],
         course_id: homeController.course['kurses'][0]['id']);
-
+    controller = new PageController(initialPage: 0);
+    print(test);
+    print(questionsCount);
+    print(stat);
     Get.appUpdate();
   }
 
   var list = [];
-  randomizer(inte) {
+  randomizer() {
     list = [];
-    while (list.length != inte) {
+    while (list.length != questionsCount) {
       var question;
       do {
         var question = getRandomElement(test.data['questions']);

@@ -883,7 +883,6 @@ class StateStaticScreen extends State<StaticScreen> {
         .month, getMonth().length));
     list.addAll(listStart);
     list = list.reversed.toList();
-    print(list);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -933,6 +932,7 @@ class StateStaticScreen extends State<StaticScreen> {
                       child: GridView.builder(
                         itemCount: list[i]['day'],
                         itemBuilder: (c, index) {
+                          index = index+1;
                           Color color;
                           if (_mainController.getStats['lessons_stats']
                               .indexWhere((el) =>
@@ -1267,9 +1267,11 @@ class StateStaticScreen extends State<StaticScreen> {
   void initStat() async {
     dios.Response getStats = await Backend().getStat(id: box.read('id'));
     _mainController.getStats.value = getStats.data['user_stats'][0];
-    setState(() {
+    try {
+      setState(() {
 
-    });
+      });
+    }catch(e){}
   }
 }
 

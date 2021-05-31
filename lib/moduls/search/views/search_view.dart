@@ -77,7 +77,7 @@ class SearchScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Obx(() => _mainController.searchCourse.length != 0 &&
+                    Obx(() => _mainController.searchCourse.length != 0 ||
                             _mainController.controllerSearch.text.length != 0
                         ? Container(
                             padding: EdgeInsets.only(right: 10),

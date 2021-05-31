@@ -11,8 +11,4 @@ abstract class Routes {
   static const TEST = '/test';
 
   static const LONGLIST = '/longlist';
-
-
-
-
 }

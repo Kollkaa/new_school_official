@@ -70,7 +70,6 @@ class HomeController extends GetxController {
 
   void getCourses() async {
     var response = await Backend().getMainCourse();
-    print(response.headers);
     if (response.statusCode == 200) {
       popular.value = response.data['popular'];
       news.value = response.data['new'];
@@ -79,9 +78,7 @@ class HomeController extends GetxController {
 
   void getCategories() async {
     var response = await Backend().getMainCategories();
-    print(response.headers);
     if (response.statusCode == 200) {
-      print(response.data);
       categorise.value = response.data['categories'];
       await getCoursesByCatStart(categorise[0]['id'], categorise[0]['name']);
     }
@@ -89,9 +86,7 @@ class HomeController extends GetxController {
 
   void getCoursesByCatStart(id, text) async {
     var response = await Backend().getCourseByCat(id);
-    print(response.headers);
     if (response.statusCode == 200) {
-      print(response.data['kurses'].length);
       coursesByCat.value = response.data['kurses'];
       category.value = text;
     }
@@ -99,9 +94,7 @@ class HomeController extends GetxController {
 
   void getCoursesByCat(id, text) async {
     var response = await Backend().getCourseByCat(id);
-    print(response.headers);
     if (response.statusCode == 200) {
-      print(response.data['kurses'].length);
       coursesByCat.value = response.data['kurses'];
       category.value = text;
       Get.to(CourseByGroup(), duration: Duration());
