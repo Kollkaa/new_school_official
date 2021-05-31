@@ -55,7 +55,6 @@ class Statehome extends State<HomePage> {
   }
 
   void loadContinues() {
-    print(_mainController.listContCourse.length);
     _mainController.listContCourse.forEach((el) {
       contunies.add(ItemCont(
           el['lesson_id'],
@@ -149,10 +148,7 @@ class Statehome extends State<HomePage> {
                                           } else {
                                             await Get.dialog(SettingPage(),
                                                 useSafeArea: false);
-                                            var responces = await Backend()
-                                                .getUser(id: box.read("id"));
-                                            _mainController.profile.value =
-                                                responces.data['clients'][0];
+
                                             setState(() {});
                                           }
                                         },

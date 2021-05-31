@@ -28,7 +28,7 @@ class ProfileController extends GetxController {
     await box.write("id", null);
     await (_mainController.auth.value = false);
     await (_mainController.banner.value = true);
-    await (_mainController.listContCourse.value = []);
+    await (_mainController.listContCourse = []);
     await (_mainController.allCourse = []);
     await (_mainController.profile = {}.obs);
     await (_mainController.finishedCourses.value = []);

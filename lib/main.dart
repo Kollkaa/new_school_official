@@ -15,12 +15,19 @@ void main() async {
 
   await GetStorage.init();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.black26,
+      statusBarColor: Colors.white,
       statusBarIconBrightness: Brightness.dark,
       statusBarBrightness: Brightness.dark,
-      systemNavigationBarColor: Colors.black26));
+      systemNavigationBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: Colors.white));
+  // SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
+  // ]);
   SystemChrome.setPreferredOrientations([
+    DeviceOrientation.landscapeRight,
+    DeviceOrientation.landscapeLeft,
     DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
   ]);
   runApp(new Localizations(
     locale: const Locale('en', 'US'),

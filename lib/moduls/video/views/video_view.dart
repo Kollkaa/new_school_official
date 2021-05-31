@@ -7,8 +7,10 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:new_school_official/custom/controlls.dart';
+import 'package:new_school_official/moduls/course/controllers/course_controller.dart';
 import 'package:new_school_official/moduls/home/controllers/home_controller.dart';
 import 'package:new_school_official/moduls/main/controllers/main_controller.dart';
+import 'package:new_school_official/routes/app_pages.dart';
 import 'package:new_school_official/service/backend.dart';
 import 'package:video_player/video_player.dart';
 
@@ -29,6 +31,7 @@ class VideoScreen extends StatefulWidget {
 class _ChewieDemoState extends State<VideoScreen> {
   HomeController _homeController = Get.find();
   MainController _mainController = Get.find();
+  CourseController _courseController = Get.find();
   ChewieController _chewieController;
   bool method1 = false;
   final GetStorage box = GetStorage();
@@ -43,7 +46,6 @@ class _ChewieDemoState extends State<VideoScreen> {
 
   updateVideoStat() async {
     if (_mainController.auth.value) {
-      await _mainController.initProfile(box.read("id"));
       await Backend().setPos(
           _homeController.videos['lessons'].reversed.toList()[(widget.index)]
               ['kurs_id'],
@@ -53,6 +55,7 @@ class _ChewieDemoState extends State<VideoScreen> {
           _chewieController.videoPlayerController.value.duration.inSeconds);
       if (box.read('id') != null) {
         _mainController.initProfile(box.read("id"));
+        _courseController.initCheckedVideos();
         Get.appUpdate();
       }
     }
@@ -61,7 +64,12 @@ class _ChewieDemoState extends State<VideoScreen> {
   @override
   void dispose() {
     try {
-      updateVideoStat();
+      if (_mainController.auth.value &&
+          _mainController.profile['subscriber'] != '0') if (_chewieController
+              .videoPlayerController.value.position.inSeconds ==
+          _chewieController.videoPlayerController.value.duration.inSeconds) {
+        updateVideoStat();
+      }
     } catch (e) {}
     try {
       myOverayEntry.remove();
@@ -95,10 +103,11 @@ class _ChewieDemoState extends State<VideoScreen> {
   Future<void> initializePlayer() async {
     SystemChrome.setEnabledSystemUIOverlays([]);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: Colors.black,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.light,
-        systemNavigationBarColor: Colors.black));
+        statusBarColor: Colors.white,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.dark,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: Colors.white));
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
@@ -210,9 +219,9 @@ class _ChewieDemoState extends State<VideoScreen> {
           _mainController.profile['subscriber'] != '0') if (_chewieController
               .videoPlayerController.value.position.inSeconds ==
           _chewieController.videoPlayerController.value.duration.inSeconds) {
-        Get.back();
         if ((widget.index + 1) <=
             _homeController.videos['lessons'].length - 1) {
+          Get.back();
           Get.to(VideoScreen(
               _homeController.videos['lessons'].reversed
                   .toList()[(widget.index + 1)],
@@ -222,15 +231,23 @@ class _ChewieDemoState extends State<VideoScreen> {
           SystemChrome.setEnabledSystemUIOverlays(
               [SystemUiOverlay.bottom, SystemUiOverlay.top]);
           SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-              statusBarColor: Colors.black26,
+              statusBarColor: Colors.white,
               statusBarIconBrightness: Brightness.dark,
               statusBarBrightness: Brightness.dark,
-              systemNavigationBarColor: Colors.black26));
+              systemNavigationBarIconBrightness: Brightness.dark,
+              systemNavigationBarColor: Colors.white));
+          // SystemChrome.setPreferredOrientations([
+          //   DeviceOrientation.portraitUp,
+          // ]);
           SystemChrome.setPreferredOrientations([
+            DeviceOrientation.landscapeRight,
+            DeviceOrientation.landscapeLeft,
             DeviceOrientation.portraitUp,
+            DeviceOrientation.portraitDown,
           ]);
           // setState(() {});
-          // Get.toNamed(Routes.TEST);
+          Get.back();
+          Get.toNamed(Routes.TEST);
         }
         method1 = true;
       }
@@ -265,13 +282,17 @@ class _ChewieDemoState extends State<VideoScreen> {
                     .toList()[(widget.index)]['kurs_id'],
                 method: () {
                   if (!method1) {
+                    try {
+                      print("NEXT");
+                      updateVideoStat();
+                    } catch (e) {}
                     // ignore: unnecessary_statements
                     myOverayEntry != null ? myOverayEntry.remove() : null;
-                    Get.back();
                     if ((widget.index + 1) <=
                         _homeController.videos['lessons'].length - 1) {
                       if (_mainController.auth.value &&
                           _mainController.profile['subscriber'] != '0') {
+                        Get.back();
                         Get.to(VideoScreen(
                             _homeController.videos['lessons'].reversed
                                 .toList()[(widget.index + 1)],
@@ -290,31 +311,43 @@ class _ChewieDemoState extends State<VideoScreen> {
                             [SystemUiOverlay.bottom, SystemUiOverlay.top]);
                         SystemChrome.setSystemUIOverlayStyle(
                             SystemUiOverlayStyle(
-                                statusBarColor: Colors.black,
+                                statusBarColor: Colors.white,
                                 statusBarIconBrightness: Brightness.dark,
                                 statusBarBrightness: Brightness.dark,
-                                systemNavigationBarColor: Colors.black));
+                                systemNavigationBarColor: Colors.white));
+                        // SystemChrome.setPreferredOrientations([
+                        //   DeviceOrientation.portraitUp,
+                        // ]);
                         SystemChrome.setPreferredOrientations([
+                          DeviceOrientation.landscapeRight,
+                          DeviceOrientation.landscapeLeft,
                           DeviceOrientation.portraitUp,
+                          DeviceOrientation.portraitDown,
                         ]);
                         // setState(() {});
-                        // // Get.toNamed(Routes.TEST);
-                        // Get.back();
+                        // Get.toNamed(Routes.TEST);
+                        Get.back();
                       }
                     } else {
                       SystemChrome.setEnabledSystemUIOverlays(
                           [SystemUiOverlay.bottom, SystemUiOverlay.top]);
                       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-                          statusBarColor: Colors.black,
+                          statusBarColor: Colors.white,
                           statusBarIconBrightness: Brightness.dark,
                           statusBarBrightness: Brightness.dark,
-                          systemNavigationBarColor: Colors.black));
+                          systemNavigationBarIconBrightness: Brightness.dark,
+                          systemNavigationBarColor: Colors.white));
+                      // SystemChrome.setPreferredOrientations([
+                      //   DeviceOrientation.portraitUp,
+                      // ]);
                       SystemChrome.setPreferredOrientations([
+                        DeviceOrientation.landscapeRight,
+                        DeviceOrientation.landscapeLeft,
                         DeviceOrientation.portraitUp,
+                        DeviceOrientation.portraitDown,
                       ]);
                       // setState(() {});
-                      // Get.toNamed(Routes.TEST);
-                      // Get.back();
+
                     }
                   }
                 },
@@ -356,12 +389,19 @@ class _ChewieDemoState extends State<VideoScreen> {
             SystemChrome.setEnabledSystemUIOverlays(
                 [SystemUiOverlay.bottom, SystemUiOverlay.top]);
             SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-                statusBarColor: Colors.black26,
+                statusBarColor: Colors.white,
                 statusBarIconBrightness: Brightness.dark,
                 statusBarBrightness: Brightness.dark,
-                systemNavigationBarColor: Colors.black26));
+                systemNavigationBarIconBrightness: Brightness.dark,
+                systemNavigationBarColor: Colors.white));
+            // SystemChrome.setPreferredOrientations([
+            //   DeviceOrientation.portraitUp,
+            // ]);
             SystemChrome.setPreferredOrientations([
+              DeviceOrientation.landscapeRight,
+              DeviceOrientation.landscapeLeft,
               DeviceOrientation.portraitUp,
+              DeviceOrientation.portraitDown,
             ]);
             // ignore: close_sinks
             // StreamController<int> controller = StreamController<int>();

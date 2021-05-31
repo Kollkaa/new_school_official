@@ -349,4 +349,16 @@ class Backend {
     getFinishedCoursesResponse = response.data;
     return response.data;
   }
+
+  Future getVideoStat(clientId, courseId) async {
+    var response;
+    response = await dio.post("/api/api.php",
+        data: dios.FormData.fromMap({
+          'type': 'client_course_stats_lessons',
+          'apiKey': '2xdCQ9nH',
+          'course_id': courseId,
+          'client_id': clientId,
+        }));
+    return response.data;
+  }
 }

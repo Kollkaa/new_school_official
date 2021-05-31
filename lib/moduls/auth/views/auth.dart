@@ -356,8 +356,6 @@ class StateAuth extends State<AuthPage> {
                   Get.dialog(Payment(
                     subscriber: _mainController.profile['subscriber'],
                   ));
-                } else {
-                  _mainController.currentIndex.value = 0;
                 }
                 setState(() {});
               } else {

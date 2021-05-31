@@ -75,7 +75,7 @@ class MainController extends GetxController {
   var finishedCourses = [].obs;
 
   var controllerSearch = new TextEditingController();
-  var listContCourse = [].obs;
+  var listContCourse = [];
 
   @override
   void onInit() async {
@@ -127,7 +127,7 @@ class MainController extends GetxController {
 
   Future initProfile(id) async {
     getUservideo_time = [].obs;
-    listContCourse = [].obs;
+    listContCourse = [];
     Backend backend = Backend();
     await Future.wait([
       backend.getFinishedCourses(id),
@@ -166,13 +166,8 @@ class MainController extends GetxController {
         new TextEditingController(text: profile['lastname']);
     if (getUservideo_time.length != 0) {
       getUservideo_time.forEach((element) {
-        if (finishedCourses
-                .where((el) => el['course_id'] == element['course_id'])
-                .length !=
-            0) {
-        } else {
-          listContCourse.add(element);
-        }
+        print(element);
+        listContCourse.add(element);
       });
     }
     // print("listContCourse ${listContCourse}");
@@ -188,6 +183,7 @@ class MainController extends GetxController {
       DownloadPage(),
       auth.value ? ProfilePage() : AuthPage(),
     ];
+    print('hi');
     Get.appUpdate();
   }
 
@@ -342,6 +338,7 @@ class MainController extends GetxController {
     Dio dio = Dio();
     try {
       var dir = await getApplicationDocumentsDirectory();
+      print("${dir.path}/material$courseId/$materialId.pdf");
       materialValue[downloadID] = {
         "rec": 1,
         "total": 1,
@@ -349,7 +346,7 @@ class MainController extends GetxController {
         "download": true,
         "cancelToken": cancelToken
       };
-      await dio.download(url, "${dir.path}/material$courseId/$materialId",
+      await dio.download(url, "${dir.path}/material$courseId/$materialId.pdf",
           onReceiveProgress: (rec, total) async {
         materialValue[downloadID] = {
           "rec": rec,

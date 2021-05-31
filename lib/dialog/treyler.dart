@@ -42,10 +42,11 @@ class _ChewieDemoState extends State<TrailerScreen> {
   Future<void> initializePlayer() async {
     SystemChrome.setEnabledSystemUIOverlays([]);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: Colors.black26,
+        statusBarColor: Colors.white,
         statusBarIconBrightness: Brightness.dark,
         statusBarBrightness: Brightness.dark,
-        systemNavigationBarColor: Colors.black26));
+        systemNavigationBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: Colors.white));
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
@@ -141,7 +142,6 @@ class _ChewieDemoState extends State<TrailerScreen> {
                       kurs_id: null,
                       method: () {
                         myOverayEntry != null ? myOverayEntry.remove() : null;
-
                         Get.back();
                       },
                     ),

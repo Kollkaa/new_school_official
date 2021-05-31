@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:new_school_official/moduls/course/controllers/course_controller.dart';
 import 'package:new_school_official/moduls/main/controllers/main_controller.dart';
 import 'package:new_school_official/moduls/test/controller/test_controller.dart';
 import 'package:new_school_official/routes/app_pages.dart';
@@ -11,6 +12,7 @@ class FinishPage extends StatelessWidget {
 
   final GetStorage box = GetStorage();
   MainController _mainController = Get.find();
+  CourseController _courseController = Get.find();
   @override
   Widget build(BuildContext context) {
     return Column(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -122,7 +124,7 @@ class FinishPage extends StatelessWidget {
                         )),
                     onTapDown: (_) {
                       _mainController.initProfile(box.read("id"));
-
+                      _courseController.statTest =  {'error': false, 'answers_correct': 2, 'answers_to_pass': 2, 'passed': true, 'message': 'Тест пройден'};
                       Get.appUpdate();
                       Get.back();
                     },

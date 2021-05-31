@@ -404,12 +404,19 @@ class _CupertinoControlsState extends State<CupertinoControls> {
         SystemChrome.setEnabledSystemUIOverlays(
             [SystemUiOverlay.bottom, SystemUiOverlay.top]);
         SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-            statusBarColor: Colors.black26,
+            statusBarColor: Colors.white,
             statusBarIconBrightness: Brightness.dark,
             statusBarBrightness: Brightness.dark,
-            systemNavigationBarColor: Colors.black26));
+            systemNavigationBarIconBrightness: Brightness.dark,
+            systemNavigationBarColor: Colors.white));
+        // SystemChrome.setPreferredOrientations([
+        //   DeviceOrientation.portraitUp,
+        // ]);
         SystemChrome.setPreferredOrientations([
+          DeviceOrientation.landscapeRight,
+          DeviceOrientation.landscapeLeft,
           DeviceOrientation.portraitUp,
+          DeviceOrientation.portraitDown,
         ]);
         // ignore: close_sinks
         StreamController<int> controller = StreamController<int>();

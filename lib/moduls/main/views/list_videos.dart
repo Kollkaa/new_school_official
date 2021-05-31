@@ -132,12 +132,19 @@ class ListVideoState extends State<ListVideo> {
                 SystemChrome.setEnabledSystemUIOverlays(
                     [SystemUiOverlay.bottom, SystemUiOverlay.top]);
                 SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-                    statusBarColor: Colors.black26,
+                    statusBarColor: Colors.white,
                     statusBarIconBrightness: Brightness.dark,
                     statusBarBrightness: Brightness.dark,
-                    systemNavigationBarColor: Colors.black26));
+                    systemNavigationBarIconBrightness: Brightness.dark,
+                    systemNavigationBarColor: Colors.white));
+                // SystemChrome.setPreferredOrientations([
+                //   DeviceOrientation.portraitUp,
+                // ]);
                 SystemChrome.setPreferredOrientations([
+                  DeviceOrientation.landscapeRight,
+                  DeviceOrientation.landscapeLeft,
                   DeviceOrientation.portraitUp,
+                  DeviceOrientation.portraitDown,
                 ]);
                 setState(() {});
               },
@@ -167,10 +174,11 @@ class VideoState extends State<Video> {
   initPlayer() async {
     SystemChrome.setEnabledSystemUIOverlays([]);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: Colors.black,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.light,
-        systemNavigationBarColor: Colors.black));
+        statusBarColor: Colors.white,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.dark,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: Colors.white));
     setState(() {});
     var dir = await getApplicationDocumentsDirectory();
     VideoPlayerController videoplayer =
@@ -225,6 +233,7 @@ class VideoState extends State<Video> {
                     _chewieController.removeListener(() {});
                     _chewieController.videoPlayerController.dispose();
                     _chewieController.dispose();
+
                     Get.back();
                   },
                 ),
