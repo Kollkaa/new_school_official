@@ -215,7 +215,6 @@ class _CupertinoControlsState extends State<CupertinoControls> {
   }
 
   void _dispose() {
-    print("CONTROLS DISSSSSSSSSSSSSSSSSSSSPOS");
     controller.removeListener(_updateState);
     _hideTimer?.cancel();
     _expandCollapseTimer?.cancel();
@@ -426,7 +425,6 @@ class _CupertinoControlsState extends State<CupertinoControls> {
               chewieController.videoPlayerController.value.position.inSeconds;
           var dur =
               chewieController.videoPlayerController.value.duration.inSeconds;
-          Get.back();
 
           var getUservideoTimeAll =
               await Backend().getUservideo_time_all(id: box.read('id'));
@@ -434,12 +432,15 @@ class _CupertinoControlsState extends State<CupertinoControls> {
           _mainController.getUservideo_time_all.value = [];
           _mainController.getUservideo_time_all
               .addAll(getUservideoTimeAll['lessons']);
-          var res = await Backend().setPos(widget.kurs_id, widget.id, pos, dur);
+          var res = {};
+          if (pos == dur)
+            res = await Backend().setPos(widget.kurs_id, widget.id, pos, dur);
           print(res);
           if (box.read('id') != null) {
             await _mainController.initProfile(box.read("id"));
           }
           setState(() {});
+          Get.back();
         });
         controller.add(1);
         setState(() {});

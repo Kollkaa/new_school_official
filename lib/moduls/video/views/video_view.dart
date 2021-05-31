@@ -69,6 +69,7 @@ class _ChewieDemoState extends State<VideoScreen> {
               .videoPlayerController.value.position.inSeconds ==
           _chewieController.videoPlayerController.value.duration.inSeconds) {
         updateVideoStat();
+        print("NOOOOOOOOOOOOOOOOOOOOOOOOOOO");
       }
     } catch (e) {}
     try {
