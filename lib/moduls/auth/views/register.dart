@@ -405,11 +405,12 @@ class StateRegister extends State<RegisterPage> {
                 dios.Response responce = await Backend().register(
                     email: _authController.phoneRegEditingController.text,
                     pas: _authController.passRegEditingController.text);
-                print(responce);
-                print('++++++++++++++++++');
                 if (responce.statusCode == 200 &&
                     responce.data[0]['id'] != null) {
                   print(responce.data);
+                  responce = await Backend().auth(
+                      email: _authController.phoneRegEditingController.text,
+                      pas: _authController.passRegEditingController.text);
                   await box.write("auth", true);
                   _mainController.profile = {}.obs;
                   await box.write("id", responce.data[0]['id']);

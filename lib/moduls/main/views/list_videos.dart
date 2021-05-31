@@ -14,57 +14,67 @@ import 'package:video_player/video_player.dart';
 class ListVideo extends StatefulWidget {
   var course;
   var title;
-  ListVideo(this.course,this.title);
+  ListVideo(this.course, this.title);
 
   @override
   State<StatefulWidget> createState() {
     return ListVideoState();
   }
 }
-class ListVideoState extends State<ListVideo>{
-  MainController mainController =Get.find();
+
+class ListVideoState extends State<ListVideo> {
+  MainController mainController = Get.find();
   ChewieController _chewieController;
 
   @override
-  void initState() {
-
-  }
-
-
+  void initState() {}
 
   @override
   Widget build(BuildContext context) {
-    var count=0;
+    var count = 0;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        elevation: 0,
-        leadingWidth: 170,
-        leading: GestureDetector(
-          child: Row(
-            children: [
-              SizedBox(width: 20,),
-              Icon(Icons.arrow_back_ios),
-              Text("Назад",style: TextStyle(fontSize: 15,fontWeight: FontWeight.w500,color:Colors.black,fontFamily: "Raleway"))
-            ],
-          ),
-          onTapDown: (_){
-            Get.back();
-          },
-        )
-      ),
+          elevation: 0,
+          leadingWidth: 170,
+          leading: GestureDetector(
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 20,
+                ),
+                Icon(Icons.arrow_back_ios),
+                Text("Назад",
+                    style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                        fontFamily: "Raleway"))
+              ],
+            ),
+            onTapDown: (_) {
+              Get.back();
+            },
+          )),
       body: ListView(
         padding: EdgeInsets.all(0),
         children: [
-          SizedBox(height: 32,),
-          Container(
-            margin: EdgeInsets.only(left: 20),
-            child: Text("${widget.title}",style: TextStyle(fontSize: 20,fontWeight: FontWeight.w700,color:Colors.black,fontFamily: "Raleway"))
+          SizedBox(
+            height: 32,
           ),
-          SizedBox(height: 22,),
-
-          ...widget.course.split("||").map((el){
-            count+=1;
+          Container(
+              margin: EdgeInsets.only(left: 20),
+              child: Text("${widget.title}",
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black,
+                      fontFamily: "Raleway"))),
+          SizedBox(
+            height: 22,
+          ),
+          ...widget.course.split("||").map((el) {
+            count += 1;
             return GestureDetector(
               child: Container(
                 margin: EdgeInsets.only(bottom: 24),
@@ -74,27 +84,42 @@ class ListVideoState extends State<ListVideo>{
                     Container(
                       height: 61,
                       width: 93,
-                      margin: EdgeInsets.only(bottom: 21,left: 20),
+                      margin: EdgeInsets.only(bottom: 21, left: 20),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
                           color: Colors.black,
                           image: DecorationImage(
-                              image: NetworkImage("${jsonDecode(el)['image']}")
-                          )
-                      ),
+                              image:
+                                  NetworkImage("${jsonDecode(el)['image']}"))),
                     ),
-                    SizedBox(width: 18,),
+                    SizedBox(
+                      width: 18,
+                    ),
                     Container(
                       height: 61,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Text("$count. ${jsonDecode(el)['title']}",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w500,color:Colors.black,fontFamily: "Raleway"),),
-                          SizedBox(height: 4,),
+                          Text(
+                            "$count. ${jsonDecode(el)['title']}",
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                                fontFamily: "Raleway"),
+                          ),
+                          SizedBox(
+                            height: 4,
+                          ),
                           Container(
-                            width: Get.width-170,
-                            child: Text("${jsonDecode(el)['desc']}",style: TextStyle(fontSize: 11,fontWeight: FontWeight.w300,color:Color(0xff6A6A6A),fontFamily: "Raleway")),
+                            width: Get.width - 170,
+                            child: Text("${jsonDecode(el)['desc']}",
+                                style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w300,
+                                    color: Color(0xff6A6A6A),
+                                    fontFamily: "Raleway")),
                           )
                         ],
                       ),
@@ -102,20 +127,26 @@ class ListVideoState extends State<ListVideo>{
                   ],
                 ),
               ),
-              onTapDown: (_)async{
+              onTapDown: (_) async {
                 await Get.to(Video(jsonDecode(el)['video']));
-                SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom,SystemUiOverlay.top]);
+                SystemChrome.setEnabledSystemUIOverlays(
+                    [SystemUiOverlay.bottom, SystemUiOverlay.top]);
                 SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
                     statusBarColor: Colors.white,
                     statusBarIconBrightness: Brightness.dark,
                     statusBarBrightness: Brightness.dark,
-                    systemNavigationBarColor: Colors.white
-                ));
+                    systemNavigationBarIconBrightness: Brightness.dark,
+                    systemNavigationBarColor: Colors.white));
                 SystemChrome.setPreferredOrientations([
                   DeviceOrientation.portraitUp,
                 ]);
-                setState(() {
-                });
+                // SystemChrome.setPreferredOrientations([
+                //   DeviceOrientation.landscapeRight,
+                //   DeviceOrientation.landscapeLeft,
+                //   DeviceOrientation.portraitUp,
+                //   DeviceOrientation.portraitDown,
+                // ]);
+                setState(() {});
               },
             );
           }).toList()
@@ -123,8 +154,8 @@ class ListVideoState extends State<ListVideo>{
       ),
     );
   }
-
 }
+
 class Video extends StatefulWidget {
   var path;
 
@@ -135,29 +166,28 @@ class Video extends StatefulWidget {
     return VideoState();
   }
 }
+
 class VideoState extends State<Video> {
   MainController mainController = Get.find();
   ChewieController _chewieController;
 
-  initPlayer()async{
+  initPlayer() async {
     SystemChrome.setEnabledSystemUIOverlays([]);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: Colors.black,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.light,
-        systemNavigationBarColor: Colors.black
-    ));
-    setState(() {
-
-    });
+        statusBarColor: Colors.white,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.dark,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: Colors.white));
+    setState(() {});
     var dir = await getApplicationDocumentsDirectory();
-    VideoPlayerController videoplayer=new VideoPlayerController.file(
-        new File("${dir.path}${widget.path}"));
+    VideoPlayerController videoplayer =
+        new VideoPlayerController.file(new File("${dir.path}${widget.path}"));
 
     await videoplayer.initialize();
     _chewieController = ChewieController(
       videoPlayerController: videoplayer,
-      aspectRatio: 16/9,
+      aspectRatio: 16 / 9,
       autoInitialize: true,
       autoPlay: true,
       showControlsOnInitialize: false,
@@ -175,37 +205,42 @@ class VideoState extends State<Video> {
       ),
     );
     _chewieController.videoPlayerController.addListener(() {
-      setState(( ) { } );
-
+      setState(() {});
     });
     myOverayEntry = getMyOverlayEntry(context: context);
     Overlay.of(context).insert(myOverayEntry);
-    setState(( ) { } );
+    setState(() {});
   }
+
   OverlayEntry myOverayEntry;
   OverlayEntry getMyOverlayEntry({
     @required BuildContext context,
   }) {
     return new OverlayEntry(
-      builder: (context) => _chewieController.videoPlayerController!=null?Positioned(
-        child: CupertinoControls(
-          chewieController: _chewieController,
-          backgroundColor: Color(0xff232323),
-          image:null,
-          iconColor: Colors.white,
-          id:  null,
-          kurs_id:  null,
-          method:(){
-            myOverayEntry.remove();
-            _chewieController.videoPlayerController.removeListener(() {});
-            _chewieController.removeListener(() {});
-            _chewieController.videoPlayerController.dispose();
-            _chewieController.dispose();
-            Get.back();},
-        ),
-      ):Container()
-  );
+        builder: (context) => _chewieController.videoPlayerController != null
+            ? Positioned(
+                child: CupertinoControls(
+                  chewieController: _chewieController,
+                  backgroundColor: Color(0xff232323),
+                  image: null,
+                  iconColor: Colors.white,
+                  id: null,
+                  kurs_id: null,
+                  method: () {
+                    myOverayEntry.remove();
+                    _chewieController.videoPlayerController
+                        .removeListener(() {});
+                    _chewieController.removeListener(() {});
+                    _chewieController.videoPlayerController.dispose();
+                    _chewieController.dispose();
+
+                    Get.back();
+                  },
+                ),
+              )
+            : Container());
   }
+
   @override
   void initState() {
     initPlayer();
@@ -218,7 +253,6 @@ class VideoState extends State<Video> {
     _chewieController.removeListener(() {});
     _chewieController.videoPlayerController.dispose();
     _chewieController.dispose();
-
   }
 
   @override
@@ -227,19 +261,17 @@ class VideoState extends State<Video> {
     return Container(
       height: Get.height,
       width: Get.height,
-      child:_chewieController != null &&
-          _chewieController
-              .videoPlayerController.value.initialized
-          ?  Chewie(
-        controller: _chewieController,
-      )
+      child: _chewieController != null &&
+              _chewieController.videoPlayerController.value.initialized
+          ? Chewie(
+              controller: _chewieController,
+            )
           : Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children:  [
-          CircularProgressIndicator(),
-        ],
-      ),
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(),
+              ],
+            ),
     );
   }
-
 }

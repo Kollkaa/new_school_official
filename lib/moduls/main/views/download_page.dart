@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -11,6 +10,7 @@ import 'package:new_school_official/storage/colors/main_color.dart';
 
 import 'list_videos.dart';
 
+// ignore: must_be_immutable
 class DownloadPage extends StatelessWidget {
   MainController mainController = Get.find();
 
@@ -105,18 +105,25 @@ class DownloadPage extends StatelessWidget {
                                 secondaryActions: [
                                   GestureDetector(
                                     onTap: () async {
-                                      // var newDownloads = mainController
-                                      //     .downloads
-                                      //     .split("||")
-                                      //     .where((elem) =>
-                                      //         jsonDecode(elem)['id'] !=
-                                      //         jsonDecode(el)['id'])
-                                      //     .toList();
-                                      // var JSON = '';
-                                      // newDownloads.forEach((el) =>
-                                      //     JSON += jsonEncode(el) + '||');
-                                      // JSON = JSON.substring(0, JSON.length - 2);
-                                      // await box.write("downloads", JSON);
+                                      var newDownloads = box
+                                          .read("downloads")
+                                          .split("||")
+                                          .where((elem) =>
+                                              jsonDecode(elem)['id'] !=
+                                              jsonDecode(el)['id'])
+                                          .toList();
+                                      // ignore: non_constant_identifier_names
+                                      String JSON = '';
+                                      newDownloads
+                                          .forEach((el) => JSON += el + '||');
+                                      try {
+                                        JSON =
+                                            JSON.substring(0, JSON.length - 2);
+                                      } catch (e) {}
+                                      await box.write("downloads", JSON);
+                                      mainController.downloads =
+                                          box.read("downloads");
+                                      box.remove(jsonDecode(el)['id']);
                                       // Dio dio = Dio();
                                       // print(el);
                                       // print(jsonDecode(el)["id"]);
