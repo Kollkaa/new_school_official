@@ -128,7 +128,9 @@ class StateCourse extends State<CourseScreen> {
   }
 
   String getTitle() {
-    if (_mainController.auth.value) {
+    if (_mainController.auth.value &&
+        _courseController.statTest != null &&
+        _mainController.profile['subscriber'] != '0') {
       if (_courseController.statTest['passed']) {
         return "Курс пройден";
       }
@@ -178,7 +180,8 @@ class StateCourse extends State<CourseScreen> {
     //     }
     //   }
     // }
-    if (_mainController.auth.value) {
+    if (_mainController.auth.value &&
+        _mainController.profile['subscriber'] != '0') {
       indexLast = _courseController.videoEnded - 1;
     } else {
       indexLast = -1;
