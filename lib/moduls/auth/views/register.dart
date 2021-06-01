@@ -420,9 +420,11 @@ class StateRegister extends State<RegisterPage> {
                   _mainController.widgets.add(ProfilePage());
                   if (int.tryParse(_mainController.profile['subscriber']) !=
                       1) {
-                    Get.dialog(Payment(
-                      subscriber: _mainController.profile['subscriber'],
-                    ));
+                    Get.dialog(
+                        Payment(
+                          subscriber: _mainController.profile['subscriber'],
+                        ),
+                        useSafeArea: false);
                   } else {
                     _mainController.currentIndex.value = 4;
                   }
