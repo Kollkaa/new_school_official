@@ -45,6 +45,15 @@ class StateCourse extends State<CourseScreen> {
   void initState() {
     super.initState();
     initPre();
+    setState(() {
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+          statusBarColor: Colors.white,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.dark,
+          systemNavigationBarIconBrightness: Brightness.dark,
+          systemNavigationBarColor: Colors.white));
+
+    });
   }
 
   @override
@@ -257,6 +266,14 @@ class StateCourse extends State<CourseScreen> {
                                   )),
                               onTap: () {
                                 _homeController.videos = {}.obs;
+                                  setState(() {
+                                    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+                                        statusBarColor: Colors.black,
+                                        statusBarIconBrightness: Brightness.light,
+                                        statusBarBrightness: Brightness.light,
+                                        systemNavigationBarIconBrightness: Brightness.dark,
+                                        systemNavigationBarColor: Colors.black));
+                                  });
                                 Get.back();
                               },
                             )),
@@ -1333,6 +1350,7 @@ class StateItem extends State<Item> {
 
   @override
   Widget build(BuildContext context) {
+
     return _loading
         ? Container(
             margin: EdgeInsets.only(right: 12),

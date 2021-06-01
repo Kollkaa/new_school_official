@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,7 +16,11 @@ void main() async {
   await GlobalConfiguration().loadFromAsset("configurations.json");
 
   await GetStorage.init();
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+  Platform.isIOS?SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+
+      systemNavigationBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: Colors.white)):
+   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.white,
       statusBarIconBrightness: Brightness.dark,
       statusBarBrightness: Brightness.dark,
